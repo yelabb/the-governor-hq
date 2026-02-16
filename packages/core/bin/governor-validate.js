@@ -12,7 +12,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const core = require('../index');
+const core = require('../dist/index');
 
 const COLORS = {
   reset: '\x1b[0m',
