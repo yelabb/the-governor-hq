@@ -1,4 +1,5 @@
 <div align="center">
+<img width="512" alt="image" src="https://github.com/user-attachments/assets/cb620a5c-c8db-4eba-9bea-b9995b4ccbe2" />
 
 # The Governor HQ Constitutional Framework
 
@@ -429,4 +430,5 @@ Built with ❤️ for safe AI-assisted development on wearable health data.
 [⬆ Back to Top](#)
 
 </div>
+
 
