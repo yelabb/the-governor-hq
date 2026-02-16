@@ -8,7 +8,8 @@
       "model": "llama-3.3-70b-versatile",
       "temperature": 0.7,
       "max_tokens": 1024,
-      "enabled": true
+      "enabled": true,
+      "description": "Meta's Llama 3.3 70B - Best overall performance"
     },
     {
       "id": "groq-llama-3.1-70b",
@@ -16,15 +17,26 @@
       "model": "llama-3.1-70b-versatile",
       "temperature": 0.7,
       "max_tokens": 1024,
-      "enabled": false
+      "enabled": false,
+      "description": "Meta's Llama 3.1 70B"
     },
     {
-      "id": "groq-mixtral",
+      "id": "groq-llama-3.1-8b",
       "provider": "groq",
-      "model": "mixtral-8x7b-32768",
+      "model": "llama-3.1-8b-instant",
       "temperature": 0.7,
       "max_tokens": 1024,
-      "enabled": false
+      "enabled": false,
+      "description": "Meta's Llama 3.1 8B - Fast"
+    },
+    {
+      "id": "groq-llama-3.2-90b",
+      "provider": "groq",
+      "model": "llama-3.2-90b-vision-preview",
+      "temperature": 0.7,
+      "max_tokens": 1024,
+      "enabled": false,
+      "description": "Meta's Llama 3.2 90B with vision"
     },
     {
       "id": "anthropic-claude",
