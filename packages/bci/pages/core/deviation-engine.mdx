@@ -75,7 +75,7 @@ const alphaDeviation = {
 
 | Deviation Type | Threshold | Why |
 |---|---|---|
-| **Minimal** | <15% from baseline | Normal noise, ignore |
+| **Minimal** | `<15%` from baseline | Normal noise, ignore |
 | **Noticeable** | 15-25% from baseline | Potentially meaningful if sustained |
 | **Significant** | >25% from baseline | Likely meaningful if sustained |
 | **Extreme** | >50% from baseline | Very unusual; verify sensor connection first |
@@ -224,15 +224,15 @@ return {
 **The system should NOT provide feedback when:**
 
 ### 1. Baseline Not Stable
-- User has <30 days of data
+- User has `<30 days` of data
 - Learning individual patterns still ongoing
 
 ### 2. Deviation Too Small
-- <15% change from baseline
+- `<15%` change from baseline
 - Within normal fluctuation range
 
 ### 3. Pattern Not Sustained
-- Brief spike or dip (<3 seconds)
+- Brief spike or dip (`<3 seconds`)
 - Intermittent pattern (not consistent)
 
 ### 4. User Cannot Act
@@ -241,7 +241,7 @@ return {
 - Not engaged with the app
 
 ### 5. Too Frequent
-- Last feedback was <5 minutes ago
+- Last feedback was `<5 minutes` ago
 - Risk of notification fatigue
 
 ### 6. State is Expected

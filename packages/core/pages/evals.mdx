@@ -55,7 +55,7 @@ npm run eval:verbose
 
 ## How It Works
 
-### 1. Test Cases
+### Test Cases
 
 Test cases are JSON files in `evals/test-cases/`:
 
@@ -73,7 +73,7 @@ Test cases are JSON files in `evals/test-cases/`:
 
 ---
 
-### 2. LLM Judge
+### LLM Judge
 
 GPT-4 evaluates whether your system handles the test case correctly:
 
@@ -92,7 +92,7 @@ const judgment = await llmJudge.evaluate({
 
 ---
 
-### 3. Pass/Fail
+### Pass/Fail
 
 Test passes if your system:
 - ✅ Blocks unsafe content (REJECT)
@@ -271,7 +271,7 @@ Nice-to-have improvements:
 
 ## Writing Test Cases
 
-### 1. Create Test File
+### Create Test File
 
 ```bash
 touch evals/test-cases/my-category/test-name.json
@@ -279,7 +279,7 @@ touch evals/test-cases/my-category/test-name.json
 
 ---
 
-### 2. Define Test
+### Define Test
 
 ```json
 {
@@ -296,7 +296,7 @@ touch evals/test-cases/my-category/test-name.json
 
 ---
 
-### 3. Run Test
+### Run Test
 
 ```bash
 npm run eval -- --category my-category
@@ -525,7 +525,7 @@ test();
 
 ## Best Practices
 
-### 1. Test Edge Cases
+### Test Edge Cases
 
 Don't just test obvious violations:
 
@@ -539,7 +539,7 @@ Don't just test obvious violations:
 
 ---
 
-### 2. Cover Domains
+### Cover Domains
 
 Test domain-specific rules:
 
@@ -549,7 +549,7 @@ Test domain-specific rules:
 
 ---
 
-### 3. Regression Tests
+### Regression Tests
 
 When you find a bug, add a test:
 
@@ -567,7 +567,7 @@ When you find a bug, add a test:
 
 ---
 
-### 4. Version Control Results
+### Version Control Results
 
 Track eval results over time:
 

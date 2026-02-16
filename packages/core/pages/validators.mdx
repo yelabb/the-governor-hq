@@ -14,9 +14,9 @@ Constitution Core provides runtime validators that check AI-generated content ag
 
 ## How Validation Works
 
-### 1. Fast Pattern Matching (<10ms)
+### Fast Pattern Matching
 
-Primary validation uses regex patterns and keyword matching:
+Primary validation uses regex patterns and keyword matching (under 10ms):
 
 ```typescript
 import { createValidator } from '@yelabb/constitution-core';
@@ -40,7 +40,7 @@ const unsafe = await validator.validate("You have cardiovascular disease.");
 
 ---
 
-### 2. LLM Judge (Optional, for edge cases)
+### LLM Judge (Optional)
 
 For ambiguous cases, use an LLM judge:
 
@@ -368,7 +368,7 @@ describe('Wearables Validator', () => {
 ## Performance
 
 **Pattern Matching:**
-- Average: <10ms per validation
+- Average: `<10ms` per validation
 - Handles 100+ checks/second
 - No API costs
 
@@ -384,7 +384,7 @@ describe('Wearables Validator', () => {
 ## Summary
 
 **Validators provide:**
-- ✅ Fast pattern matching (<10ms)
+- ✅ Fast pattern matching (`<10ms`)
 - ✅ Optional LLM judge for edge cases
 - ✅ Domain-specific rule sets
 - ✅ Custom rule support

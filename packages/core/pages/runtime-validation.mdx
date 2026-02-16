@@ -55,9 +55,9 @@ return result.output; // Safe to show
 
 ## How It Works
 
-### 1. Fast Pattern Matching
+### Fast Pattern Matching
 
-Primary validation uses regex and keyword matching (<10ms):
+Primary validation uses regex and keyword matching (under 10ms):
 
 ```typescript
 const result = await validator.validate("Your HRV looks good!");
@@ -77,7 +77,7 @@ const unsafe = await validator.validate("You have heart disease.");
 
 ---
 
-### 2. Optional LLM Judge
+### Optional LLM Judge
 
 For edge cases, use an LLM to judge safety:
 
@@ -104,7 +104,7 @@ const result = await validator.validate(llmOutput);
 
 ## Basic Setup
 
-### 1. Install
+### Install
 
 ```bash
 npm install @yelabb/constitution-core
@@ -112,7 +112,7 @@ npm install @yelabb/constitution-core
 
 ---
 
-### 2. Create Validator
+### Create Validator
 
 ```typescript
 import { createValidator } from '@yelabb/constitution-core';
@@ -127,7 +127,7 @@ const validator = createValidator({
 
 ---
 
-### 3. Validate AI Output
+### Validate AI Output
 
 ```typescript
 async function generateInsight(userData: UserData): Promise<string> {
@@ -370,7 +370,7 @@ const customRules: ValidationRule[] = [
     severity: 'error',
     message: 'Age-related medical claims not allowed',
     safeAlternative: 'Changes can occur over time. Discuss with a healthcare provider.'
-  } ];
+  }];
 
 const validator = createValidator({
   domain: 'wearables',
@@ -384,7 +384,7 @@ const validator = createValidator({
 
 ### Pattern Matching
 
-**Speed:** <10ms per validation  
+**Speed:** `<10ms` per validation  
 **Throughput:** 100+ validations/second  
 **Cost:** Free (no API calls)
 
@@ -514,7 +514,7 @@ describe('API Safety', () => {
 
 **Runtime validation:**
 - ✅ Hard gate between AI and user
-- ✅ Fast pattern matching (<10ms)
+- ✅ Fast pattern matching (`<10ms`)
 - ✅ Optional LLM judge for edge cases
 - ✅ Multiple violation modes
 - ✅ Custom rules support
