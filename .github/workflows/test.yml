@@ -26,8 +26,21 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run tests
+      - name: Build packages
+        run: npm run build
+
+      - name: Run all tests
         run: npm test
+
+      - name: Test runtime validator
+        run: |
+          cd packages/core
+          node tests/runtime-validator.test.js
+
+      - name: Validate CLI tool
+        run: |
+          cd packages/core
+          echo "Consider tracking your sleep" | node bin/governor-validate.js
 
       - name: Build documentation
         run: npm run build

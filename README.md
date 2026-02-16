@@ -45,10 +45,6 @@ AI coding assistants (Copilot, Claude, ChatGPT) can generate dangerous code when
 
 Install only the domains you need:
 
-## 📦 Packages
-
-Install only the domains you need:
-
 ### 🏃 Wearables & Fitness Trackers
 [![npm](https://img.shields.io/npm/v/@yelabb/constitution-wearables?label=%40yelabb%2Fconstitution-wearables)](https://www.npmjs.com/package/@yelabb/constitution-wearables)
 
