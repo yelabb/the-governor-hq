@@ -1,0 +1,7 @@
+{
+  "github.copilot.chat.codeGeneration.instructions": [
+    {
+      "text": "Follow the Governor HQ Constitutional Framework in node_modules/@yelabb/constitution-bci for BCI/neural data safety constraints. Never generate code that makes mental health diagnoses or emotion reading claims."
+    }
+  ]
+}

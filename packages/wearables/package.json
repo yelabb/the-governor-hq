@@ -1,6 +1,6 @@
 {
   "name": "@yelabb/constitution-wearables",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "AI Safety Constitution for Wearable/Smartwatch Data Projects - Instant context for AI coding assistants",
   "main": "dist/mcp-server.js",
   "types": "dist/index.d.ts",
