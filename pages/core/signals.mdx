@@ -1,75 +1,103 @@
 # Signals
 
-> What data the system reads — and what it cannot tell us.
+> What data systems read — and what it cannot tell us.
 
 ---
 
 ## Purpose
 
-This document defines the **exact data inputs** available to the system. Every signal listed here comes from consumer wearables. No signal in this list constitutes a medical measurement.
+This document defines **signal principles** that apply across all Governor HQ domains. Every signal processed by systems built with this framework must be understood within these constraints.
+
+**Domain-specific signals vary:** Wearables read HRV and sleep stages, BCI systems read brain waves, therapy apps read mood entries. But the underlying principles are universal.
 
 A developer reading this page should know:
-1. What can be **read** from the hardware
+1. What can be **read** from various data sources
 2. What can be **derived** with reasonable confidence
 3. What **must never be inferred** from this data
 
 ---
 
-## Supported Signals
+## Universal Signal Principles
 
-| Signal | Source | Characteristics | Update Frequency |
-|---|---|---|---|
-| **Sleep Stages** | Wearable (accelerometer + PPG) | Estimated, not clinical polysomnography. Light/Deep/REM classification. | Nightly |
-| **HRV (Heart Rate Variability)** | Wearable (PPG) | Trend-based, noisy, influenced by hydration, alcohol, position. rMSSD or equivalent. | Nightly / Morning |
-| **Resting Heart Rate** | Wearable (PPG) | Delayed indicator. More stable than HRV. Lower is generally better *for the individual*. | Nightly |
-| **Sleep Consistency** | Derived (bed/wake times) | Pattern regularity across nights. Circadian alignment proxy. | Rolling window |
+### 1. Trend-based, not absolute
+
+All signals are meaningful **relative to the individual's baseline**, not as standalone values. A single measurement means nothing without personal context.
+
+**Examples across domains:**
+- **Wearables:** An HRV of 35ms means nothing without context. An HRV that dropped 30% from baseline is meaningful.
+- **BCI:** A beta wave frequency means nothing alone. A sustained shift from personal baseline requires attention.
+- **Therapy:** A mood rating of 4/10 means nothing. A consistent 2-point drop from baseline is meaningful.
+
+### 2. Noisy
+
+Consumer health sensors produce estimates, not clinical measurements. Single-event anomalies are expected and must not trigger alerts alone.
+
+### 3. Delayed
+
+Many signals reflect what happened **hours or days ago**, not the current moment. Systems must account for this latency when interpreting data.
+
+### 4. Influenced by confounders
+
+Countless external factors affect every signal. The system cannot isolate causality — only observe patterns.
 
 ---
 
-## Signal Characteristics
+## Signal Examples by Domain
 
-### Trend-based, not absolute
+### 🏃 Wearables & Fitness
+| Signal | Source | Characteristics |
+|---|---|---|
+| **Sleep Stages** | Wearable (accelerometer + PPG) | Estimated, not clinical polysomnography |
+| **HRV** | Wearable (PPG) | Trend-based, noisy, influenced by lifestyle |
+| **Resting Heart Rate** | Wearable (PPG) | Delayed indicator, more stable than HRV |
+| **Activity Load** | Derived (movement + GPS) | Training stress proxy, not medical |
 
-All signals are meaningful **relative to the individual's baseline**, not as standalone values. An HRV of 35ms means nothing without context. An HRV that dropped 30% from a person's 90-day average is meaningful.
+**See:** [Wearables Signal Documentation](/packages/wearables/core/signals) for complete details.
 
-### Noisy
+### 🧠 Brain-Computer Interfaces
+| Signal | Source | Characteristics |
+|---|---|---|
+| **Alpha/Beta/Theta Waves** | EEG | Noisy, influenced by electrode placement |
+| **Focus Score** | Derived (beta/theta ratio) | Estimate, not absolute cognitive state |
+| **Meditation Index** | Derived (alpha dominance) | Rough proxy, individual variance high |
 
-Wearable sensors produce estimates, not clinical measurements. Single-night anomalies are expected and must not trigger alerts alone.
+**Note:** BCI-specific signal documentation coming soon.
 
-### Delayed
+### 💭 Therapy & Mental Health
+| Signal | Source | Characteristics |
+|---|---|---|
+| **Mood Ratings** | User-reported | Subjective, context-dependent |
+| **Journal Sentiment** | NLP derived | Approximate, language-limited |
+| **Behavioral Patterns** | Usage tracking | Correlation only, not causation |
 
-Most recovery signals reflect what happened **12–48 hours ago**, not the current moment. The system must account for this latency when interpreting data.
-
-### Influenced by confounders
-
-Alcohol, caffeine, travel, illness, menstrual cycle, and dozens of other factors affect every signal. The system cannot isolate causality.
+**Note:** Therapy-specific signal documentation coming soon.
 
 ---
 
 ## What Signals Cannot Tell Us
 
-This is as important as what they *can* tell us.
+This principle applies **universally across all domains**.
 
 | Impossible Inference | Why |
 |---|---|
-| **Diagnose a condition** | Consumer wearables are not medical devices. Signal accuracy is insufficient for diagnosis. |
-| **Determine causality** | A drop in HRV does not tell you *why* it dropped. Correlation ≠ causation. |
+| **Diagnose a condition** | Consumer health tools are not medical devices. Signal accuracy is insufficient for diagnosis. |
+| **Determine causality** | A change in any signal does not tell you *why* it changed. Correlation ≠ causation. |
 | **Prescribe treatment** | No signal combination justifies medical intervention. |
-| **Replace a doctor** | Even perfect data cannot replace clinical judgment, history, and examination. |
+| **Replace a professional** | Data cannot replace clinical judgment, professional assessment, or therapy. |
 | **Predict disease** | Trends may correlate with health outcomes in research, but individual prediction is not validated. |
 
 ---
 
 ## Population Averages Are Not Decision Inputs
 
-The system **explicitly rejects** population averages as primary decision criteria.
+Systems built with Governor HQ **explicitly reject** population averages as primary decision criteria.
 
 **Why:**
-- "Normal HRV" ranges vary by age, sex, fitness, genetics, and measurement method
-- Telling someone their HRV is "below average" creates anxiety without actionable insight
-- The only meaningful comparison is **you vs. your own baseline**
+- "Normal" ranges vary by age, demographics, genetics, and measurement method
+- Comparing users to population averages creates anxiety without actionable insight
+- The only meaningful comparison is **personal baseline vs. current state**
 
-**Rule:** Population data may be used for initial context during onboarding but must **never** drive agent recommendations or deviation detection.
+**Rule:** Population data may be used for initial context during onboarding but must **never** drive recommendations or deviation detection.
 
 ---
 
@@ -77,16 +105,18 @@ The system **explicitly rejects** population averages as primary decision criter
 
 ### DO
 - Compare signals to the user's personal baseline
-- Require multi-signal confirmation before triggering agents
-- Treat single-night anomalies as noise
+- Require multi-signal confirmation before triggering alerts
+- Treat single anomalies as noise unless part of a sustained pattern
 - Display trends, not snapshots
+- Acknowledge uncertainty and limitations
 
 ### DON'T
-- Show "normal ranges" based on population data
-- Use language like "your HRV is low" (low compared to what?)
-- Infer mood, stress level, or health status from a single metric
-- Present wearable data as medically accurate
+- Show "normal ranges" based on population data as decision criteria
+- Use language like "low" or "high" without baseline context
+- Infer health status, mood, or condition from a single metric
+- Present consumer health data as medically accurate
+- Make causal claims from correlational data
 
 ---
 
-> **Bottom line:** These signals are behavioral feedback tools, not diagnostic instruments. Build accordingly.
+> **Bottom line:** All health signals are behavioral feedback tools, not diagnostic instruments. Build accordingly, regardless of domain.

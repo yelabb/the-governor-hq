@@ -1,12 +1,12 @@
 # AI Agent Guide
 
-> Instructions for AI coding assistants working with wearable health data
+> Instructions for AI coding assistants working with health and biometric data
 
 ---
 
 ## Purpose
 
-This document is written **for AI coding assistants** (GitHub Copilot, ChatGPT, Claude, Cursor, etc.) helping developers build features that process wearable biometric data.
+This document is written **for AI coding assistants** (GitHub Copilot, ChatGPT, Claude, Cursor, etc.) helping developers build features that process health and biometric data across multiple domains.
 
 **Your role:** Generate code and suggestions that respect the constitutional framework defined in this repository. These are not guidelines — they are **hard constraints** that must be enforced in every line of code you produce.
 
@@ -15,11 +15,18 @@ This document is written **for AI coding assistants** (GitHub Copilot, ChatGPT, 
 ## Understanding Your Constraints
 
 You are helping build a system that:
-- Processes personal biometric data from consumer wearables
+- Processes personal health or biometric data from various sources
 - Generates insights and recommendations for end users
 - Operates in a high-risk domain (health and wellness)
 - Must avoid medical claims, diagnoses, and treatment advice
 - Prioritizes user safety over feature richness
+
+**Domain-Specific Context:**
+- 🏃 **Wearables:** Consumer devices (smartwatches, fitness trackers)
+- 🧠 **BCI:** Brain-computer interfaces (EEG, fNIRS, neurofeedback)
+- 💭 **Therapy:** Mental health and emotional wellbeing data
+
+Each domain has specific constraints — refer to the package-specific documentation for details.
 
 **If you are uncertain whether something is allowed, the answer is NO** until you confirm otherwise with this documentation.
 

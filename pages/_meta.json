@@ -4,9 +4,8 @@
   "ai-agent-guide": "AI Agent Guide",
   "quick-reference": "Quick Reference",
   "core": "Core System",
-  "agents": "Agents",
   "constraints": "Constraints",
-  "packages": "Package Documentation",
   "positioning": "Positioning",
-  "what-we-dont-do": "What We Don't Do"
+  "what-we-dont-do": "What We Don't Do",
+  "packages": "📦 Package Documentation"
 }
