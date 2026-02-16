@@ -1,0 +1,279 @@
+# Constitution Core
+
+> Shared AI safety infrastructure for all Governor HQ constitutions
+
+---
+
+## What is Constitution Core?
+
+**@yelabb/constitution-core** is the foundational package that powers all Governor HQ domain-specific constitutions (wearables, BCI, therapy).
+
+It provides:
+- **Validators** — Enforce AI safety rules at authoring time
+- **Middleware** — Runtime validation for API responses
+- **CLI Tools** — Command-line utilities for validation
+- **Evaluation System** — Test AI safety compliance
+- **Base MCP Server** — Foundation for domain packages
+
+---
+
+## Why Core Exists
+
+Each domain (wearables, BCI, therapy) has specific safety rules, but they all share common infrastructure needs:
+
+| Need | Core Solution |
+|---|---|
+| Validate code against safety rules | Validators (medical-claims, authoritative-language, etc.) |
+| Catch unsafe AI responses at runtime | Middleware (validation interceptors) |
+| Test compliance before deployment | Evaluation system with LLM judge |
+| Command-line validation | CLI tools (`governor-validate`) |
+| Consistent MCP server structure | Base MCP server class |
+
+**Core = no duplication.** Safety infrastructure is built once, shared everywhere.
+
+---
+
+## Package Structure
+
+```
+@yelabb/constitution-core/
+├── src/
+│   ├── validators/          # Safety rule validators
+│   │   ├── medical-claims.ts
+│   │   ├── authoritative-language.ts
+│   │   ├── diagnosis.ts
+│   │   └── ...
+│   ├── middleware/          # Runtime validation
+│   │   ├── response-validator.ts
+│   │   └── ...
+│   ├── base-mcp-server.ts   # Base MCP server
+│   └── index.ts
+├── bin/
+│   └── governor-validate.js # CLI tool
+├── evals/                   # Evaluation system
+│   ├── eval-runner.js
+│   ├── llm-judge.js
+│   └── test-cases/
+└── examples/                # Usage examples
+```
+
+---
+
+## Quick Example
+
+### Using Validators
+
+```typescript
+import { validateMedicalClaims } from '@yelabb/constitution-core';
+
+const code = `
+  return "This smartwatch can detect heart attacks before they happen.";
+`;
+
+const result = validateMedicalClaims(code);
+
+if (!result.valid) {
+  console.error('Validation failed:', result.violations);
+  // Violations: ["Disease diagnosis claim detected"]
+}
+```
+
+### Using Runtime Middleware
+
+```typescript
+import { createResponseValidator } from '@yelabb/constitution-core';
+
+const validator = createResponseValidator({
+  enableMedicalClaimsCheck: true,
+  enableAuthoritativeLanguageCheck: true
+});
+
+// Wrap API responses
+const aiResponse = await getAIResponse(userQuery);
+const validatedResponse = await validator.validate(aiResponse);
+
+if (!validatedResponse.safe) {
+  // Sanitize or reject unsafe response
+  return validatedResponse.sanitized;
+}
+```
+
+### Using CLI Tool
+
+```bash
+# Validate a file
+npx governor-validate src/insights.ts
+
+# Validate entire directory
+npx governor-validate src/
+
+# Strict mode
+npx governor-validate --strict src/
+```
+
+---
+
+## Who Uses Core?
+
+### Domain Packages
+
+All Governor HQ domain packages depend on core:
+
+```json
+// @yelabb/constitution-wearables/package.json
+{
+  "dependencies": {
+    "@yelabb/constitution-core": "^3.0.4"
+  }
+}
+```
+
+They extend core validators with domain-specific rules.
+
+### Your Application
+
+You can use core directly:
+
+```bash
+npm install @yelabb/constitution-core
+```
+
+Or use domain-specific packages (wearables, BCI, therapy) which include core automatically.
+
+---
+
+## Key Features
+
+### 1. Validators
+
+Enforce safety rules at authoring time:
+- Medical diagnosis claims
+- Authoritative vs. supportive language
+- Emergency response protocols
+- Supplement dosing safety
+- And 20+ more
+
+**See:** [Validators Guide](./validators)
+
+---
+
+### 2. Middleware
+
+Runtime validation for production:
+- Intercept AI responses before showing users
+- Sanitize unsafe content
+- Log violations
+- Fail-safe defaults
+
+**See:** [Middleware Guide](./middleware)
+
+---
+
+### 3. CLI Tools
+
+Command-line validation:
+```bash
+governor-validate src/**/*.ts --strict
+```
+
+**See:** [CLI Tools](./cli-tools)
+
+---
+
+### 4. Evaluation System
+
+Test AI safety compliance:
+```bash
+npm run eval
+npm run eval:critical
+npm run eval:medical
+```
+
+Uses GPT-4 as an LLM judge to test edge cases.
+
+**See:** [Evaluation System](./evals)
+
+---
+
+### 5. Base MCP Server
+
+Foundation for domain MCP servers:
+
+```typescript
+import { BaseMCPServer } from '@yelabb/constitution-core';
+
+class WearablesMCPServer extends BaseMCPServer {
+  getContext() {
+    return {
+      ...super.getContext(),
+      domain: 'wearables',
+      rules: this.wearablesRules
+    };
+  }
+}
+```
+
+**See:** [Runtime Validation](./runtime-validation)
+
+---
+
+## Installation
+
+```bash
+# Install core directly
+npm install @yelabb/constitution-core
+
+# Or use a domain package (includes core)
+npm install @yelabb/constitution-wearables
+npm install @yelabb/constitution-bci
+npm install @yelabb/constitution-therapy
+```
+
+---
+
+## Documentation
+
+- [Getting Started](./getting-started) — Installation and first validation
+- [Validators](./validators) — All available safety validators
+- [Middleware](./middleware) — Runtime validation setup
+- [CLI Tools](./cli-tools) — Command-line usage
+- [Runtime Validation](./runtime-validation) — Runtime validator usage
+- [Evaluation System](./evals) — Testing safety compliance
+
+---
+
+## Version
+
+Current version: **3.0.4**
+
+Updates:
+- Comprehensive validator suite
+- LLM-based evaluation system
+- Runtime middleware
+- CLI tooling
+- TypeScript migration complete
+
+---
+
+## Contributing
+
+Core is the foundation of Governor HQ. Changes here affect all domain packages.
+
+See [CONTRIBUTING.md](https://github.com/yelabb/the-governor-hq/blob/main/CONTRIBUTING.md)
+
+---
+
+## Summary
+
+**Constitution Core provides:**
+- ✅ Safety validators (20+ rules)
+- ✅ Runtime middleware
+- ✅ CLI tools
+- ✅ Evaluation system
+- ✅ Base MCP server
+
+**Used by:**
+- All domain packages (wearables, BCI, therapy)
+- Your application (direct usage)
+
+Build safe AI features with shared, tested infrastructure.

@@ -1,6 +1,6 @@
 {
   "name": "@yelabb/constitution-therapy",
-  "version": "3.0.3",
+  "version": "3.0.4",
   "description": "AI Safety Constitution for Therapy and Mental Health Data Projects",
   "main": "dist/mcp-server.js",
   "types": "dist/index.d.ts",

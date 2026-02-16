@@ -1,0 +1,536 @@
+# Runtime Validation
+
+> Hard post-generation gate for production AI systems
+
+---
+
+## Overview
+
+Runtime validation creates a **hard safety gate** between AI generation and user output:
+
+**LLM → Validator → Output**
+
+Unlike static analysis (which checks your code), runtime validation checks **AI-generated content** before showing it to users.
+
+---
+
+## Why Runtime Validation?
+
+### The Problem
+
+AI models can generate unsafe content despite prompts and constraints:
+
+```typescript
+// Your carefully crafted prompt
+const prompt = "Provide supportive wellness insights only.";
+
+const llmOutput = await callLLM(prompt);
+// But LLM still generates: "You have cardiovascular disease."
+```
+
+**Prompts aren't enough.** You need a hard gate.
+
+---
+
+### The Solution
+
+Runtime validation blocks unsafe content:
+
+```typescript
+import { createValidator } from '@yelabb/constitution-core';
+
+const validator = createValidator({ domain: 'wearables' });
+
+const llmOutput = await callLLM(prompt);
+const result = await validator.validate(llmOutput);
+
+if (!result.safe) {
+  return result.safeAlternative; // Safe fallback
+}
+
+return result.output; // Safe to show
+```
+
+---
+
+## How It Works
+
+### 1. Fast Pattern Matching
+
+Primary validation uses regex and keyword matching (<10ms):
+
+```typescript
+const result = await validator.validate("Your HRV looks good!");
+// ✓ Safe (no violations)
+
+const unsafe = await validator.validate("You have heart disease.");
+// ✗ Blocked (medical diagnosis detected)
+```
+
+**Checks:**
+- Medical diagnosis patterns
+- Disease/condition naming
+- Treatment/cure claims
+- Authoritative language
+- Supplement dosing
+- Emergency language
+
+---
+
+### 2. Optional LLM Judge
+
+For edge cases, use an LLM to judge safety:
+
+```typescript
+const validator = createValidator({
+  domain: 'wearables',
+  useLLMJudge: true,
+  strictMode: true,
+  apiKey: process.env.OPENAI_API_KEY
+});
+
+const result = await validator.validate(llmOutput);
+```
+
+**LLM Judge:**
+- More thorough than patterns
+- Catches subtle violations
+- ~500ms latency
+- API costs apply
+
+**When to use:** Critical production flows, regulatory compliance
+
+---
+
+## Basic Setup
+
+### 1. Install
+
+```bash
+npm install @yelabb/constitution-core
+```
+
+---
+
+### 2. Create Validator
+
+```typescript
+import { createValidator } from '@yelabb/constitution-core';
+
+const validator = createValidator({
+  domain: 'wearables',      // or 'bci', 'therapy', 'core'
+  onViolation: 'block',     // 'block' | 'sanitize' | 'warn' | 'log'
+  strictMode: false,        // Enable LLM judge
+  useLLMJudge: false,       // For edge cases
+});
+```
+
+---
+
+### 3. Validate AI Output
+
+```typescript
+async function generateInsight(userData: UserData): Promise<string> {
+  // Generate with LLM
+  const llmOutput = await callLLM(userData);
+  
+  // Validate before returning
+  const result = await validator.validate(llmOutput);
+  
+  if (!result.safe) {
+    logger.warn('Blocked unsafe insight', {
+      violations: result.violations,
+      original: llmOutput
+    });
+    
+    return result.safeAlternative;
+  }
+  
+  return result.output;
+}
+```
+
+---
+
+## Configuration Options
+
+### ValidatorConfig
+
+```typescript
+interface ValidatorConfig {
+  /** Domain rules: 'wearables' | 'bci' | 'therapy' | 'core' */
+  domain?: string;
+  
+  /** Action when violation detected */
+  onViolation?: 'block' | 'sanitize' | 'warn' | 'log';
+  
+  /** Use LLM judge for validation */
+  useLLMJudge?: boolean;
+  
+  /** Strict mode (enables LLM judge) */
+  strictMode?: boolean;
+  
+  /** OpenAI API key for LLM judge */
+  apiKey?: string;
+  
+  /** Custom safe fallback message */
+  defaultSafeMessage?: string;
+  
+  /** Custom validation rules */
+  customRules?: ValidationRule[];
+}
+```
+
+---
+
+## Violation Modes
+
+### Block Mode (Production)
+
+Replace unsafe content with safe alternative:
+
+```typescript
+const validator = createValidator({
+  domain: 'wearables',
+  onViolation: 'block'
+});
+
+const result = await validator.validate("You have sleep apnea.");
+console.log(result.output);
+// "Your sleep patterns show interruptions. Consider discussing with a doctor."
+```
+
+---
+
+### Sanitize Mode
+
+Attempt to fix unsafe patterns automatically:
+
+```typescript
+const validator = createValidator({
+  domain: 'wearables',
+  onViolation: 'sanitize'
+});
+
+const result = await validator.validate("You have insomnia and need CBT.");
+console.log(result.output);
+// "You've mentioned difficulty sleeping. Consider talking to a professional."
+```
+
+---
+
+### Warn Mode (Development)
+
+Log warnings but allow content:
+
+```typescript
+const validator = createValidator({
+  domain: 'wearables',
+  onViolation: 'warn'
+});
+
+const result = await validator.validate("You have high blood pressure.");
+// Logs warning but returns original
+console.log(result.output);
+// "You have high blood pressure." (+ warning logged)
+```
+
+Use in development/staging to identify issues.
+
+---
+
+### Log Mode (Analytics)
+
+Silently log violations for monitoring:
+
+```typescript
+const validator = createValidator({
+  domain: 'wearables',
+  onViolation: 'log'
+});
+
+const result = await validator.validate(llmOutput);
+// Violations logged silently, content allowed
+```
+
+Use for A/B testing or gradual rollout.
+
+---
+
+## ValidationResult
+
+Every validation returns:
+
+```typescript
+interface ValidationResult {
+  safe: boolean;              // Is content safe?
+  output: string;             // Original (if safe)
+  violations: Violation[];    // List of violations
+  safeAlternative?: string;   // Safe fallback
+  metadata: {
+    processingTime: number;   // ms
+    patternsChecked: number;
+    usedLLMJudge: boolean;
+  };
+}
+```
+
+**Usage:**
+```typescript
+const result = await validator.validate(llmOutput);
+
+if (!result.safe) {
+  // Log violations
+  console.error('Violations:', result.violations.map(v => v.id));
+  
+  // Return safe alternative
+  return result.safeAlternative;
+}
+
+// Safe to show
+return result.output;
+```
+
+---
+
+## Production Patterns
+
+### API Endpoint
+
+```typescript
+app.post('/api/chat', async (req, res) => {
+  const { message } = req.body;
+  
+  // Generate AI response
+  const aiResponse = await callLLM(message);
+  
+  // Validate before sending
+  const result = await validator.validate(aiResponse);
+  
+  res.json({
+    message: result.safe ? result.output : result.safeAlternative,
+    blocked: !result.safe,
+    violations: result.violations.map(v => v.id)
+  });
+});
+```
+
+---
+
+### Background Jobs
+
+```typescript
+async function processUserInsights(userId: string) {
+  const userData = await getUserData(userId);
+  const insight = await generateInsight(userData);
+  
+  // Validate before saving
+  const result = await validator.validate(insight);
+  
+  if (!result.safe) {
+    await saveInsight(userId, result.safeAlternative, {
+      blocked: true,
+      violations: result.violations
+    });
+  } else {
+    await saveInsight(userId, result.output);
+  }
+}
+```
+
+---
+
+### Batch Validation
+
+```typescript
+async function validateBatch(texts: string[]): Promise<ValidationResult[]> {
+  return Promise.all(
+    texts.map(text => validator.validate(text))
+  );
+}
+
+const results = await validateBatch([
+  "Your HRV is low.",
+  "You have cardiovascular disease.", // Will be blocked
+  "Consider talking to a doctor."
+]);
+```
+
+---
+
+## Custom Rules
+
+Add domain-specific validation:
+
+```typescript
+const customRules: ValidationRule[] = [
+  {
+    id: 'no-age-diagnosis',
+    pattern: /\b(aging|old age|elderly)\b.*\b(disease|disorder)\b/i,
+    severity: 'error',
+    message: 'Age-related medical claims not allowed',
+    safeAlternative: 'Changes can occur over time. Discuss with a healthcare provider.'
+  } ];
+
+const validator = createValidator({
+  domain: 'wearables',
+  customRules
+});
+```
+
+---
+
+## Performance
+
+### Pattern Matching
+
+**Speed:** <10ms per validation  
+**Throughput:** 100+ validations/second  
+**Cost:** Free (no API calls)
+
+```typescript
+const start = Date.now();
+const result = await validator.validate(text);
+console.log(`Validated in ${Date.now() - start}ms`);
+// Validated in 7ms
+```
+
+---
+
+### LLM Judge
+
+**Speed:** ~500ms per validation  
+**Thoroughness:** Higher (catches edge cases)  
+**Cost:** API usage (OpenAI)
+
+```typescript
+const validator = createValidator({
+  domain: 'wearables',
+  useLLMJudge: true,
+  apiKey: process.env.OPENAI_API_KEY
+});
+
+const start = Date.now();
+const result = await validator.validate(text);
+console.log(`Validated in ${Date.now() - start}ms`);
+// Validated in 523ms
+```
+
+---
+
+### Caching
+
+Cache validation results for repeated content:
+
+```typescript
+import NodeCache from 'node-cache';
+
+const cache = new NodeCache({ stdTTL: 3600 });
+
+async function validateWithCache(text: string) {
+  const cached = cache.get(text);
+  if (cached) return cached as ValidationResult;
+  
+  const result = await validator.validate(text);
+  cache.set(text, result);
+  
+  return result;
+}
+```
+
+---
+
+## Monitoring
+
+Track violations in production:
+
+```typescript
+const validator = createValidator({
+  domain: 'wearables',
+  onViolation: (violations, original) => {
+    // Send to monitoring
+    metrics.increment('ai.safety.violations', {
+      count: violations.length,
+      rules: violations.map(v => v.id).join(',')
+    });
+    
+    // Log for debugging
+    logger.warn('Safety violation detected', {
+      violations: violations.map(v => ({ id: v.id, message: v.message })),
+      original,
+      timestamp: new Date()
+    });
+    
+    return 'Unable to generate safe response.';
+  }
+});
+```
+
+---
+
+## Testing
+
+### Unit Tests
+
+```typescript
+import { createValidator } from '@yelabb/constitution-core';
+
+describe('Runtime Validator', () => {
+  const validator = createValidator({ domain: 'wearables' });
+  
+  it('blocks medical diagnosis', async () => {
+    const result = await validator.validate("You have sleep apnea.");
+    expect(result.safe).toBe(false);
+    expect(result.violations[0].id).toContain('diagnosis');
+  });
+  
+  it('allows observation language', async () => {
+    const result = await validator.validate("Your sleep shows interruptions.");
+    expect(result.safe).toBe(true);
+  });
+});
+```
+
+---
+
+### Integration Tests
+
+```typescript
+describe('API Safety', () => {
+  it('blocks unsafe AI responses', async () => {
+    const response = await request(app)
+      .post('/api/chat')
+      .send({ message: 'What does my data mean?' });
+    
+    expect(response.body.message).not.toContain('disease');
+    expect(response.body.message).not.toContain('diagnosis');
+  });
+});
+```
+
+---
+
+## Summary
+
+**Runtime validation:**
+- ✅ Hard gate between AI and user
+- ✅ Fast pattern matching (<10ms)
+- ✅ Optional LLM judge for edge cases
+- ✅ Multiple violation modes
+- ✅ Custom rules support
+- ✅ Production-ready
+
+**Use cases:**
+- API endpoints serving AI content
+- Background job processing
+- Batch insight generation
+- Real-time chat applications
+
+**Best practices:**
+- Use `block` mode in production
+- Cache validation results
+- Monitor violations
+- Test edge cases
+- Start with patterns, add LLM judge if needed
+
+**Next:** [Evaluation System](./evals) for testing safety compliance

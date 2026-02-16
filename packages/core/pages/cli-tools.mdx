@@ -1,0 +1,552 @@
+# CLI Tools
+
+> Command-line validation for development and CI/CD
+
+---
+
+## Overview
+
+The `governor-validate` CLI tool validates your code against AI safety rules during development and in CI/CD pipelines.
+
+---
+
+## Installation
+
+Included with `@yelabb/constitution-core`:
+
+```bash
+npm install @yelabb/constitution-core
+```
+
+---
+
+## Basic Usage
+
+### Validate a Single File
+
+```bash
+npx governor-validate src/insights.ts
+```
+
+**Output:**
+```
+✓ src/insights.ts (0 violations)
+```
+
+---
+
+### Validate a Directory
+
+```bash
+npx governor-validate src/
+```
+
+**Output:**
+```
+✓ src/user-profile.ts
+✗ src/insights.ts
+  - medical-claims: "diagnose heart disease" (line 42)
+  - authoritative-language: "you must see a doctor" (line 45)
+✓ src/utils.ts
+
+3 files checked, 1 failed
+```
+
+---
+
+### Validate Multiple Paths
+
+```bash
+npx governor-validate src/ lib/ components/
+```
+
+---
+
+## Command Options
+
+### `--strict`
+
+Fail on any violation (exit code 1):
+
+```bash
+npx governor-validate --strict src/
+```
+
+Use in CI/CD to block merges with violations.
+
+---
+
+### `--domain <domain>`
+
+Specify domain-specific rules:
+
+```bash
+npx governor-validate --domain wearables src/
+npx governor-validate --domain bci src/
+npx governor-validate --domain therapy src/
+```
+
+---
+
+### `--fix`
+
+Attempt to auto-fix violations:
+
+```bash
+npx governor-validate --fix src/insights.ts
+```
+
+**Example fix:**
+```diff
+- return "You have sleep apnea.";
++ return "Your sleep patterns show interruptions. Consider discussing with a doctor.";
+```
+
+⚠️ **Warning:** Always review auto-fixes before committing.
+
+---
+
+### `--output <format>`
+
+Output format (text, json, junit):
+
+```bash
+# JSON output
+npx governor-validate --output json src/ > violations.json
+
+# JUnit XML (for CI/CD)
+npx governor-validate --output junit src/ > test-results.xml
+```
+
+---
+
+### `--ignore <patterns>`
+
+Ignore files/directories:
+
+```bash
+npx governor-validate --ignore "test/**,*.test.ts" src/
+```
+
+---
+
+### `--help`
+
+Show all options:
+
+```bash
+npx governor-validate --help
+```
+
+---
+
+## CI/CD Integration
+
+### GitHub Actions
+
+```yaml
+name: AI Safety Validation
+
+on: [push, pull_request]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      
+      - run: npm install
+      
+      - name: Validate AI safety
+        run: npx governor-validate --strict src/
+```
+
+---
+
+### GitLab CI
+
+```yaml
+ai-safety-check:
+  stage: test
+  script:
+    - npm install
+    - npx governor-validate --strict --output junit src/
+  artifacts:
+    reports:
+      junit: test-results.xml
+```
+
+---
+
+### CircleCI
+
+```yaml
+version: 2.1
+
+jobs:
+  validate:
+    docker:
+      - image: node:18
+    steps:
+      - checkout
+      - run: npm install
+      - run: npx governor-validate --strict src/
+      - store_test_results:
+          path: test-results
+```
+
+---
+
+## Pre-commit Hooks
+
+### Using Husky
+
+Install husky:
+
+```bash
+npm install -D husky
+npx husky init
+```
+
+**`.husky/pre-commit`:**
+```bash
+#!/bin/sh
+npx governor-validate --strict src/
+```
+
+---
+
+### Using lint-staged
+
+```json
+{
+  "lint-staged": {
+    "src/**/*.{ts,tsx,js,jsx}": [
+      "npx governor-validate --strict"
+    ]
+  }
+}
+```
+
+---
+
+## Configuration File
+
+Create `.governorrc.json` in your project root:
+
+```json
+{
+  "domain": "wearables",
+  "strict": true,
+  "ignore": [
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "node_modules/**"
+  ],
+  "rules": {
+    "medical-claims": "error",
+    "authoritative-language": "warn",
+    "supplement-dosing": "error"
+  }
+}
+```
+
+Then run without options:
+
+```bash
+npx governor-validate src/
+```
+
+---
+
+## Exit Codes
+
+| Code | Meaning |
+|------|---------|
+| 0 | No violations (success) |
+| 1 | Violations found (--strict mode) |
+| 2 | CLI error (invalid arguments, etc.) |
+
+**Usage in scripts:**
+
+```bash
+#!/bin/bash
+npx governor-validate --strict src/
+
+if [ $? -eq 0 ]; then
+  echo "✓ All safety checks passed"
+  npm run build
+else
+  echo "✗ Safety violations detected"
+  exit 1
+fi
+```
+
+---
+
+## Output Formats
+
+### Text (Default)
+
+```
+✓ src/user-profile.ts
+✗ src/insights.ts
+  - medical-claims: "diagnose heart disease" (line 42)
+  - authoritative-language: "you must see a doctor" (line 45)
+
+2 files checked, 1 failed
+```
+
+---
+
+### JSON
+
+```json
+{
+  "success": false,
+  "filesChecked": 2,
+  "filesFailed": 1,
+  "violations": [
+    {
+      "file": "src/insights.ts",
+      "line": 42,
+      "rule": "medical-claims",
+      "message": "diagnose heart disease",
+      "severity": "error"
+    }
+  ]
+}
+```
+
+---
+
+### JUnit XML
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="AI Safety Validation" tests="2" failures="1">
+    <testcase name="src/user-profile.ts" />
+    <testcase name="src/insights.ts">
+      <failure message="medical-claims: diagnose heart disease" />
+    </testcase>
+  </testsuite>
+</testsuites>
+```
+
+---
+
+## Ignore Comments
+
+Suppress specific violations in code:
+
+```typescript
+// governor-disable-next-line medical-claims
+return "Heart rate data suggests cardiovascular health.";
+
+// governor-disable
+function generateDiagnosticInsight() {
+  // This entire function is ignored
+  return "You have sleep apnea.";
+}
+// governor-enable
+```
+
+⚠️ **Use sparingly.** Better to fix the violation.
+
+---
+
+## Watch Mode
+
+For development:
+
+```bash
+npx governor-validate --watch src/
+```
+
+Automatically re-validates on file changes.
+
+---
+
+## Verbose Output
+
+See detailed validation info:
+
+```bash
+npx governor-validate --verbose src/
+```
+
+**Output:**
+```
+Checking src/insights.ts...
+  ✓ Pattern check: medical-diagnosis (0.5ms)
+  ✓ Pattern check: authoritative-language (0.3ms)
+  ✗ Pattern check: medical-claims (1.2ms)
+    - Found: "diagnose heart disease" at line 42
+    
+1 violation found
+```
+
+---
+
+## Custom Rules
+
+Load custom rules from file:
+
+**`custom-rules.js`:**
+```javascript
+module.exports = {
+  rules: [
+    {
+      id: 'no-genetic-claims',
+      pattern: /\b(genetic|dna|hereditary)\b/i,
+      message: 'Genetic claims not allowed',
+      severity: 'error'
+    }
+  ]
+};
+```
+
+**Usage:**
+```bash
+npx governor-validate --rules custom-rules.js src/
+```
+
+---
+
+## Performance
+
+### Large Codebases
+
+For repos with 1000+ files:
+
+```bash
+# Parallel validation
+npx governor-validate --parallel src/
+
+# Limit to changed files only
+git diff --name-only main | xargs npx governor-validate
+```
+
+---
+
+### Cache Results
+
+```bash
+# Enable caching
+npx governor-validate --cache src/
+
+# Clear cache
+npx governor-validate --cache-clear
+```
+
+---
+
+## Integration with Editors
+
+### VS Code
+
+Install the Governor HQ extension (coming soon) or use the CLI:
+
+**`.vscode/tasks.json`:**
+```json
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Validate AI Safety",
+      "type": "shell",
+      "command": "npx governor-validate ${file}",
+      "problemMatcher": {
+        "pattern": {
+          "regexp": "^(.*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",
+          "file": 1,
+          "line": 2,
+          "column": 3,
+          "severity": 4,
+          "message": 5
+        }
+      }
+    }
+  ]
+}
+```
+
+---
+
+## Troubleshooting
+
+### "command not found"
+
+Use `npx`:
+
+```bash
+npx governor-validate src/
+```
+
+Or install globally:
+
+```bash
+npm install -g @yelabb/constitution-core
+governor-validate src/
+```
+
+---
+
+### False Positives
+
+If CLI incorrectly flags safe code:
+
+```bash
+# Use ignore comment
+// governor-disable-next-line medical-claims
+const safeCode = "Healthcare data";
+
+# Or report issue
+# We want to fix false positives!
+```
+
+---
+
+### No Violations Detected
+
+If CLI misses unsafe code:
+
+```bash
+# Try strict mode
+npx governor-validate --strict --verbose src/
+
+# Or report issue
+# False negatives are critical!
+```
+
+---
+
+## Summary
+
+**CLI provides:**
+- ✅ Validate code during development
+- ✅ CI/CD integration
+- ✅ Pre-commit hooks
+- ✅ Multiple output formats
+- ✅ Auto-fix capabilities
+- ✅ Watch mode
+- ✅ Custom rules
+
+**Common workflows:**
+```bash
+# Development
+npx governor-validate --watch src/
+
+# Pre-commit
+npx governor-validate --strict src/
+
+# CI/CD
+npx governor-validate --strict --output junit src/
+```
+
+**Next:** [Evaluation System](./evals) for testing safety compliance

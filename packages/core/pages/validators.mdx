@@ -1,0 +1,400 @@
+# Validators
+
+> Safety rule validators for AI-generated content
+
+---
+
+## Overview
+
+Constitution Core provides runtime validators that check AI-generated content against safety constraints before showing it to users.
+
+**Hard safety gate:** LLM → Validator → Output
+
+---
+
+## How Validation Works
+
+### 1. Fast Pattern Matching (<10ms)
+
+Primary validation uses regex patterns and keyword matching:
+
+```typescript
+import { createValidator } from '@yelabb/constitution-core';
+
+const validator = createValidator({ domain: 'wearables' });
+
+const result = await validator.validate("Your HRV data looks good!");
+// ✓ Safe (passes pattern checks)
+
+const unsafe = await validator.validate("You have cardiovascular disease.");
+// ✗ Blocked (medical diagnosis detected)
+```
+
+**Patterns checked:**
+- Medical diagnosis language
+- Disease/condition naming
+- Treatment claims
+- Authoritative language
+- Supplement dosing
+- Emergency language
+
+---
+
+### 2. LLM Judge (Optional, for edge cases)
+
+For ambiguous cases, use an LLM judge:
+
+```typescript
+const validator = createValidator({
+  domain: 'wearables',
+  useLLMJudge: true,
+  strictMode: true,
+  apiKey: process.env.OPENAI_API_KEY
+});
+
+const result = await validator.validate(llmOutput);
+```
+
+**When to use LLM judge:**
+- Production systems requiring maximum safety
+- Edge cases that pattern matching might miss
+- Regulatory compliance requirements
+
+**Trade-off:** Slower (~500ms) but more thorough
+
+---
+
+## Validation Rules
+
+### Medical Claims
+
+**What it blocks:**
+- Disease diagnosis
+- Treatment recommendations
+- Cure/heal claims
+- Medical condition naming
+
+❌ **Blocked:**
+```
+"You have sleep apnea based on your snoring data."
+"This indicates cardiovascular disease."
+"Your symptoms show clinical depression."
+```
+
+✅ **Allowed:**
+```
+"Your sleep patterns show frequent interruptions."
+"Consider discussing persistent symptoms with a doctor."
+"Some people find talking to a healthcare provider helpful."
+```
+
+---
+
+### Authoritative Language
+
+**What it blocks:**
+- Commanding language (must, should, need to)
+- Definitive statements about health
+- Prescriptive instructions
+
+❌ **Blocked:**
+```
+"You must see a doctor immediately."
+"You should take 500mg of magnesium."
+"You need to change your diet."
+```
+
+✅ **Allowed:**
+```
+"Consider talking to a doctor."
+"Some people find magnesium helpful."
+"You might explore dietary changes."
+```
+
+---
+
+### Supplement Dosing
+
+**What it blocks:**
+- Specific dosage recommendations
+- Supplement prescriptions
+- Treatment protocols
+
+❌ **Blocked:**
+```
+"Take 10,000 IU of vitamin D daily."
+"Supplement with 400mg of magnesium before bed."
+```
+
+✅ **Allowed:**
+```
+"Consult your doctor about vitamin D levels."
+"Talk to a healthcare provider about supplements."
+```
+
+---
+
+### Disease Naming
+
+**What it blocks:**
+- Naming specific diseases/conditions
+- Diagnostic language
+- Clinical terms without context
+
+❌ **Blocked:**
+```
+"Your HRV indicates anxiety disorder."
+"This pattern suggests diabetes."
+"You may have insomnia."
+```
+
+✅ **Allowed:**
+```
+"Your HRV is lower than your baseline."
+"Consider discussing persistent patterns with a doctor."
+"You've mentioned difficulty sleeping."
+```
+
+---
+
+### Emergency Language
+
+**What it blocks:**
+- Alarming/panic-inducing language
+- Urgent medical claims
+- Critical health warnings
+
+❌ **Blocked:**
+```
+"DANGER: Your heart rate indicates immediate risk!"
+"CRITICAL: Seek emergency care now!"
+"WARNING: This could be life-threatening!"
+```
+
+✅ **Allowed:**
+```
+"Your heart rate is higher than usual."
+"If you're concerned, consider talking to a doctor."
+"Persistent symptoms are worth discussing with a professional."
+```
+
+---
+
+## Domain-Specific Rules
+
+### Wearables Domain
+
+```typescript
+const validator = createValidator({ domain: 'wearables' });
+```
+
+**Additional checks:**
+- No heart disease diagnosis from HRV
+- No sleep disorder diagnosis from sleep data
+- No fitness medical claims
+- No calorie-burning treatment claims
+
+---
+
+### BCI Domain
+
+```typescript
+const validator = createValidator({ domain: 'bci' });
+```
+
+**Additional checks:**
+- No mental health diagnosis from EEG
+- No brain disorder detection
+- No cognitive disease claims
+- No neurofeedback treatment claims
+
+---
+
+### Therapy Domain
+
+```typescript
+const validator = createValidator({ domain: 'therapy' });
+```
+
+**Additional checks:**
+- No mental health diagnosis
+- No suicide risk assessment
+- No therapy replacement claims
+- No medication recommendations
+- Mandatory crisis resource display (988, Crisis Text Line)
+
+---
+
+## ValidationResult
+
+Every validation returns a standardized result:
+
+```typescript
+interface ValidationResult {
+  safe: boolean;              // Is content safe to show?
+  output: string;             // Original output if safe
+  violations: Violation[];    // List of safety violations
+  safeAlternative?: string;   // Safe fallback message
+  metadata: {
+    processingTime: number;   // ms
+    patternsChecked: number;
+    usedLLMJudge: boolean;
+  };
+}
+```
+
+**Usage:**
+```typescript
+const result = await validator.validate(llmOutput);
+
+if (!result.safe) {
+  console.error('Violations:', result.violations);
+  return result.safeAlternative; // Show safe fallback
+}
+
+return result.output; // Safe to show
+```
+
+---
+
+## Custom Rules
+
+Add domain-specific rules:
+
+```typescript
+import { createValidator, type ValidationRule } from '@yelabb/constitution-core';
+
+const customRules: ValidationRule[] = [
+  {
+    id: 'no-genetic-claims',
+    pattern: /\b(genetic|dna|genes|hereditary)\b/i,
+    severity: 'critical',
+    message: 'Genetic claims not allowed',
+    safeAlternative: 'Consider discussing family history with a genetic counselor.'
+  }
+];
+
+const validator = createValidator({
+  domain: 'wearables',
+  customRules
+});
+```
+
+---
+
+## Violation Handling
+
+### Block Mode (Production)
+
+```typescript
+const validator = createValidator({
+  domain: 'wearables',
+  onViolation: 'block'
+});
+
+const result = await validator.validate(unsafeOutput);
+// Returns safe alternative automatically
+```
+
+---
+
+### Sanitize Mode
+
+```typescript
+const validator = createValidator({
+  domain: 'wearables',
+  onViolation: 'sanitize'
+});
+
+const result = await validator.validate("You have insomnia and need CBT.");
+// Attempts to sanitize: "You've mentioned difficulty sleeping. Consider talking to a professional."
+```
+
+---
+
+### Warn Mode (Development)
+
+```typescript
+const validator = createValidator({
+  domain: 'wearables',
+  onViolation: 'warn'
+});
+
+const result = await validator.validate(unsafeOutput);
+// Logs warning but allows content (for testing)
+```
+
+---
+
+### Log Mode (Analytics)
+
+```typescript
+const validator = createValidator({
+  domain: 'wearables',
+  onViolation: 'log'
+});
+
+const result = await validator.validate(unsafeOutput);
+// Silently logs violations for monitoring
+```
+
+---
+
+## Testing
+
+Test validators with edge cases:
+
+```typescript
+import { createValidator } from '@yelabb/constitution-core';
+
+describe('Wearables Validator', () => {
+  const validator = createValidator({ domain: 'wearables' });
+  
+  it('blocks medical diagnosis', async () => {
+    const result = await validator.validate("You have sleep apnea.");
+    expect(result.safe).toBe(false);
+    expect(result.violations[0].rule).toBe('medical-diagnosis');
+  });
+  
+  it('allows observation language', async () => {
+    const result = await validator.validate("Your sleep patterns show interruptions.");
+    expect(result.safe).toBe(true);
+  });
+});
+```
+
+---
+
+## Performance
+
+**Pattern Matching:**
+- Average: <10ms per validation
+- Handles 100+ checks/second
+- No API costs
+
+**LLM Judge:**
+- Average: ~500ms per validation
+- More thorough but slower
+- API costs apply
+
+**Recommendation:** Use pattern matching by default, LLM judge for critical flows.
+
+---
+
+## Summary
+
+**Validators provide:**
+- ✅ Fast pattern matching (<10ms)
+- ✅ Optional LLM judge for edge cases
+- ✅ Domain-specific rule sets
+- ✅ Custom rule support
+- ✅ Multiple violation handling modes
+
+**Common patterns blocked:**
+- Medical diagnosis
+- Treatment claims
+- Authoritative language
+- Supplement dosing
+- Disease naming
+
+**Next:** [Middleware](./middleware) for automatic validation in APIs

@@ -1,0 +1,342 @@
+# Getting Started
+
+> Install and start using Constitution Core validators
+
+---
+
+## Installation
+
+### Option 1: Use a Domain Package (Recommended)
+
+Most developers should use a domain-specific package, which includes core automatically:
+
+```bash
+# For wearable/fitness apps
+npm install @yelabb/constitution-wearables
+
+# For BCI/neurofeedback apps  
+npm install @yelabb/constitution-bci
+
+# For therapy/mental health apps
+npm install @yelabb/constitution-therapy
+```
+
+Each domain package extends core with specialized rules.
+
+---
+
+### Option 2: Use Core Directly
+
+For custom domains or direct validator access:
+
+```bash
+npm install @yelabb/constitution-core
+```
+
+---
+
+## First Validation
+
+### 1. Validate Code with CLI
+
+```bash
+# Validate a single file
+npx governor-validate src/insights.ts
+
+# Validate directory
+npx governor-validate src/
+
+# Strict mode (fail on any violation)
+npx governor-validate --strict src/
+```
+
+**Output:**
+```
+✓ src/user-profile.ts
+✗ src/insights.ts
+  - medical-claims: "detects heart disease" (line 42)
+  - authoritative-language: "you have high blood pressure" (line 45)
+
+2 files checked, 1 failed
+```
+
+---
+
+### 2. Validate Code Programmatically
+
+```typescript
+import { validateMedicalClaims } from '@yelabb/constitution-core';
+
+const code = `
+  function getHealthInsight(hrv: number) {
+    if (hrv < 30) {
+      return "You have cardiovascular disease. See a doctor immediately.";
+    }
+  }
+`;
+
+const result = validateMedicalClaims(code);
+
+if (!result.valid) {
+  console.error('Violations:', result.violations);
+  // ["Disease diagnosis detected: cardiovascular disease"]
+}
+```
+
+---
+
+### 3. Runtime Validation
+
+Validate AI responses before showing to users:
+
+```typescript
+import { createResponseValidator } from '@yelabb/constitution-core';
+
+const validator = createResponseValidator({
+  enableMedicalClaimsCheck: true,
+  enableAuthoritativeLanguageCheck: true,
+  enableDiagnosisCheck: true
+});
+
+// AI generates a response
+const aiResponse = await generateAIInsight(userData);
+
+// Validate before showing user
+const validation = await validator.validate(aiResponse);
+
+if (!validation.safe) {
+  console.error('Unsafe response blocked:', validation.violations);
+  
+  // Use sanitized version or fallback
+  return validation.sanitized || "Unable to generate safe insight.";
+}
+
+// Safe to show
+return aiResponse;
+```
+
+---
+
+## Available Validators
+
+Core includes 20+ validators. Most important:
+
+| Validator | What it checks |
+|---|---|
+| `validateMedicalClaims` | Disease diagnosis, treatment claims |
+| `validateAuthoritativeLanguage` | "You have X" vs. "You mentioned feeling X" |
+| `validateSupplementDosing` | Dangerous supplement dosages |
+| `validateDiagnosis` | Mental health diagnosis claims |
+| `validateEmergencyProtocol` | Crisis response (988, not app intervention) |
+
+**See full list:** [Validators](./validators)
+
+---
+
+## Quick Examples
+
+### Example 1: Medical Claims
+
+❌ **Unsafe (will fail validation):**
+```typescript
+return "Your low HRV indicates heart disease. Start taking beta blockers.";
+```
+
+✅ **Safe (will pass):**
+```typescript
+return "Your HRV is lower than your baseline. Consider discussing with your doctor.";
+```
+
+---
+
+### Example 2: Authoritative Language
+
+❌ **Unsafe:**
+```typescript
+return "You have insomnia. You need CBT treatment.";
+```
+
+✅ **Safe:**
+```typescript
+return "You've mentioned difficulty sleeping. Some people find talking to a sleep specialist helpful.";
+```
+
+---
+
+### Example 3: Supplement Dosing
+
+❌ **Unsafe:**
+```typescript
+return "Take 10,000 IU of vitamin D daily to fix your deficiency.";
+```
+
+✅ **Safe:**
+```typescript
+return "Vitamin D levels can vary. Consult your doctor about appropriate supplementation.";
+```
+
+---
+
+## Testing with Evals
+
+Run the evaluation system to test edge cases:
+
+```bash
+# Run all evaluations
+npm run eval
+
+# Only critical violations
+npm run eval:critical
+
+# Medical claims category
+npm run eval:medical
+
+# Verbose output
+npm run eval:verbose
+```
+
+**Output:**
+```
+Running evaluations...
+
+✓ medical-claims/diagnosis-explicit (PASS)
+✗ medical-claims/treatment-recommendation (FAIL)
+  Expected: REJECT
+  Got: ALLOW
+  
+Results: 42/45 passed (93.3%)
+```
+
+---
+
+## Integration into CI/CD
+
+### GitHub Actions
+
+```yaml
+name: AI Safety Validation
+
+on: [push, pull_request]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+      - run: npm install
+      - run: npx governor-validate src/ --strict
+```
+
+### Pre-commit Hook
+
+```json
+{
+  "husky": {
+    "hooks": {
+      "pre-commit": "npx governor-validate src/"
+    }
+  }
+}
+```
+
+---
+
+## Environment Setup
+
+### TypeScript Project
+
+Install core in your TypeScript project:
+
+```bash
+npm install @yelabb/constitution-core
+npm install -D @types/node
+```
+
+**tsconfig.json:**
+```json
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "strict": true
+  }
+}
+```
+
+---
+
+### Node.js Requirements
+
+- **Node.js:** >=16.0.0
+- **npm:** >=7.0.0
+
+Check versions:
+```bash
+node --version  # Should be 16+
+npm --version   # Should be 7+
+```
+
+---
+
+## Next Steps
+
+1. **Explore Validators** — Learn all available rules: [Validators](./validators)
+2. **Runtime Protection** — Add middleware: [Middleware](./middleware)
+3. **CLI Tooling** — Automate validation: [CLI Tools](./cli-tools)
+4. **Test Compliance** — Run evals: [Evaluation System](./evals)
+
+---
+
+## Common Issues
+
+### Issue: "governor-validate: command not found"
+
+**Solution:** Use npx or install globally
+
+```bash
+# Use npx (recommended)
+npx governor-validate src/
+
+# Or install globally
+npm install -g @yelabb/constitution-core
+governor-validate src/
+```
+
+---
+
+### Issue: TypeScript errors importing validators
+
+**Solution:** Ensure types are installed
+
+```bash
+npm install -D @types/node
+```
+
+---
+
+### Issue: Validators passing unsafe code
+
+**Solution:** Use stricter validation
+
+```typescript
+const result = validateMedicalClaims(code, {
+  strict: true,
+  failOnWarnings: true
+});
+```
+
+Or file an issue: we want to know about false negatives!
+
+---
+
+## Summary
+
+**To get started:**
+1. Install: `npm install @yelabb/constitution-core`
+2. Validate: `npx governor-validate src/`
+3. Integrate: Add to CI/CD and pre-commit hooks
+4. Runtime: Use middleware for AI responses
+
+**Next:** Read [Validators](./validators) for comprehensive rule documentation.
