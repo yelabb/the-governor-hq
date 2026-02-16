@@ -2,7 +2,7 @@
 
 **AI Safety Constitution for Therapy and Mental Health Data Projects**
 
-A safety layer for AI agents working with therapy, mental health, and emotional wellbeing data. Prescriptive, executable constraints that prevent psychological diagnoses, therapeutic claims, and ensure ethical boundaries.
+AI behavior guidance layer working with therapy, mental health, and emotional wellbeing data. Prescriptive, executable constraints that prevent psychological diagnoses, therapeutic claims, and ensure ethical boundaries.
 
 ## 🚧 Status: In Development
 

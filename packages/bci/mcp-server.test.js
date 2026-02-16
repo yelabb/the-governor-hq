@@ -4,7 +4,7 @@
  * Test suite for BCI MCP Server
  */
 
-const GovernorHQMCPServer = require('./mcp-server');
+const GovernorHQMCPServer = require('./dist/mcp-server').default;
 
 function runTests() {
   console.log('🧪 Testing BCI MCP Server...\n');

@@ -4,7 +4,7 @@
  * Run with: node mcp-server.test.js
  */
 
-const GovernorHQMCPServer = require('./mcp-server');
+const GovernorHQMCPServer = require('./dist/mcp-server').default;
 const fs = require('fs');
 const path = require('path');
 
@@ -206,7 +206,8 @@ runner.test('All resource files exist', () => {
   const server = new GovernorHQMCPServer();
   
   for (const [name, relativePath] of Object.entries(server.resources)) {
-    const fullPath = path.join(__dirname, relativePath);
+    // Resources are relative to dist/ directory, so we need to resolve from there
+    const fullPath = path.join(__dirname, 'dist', relativePath);
     runner.assert(
       fs.existsSync(fullPath),
       `Resource file exists: ${relativePath}`

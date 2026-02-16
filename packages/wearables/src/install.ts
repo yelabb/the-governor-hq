@@ -5,8 +5,8 @@
  * Sets up AI safety context for wearable data projects
  */
 
-const fs = require('fs');
-const path = require('path');
+import * as fs from 'fs';
+import * as path from 'path';
 
 const COLORS = {
   reset: '\x1b[0m',
@@ -17,11 +17,11 @@ const COLORS = {
   red: '\x1b[31m',
 };
 
-function log(message, color = 'reset') {
+function log(message: string, color: keyof typeof COLORS = 'reset'): void {
   console.log(`${COLORS[color]}${message}${COLORS.reset}`);
 }
 
-function createCursorRules(targetDir) {
+function createCursorRules(targetDir: string): boolean {
   const cursorRulesPath = path.join(targetDir, '.cursorrules');
   const sourcePath = path.join(__dirname, '.cursorrules');
 
@@ -36,7 +36,12 @@ function createCursorRules(targetDir) {
   return true;
 }
 
-function updateVSCodeSettings(targetDir) {
+interface VSCodeSettings {
+  'github.copilot.chat.codeGeneration.instructions'?: Array<{ text: string }>;
+  [key: string]: any;
+}
+
+function updateVSCodeSettings(targetDir: string): boolean {
   const vscodeDir = path.join(targetDir, '.vscode');
   const settingsPath = path.join(vscodeDir, 'settings.json');
 
@@ -44,7 +49,7 @@ function updateVSCodeSettings(targetDir) {
     fs.mkdirSync(vscodeDir);
   }
 
-  let settings = {};
+  let settings: VSCodeSettings = {};
   if (fs.existsSync(settingsPath)) {
     settings = JSON.parse(fs.readFileSync(settingsPath, 'utf-8'));
   }
@@ -75,7 +80,7 @@ function updateVSCodeSettings(targetDir) {
   }
 }
 
-function createMCPConfig(targetDir) {
+function createMCPConfig(targetDir: string): boolean {
   const mcpConfigPath = path.join(targetDir, '.mcp-config.json');
 
   if (fs.existsSync(mcpConfigPath)) {
@@ -99,7 +104,12 @@ function createMCPConfig(targetDir) {
   return true;
 }
 
-function updatePackageJson(targetDir) {
+interface PackageJson {
+  scripts?: Record<string, string>;
+  [key: string]: any;
+}
+
+function updatePackageJson(targetDir: string): boolean {
   const packageJsonPath = path.join(targetDir, 'package.json');
 
   if (!fs.existsSync(packageJsonPath)) {
@@ -107,7 +117,7 @@ function updatePackageJson(targetDir) {
     return false;
   }
 
-  const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
+  const packageJson: PackageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
 
   if (!packageJson.scripts) {
     packageJson.scripts = {};
@@ -125,7 +135,7 @@ function updatePackageJson(targetDir) {
   }
 }
 
-function printSuccessMessage() {
+function printSuccessMessage(): void {
   log('\n' + '='.repeat(60), 'bright');
   log('🎉 Governor HQ Constitutional Framework Installed!', 'bright');
   log('='.repeat(60) + '\n', 'bright');
@@ -163,10 +173,10 @@ function printSuccessMessage() {
   log('   @governor-hq/constitution/pages/constraints/hard-rules.mdx', 'bright');
   log('   before generating any health-related code."\n', 'bright');
 
-  log('=' .repeat(60) + '\n', 'bright');
+  log('='.repeat(60) + '\n', 'bright');
 }
 
-function install() {
+export function install(): void {
   log('\n🛡️  Installing Governor HQ Constitutional Framework...\n', 'bright');
 
   const targetDir = process.cwd();
@@ -192,7 +202,7 @@ function install() {
       printSuccessMessage();
     }
   } catch (error) {
-    log(`\n❌ Installation failed: ${error.message}\n`, 'red');
+    log(`\n❌ Installation failed: ${(error as Error).message}\n`, 'red');
     process.exit(1);
   }
 }
@@ -201,5 +211,3 @@ function install() {
 if (require.main === module) {
   install();
 }
-
-module.exports = { install };

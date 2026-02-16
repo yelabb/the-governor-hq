@@ -5,8 +5,8 @@
  * Sets up AI safety context for therapy and mental health data projects
  */
 
-const fs = require('fs');
-const path = require('path');
+import * as fs from 'fs';
+import * as path from 'path';
 
 const COLORS = {
   reset: '\x1b[0m',
@@ -17,11 +17,11 @@ const COLORS = {
   red: '\x1b[31m',
 };
 
-function log(message, color = 'reset') {
+function log(message: string, color: keyof typeof COLORS = 'reset'): void {
   console.log(`${COLORS[color]}${message}${COLORS.reset}`);
 }
 
-function createCursorRules(targetDir) {
+function createCursorRules(targetDir: string): boolean {
   const cursorRulesPath = path.join(targetDir, '.cursorrules');
   
   if (fs.existsSync(cursorRulesPath)) {
@@ -72,7 +72,12 @@ This is the most sensitive data domain. Be extremely conservative.`;
   return true;
 }
 
-function updateVSCodeSettings(targetDir) {
+interface VSCodeSettings {
+  'github.copilot.chat.codeGeneration.instructions'?: Array<{ text: string }>;
+  [key: string]: any;
+}
+
+function updateVSCodeSettings(targetDir: string): boolean {
   const vscodeDir = path.join(targetDir, '.vscode');
   const settingsPath = path.join(vscodeDir, 'settings.json');
 
@@ -80,7 +85,7 @@ function updateVSCodeSettings(targetDir) {
     fs.mkdirSync(vscodeDir);
   }
 
-  let settings = {};
+  let settings: VSCodeSettings = {};
   if (fs.existsSync(settingsPath)) {
     settings = JSON.parse(fs.readFileSync(settingsPath, 'utf-8'));
   }
@@ -110,7 +115,7 @@ function updateVSCodeSettings(targetDir) {
   }
 }
 
-function install() {
+function install(): void {
   log('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━', 'blue');
   log('   Governor HQ Constitutional Framework - Therapy', 'bright');
   log('   AI Safety for Mental Health & Wellbeing Data', 'blue');
@@ -132,7 +137,7 @@ function install() {
     log('  3. Read docs: node_modules/@yelabb/constitution-therapy/', 'blue');
     log('');
   } catch (error) {
-    log(`\n❌ Installation failed: ${error.message}\n`, 'red');
+    log(`\n❌ Installation failed: ${(error as Error).message}\n`, 'red');
     process.exit(1);
   }
 }
@@ -141,4 +146,4 @@ if (require.main === module) {
   install();
 }
 
-module.exports = { install };
+export { install };

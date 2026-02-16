@@ -2,15 +2,19 @@
   "name": "@yelabb/constitution-wearables",
   "version": "1.0.0",
   "description": "AI Safety Constitution for Wearable/Smartwatch Data Projects - Instant context for AI coding assistants",
-  "main": "mcp-server.js",
-  "types": "index.d.ts",
+  "main": "dist/mcp-server.js",
+  "types": "dist/index.d.ts",
   "bin": {
-    "governor-install": "./install.js"
+    "governor-install": "./dist/install.js"
   },
   "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "clean": "rimraf dist",
+    "prepublishOnly": "npm run clean && npm run build",
     "test": "node mcp-server.test.js",
-    "ai:context": "node mcp-server.js",
-    "postinstall": "node install.js"
+    "ai:context": "node dist/mcp-server.js",
+    "postinstall": "node dist/install.js"
   },
   "keywords": [
     "ai-safety",
@@ -38,21 +42,25 @@
   "author": "Governor HQ",
   "license": "MIT",
   "files": [
+    "dist/",
     "pages/",
-    "mcp-server.js",
     "mcp-config.json",
-    "install.js",
     ".cursorrules",
-    "index.d.ts",
+    "mcp-server.test.js",
     "README.md"
   ],
   "engines": {
     "node": ">=16.0.0"
   },
   "dependencies": {
-    "@yelabb/constitution-core": "^1.0.0"
+    "@yelabb/constitution-core": "^2.0.0"
   },
   "peerDependencies": {
-    "@yelabb/constitution-core": "^1.0.0"
+    "@yelabb/constitution-core": "^2.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "rimraf": "^5.0.0",
+    "typescript": "^5.3.0"
   }
 }

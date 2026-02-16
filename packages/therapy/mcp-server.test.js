@@ -4,7 +4,7 @@
  * Test suite for Therapy MCP Server
  */
 
-const GovernorHQMCPServer = require('./mcp-server');
+const GovernorHQMCPServer = require('./dist/mcp-server').default;
 
 function runTests() {
   console.log('🧪 Testing Therapy MCP Server...\n');

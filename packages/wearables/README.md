@@ -2,7 +2,7 @@
 
 **AI Safety Constitution for Wearable/Smartwatch Data Projects**
 
-A safety layer for AI agents working with consumer wearable health data (Garmin, Apple Watch, Whoop, Oura, Fitbit, etc.). Prescriptive, executable constraints that prevent medical claims and ensure ethical boundaries.
+AI behavior guidance layer working with consumer wearable health data (Garmin, Apple Watch, Whoop, Oura, Fitbit, etc.). Prescriptive, executable constraints that prevent medical claims and ensure ethical boundaries.
 
 ## Quick Start
 

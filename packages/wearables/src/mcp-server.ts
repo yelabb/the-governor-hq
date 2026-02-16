@@ -5,7 +5,7 @@
  * Exposes wearable data safety constraints as context to AI assistants
  */
 
-const { BaseGovernorMCPServer } = require('@yelabb/constitution-core');
+import { BaseGovernorMCPServer } from '@yelabb/constitution-core';
 
 class GovernorHQMCPServer extends BaseGovernorMCPServer {
   constructor() {
@@ -15,13 +15,13 @@ class GovernorHQMCPServer extends BaseGovernorMCPServer {
       version: '1.0.0',
       baseDir: __dirname,
       resources: {
-        'hard-rules': './pages/constraints/hard-rules.mdx',
-        'language-rules': './pages/constraints/language-rules.mdx',
-        'quick-reference': './pages/quick-reference.mdx',
-        'what-we-dont-do': './pages/what-we-dont-do.mdx',
-        'ai-agent-guide': './pages/ai-agent-guide.mdx',
-        'signals': './pages/core/signals.mdx',
-        'baseline': './pages/core/baseline.mdx',
+        'hard-rules': '../pages/constraints/hard-rules.mdx',
+        'language-rules': '../pages/constraints/language-rules.mdx',
+        'quick-reference': '../pages/quick-reference.mdx',
+        'what-we-dont-do': '../pages/what-we-dont-do.mdx',
+        'ai-agent-guide': '../pages/ai-agent-guide.mdx',
+        'signals': '../pages/core/signals.mdx',
+        'baseline': '../pages/core/baseline.mdx',
       },
       contextSummary: `
 # Governor HQ Constitutional Framework - Active Context
@@ -77,4 +77,4 @@ if (require.main === module) {
   server.start();
 }
 
-module.exports = GovernorHQMCPServer;
+export default GovernorHQMCPServer;

@@ -2,7 +2,7 @@
 
 **AI Safety Constitution for Brain-Computer Interface (BCI) Data Projects**
 
-A safety layer for AI agents working with consumer BCI/neurotechnology data (EEG, fNIRS, neurofeedback devices). Prescriptive, executable constraints that prevent neurological claims, mental state interpretation, and ensure ethical boundaries.
+AI behavior guidance layer working with consumer BCI/neurotechnology data (EEG, fNIRS, neurofeedback devices). Prescriptive, executable constraints that prevent neurological claims, mental state interpretation, and ensure ethical boundaries.
 
 ## 🚧 Status: In Development
 

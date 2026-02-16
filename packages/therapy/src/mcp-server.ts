@@ -5,7 +5,7 @@
  * Exposes therapy and mental health data safety constraints as context to AI assistants
  */
 
-const { BaseGovernorMCPServer } = require('@yelabb/constitution-core');
+import { BaseGovernorMCPServer } from '@yelabb/constitution-core';
 
 class GovernorHQMCPServer extends BaseGovernorMCPServer {
   constructor() {
@@ -86,4 +86,4 @@ if (require.main === module) {
   server.start();
 }
 
-module.exports = GovernorHQMCPServer;
+export default GovernorHQMCPServer;
