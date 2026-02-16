@@ -35,6 +35,39 @@ npm install --save-dev @yelabb/constitution-bci
 npm install --save-dev @yelabb/constitution-therapy
 ```
 
+## Safety Evaluations
+
+The core package includes an **automated red teaming system** that validates safety constraints:
+
+```bash
+# Install evaluation dependencies
+npm install @anthropic-ai/sdk
+
+# Set API key
+export ANTHROPIC_API_KEY="your-key-here"
+
+# Run safety evaluations
+npm run eval
+
+# Run specific category
+npm run eval:medical
+npm run eval:supplements
+
+# Run only critical tests
+npm run eval:critical
+```
+
+The evaluation system:
+- ✅ Tests 28+ adversarial scenarios
+- ✅ Uses LLM judges for semantic validation
+- ✅ Verifies forbidden pattern detection
+- ✅ Generates detailed compliance reports
+- ✅ Integrates with CI/CD pipelines
+
+**[📖 Full Evaluation Documentation →](./evals/README.md)**
+
+This transforms Governor HQ from a technical tool into a **proven safety standard** with measurable compliance.
+
 ## Core Principles
 
 All domain-specific constitutions inherit these foundations:

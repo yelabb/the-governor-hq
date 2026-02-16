@@ -1,0 +1,8 @@
+# Evaluation Results
+# Store test results locally for tracking over time
+
+*.json
+!config.json
+
+# Except keep one example result
+!example-result.json

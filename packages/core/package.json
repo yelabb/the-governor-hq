@@ -8,13 +8,20 @@
     "governor-validate": "./bin/governor-validate.js"
   },
   "scripts": {
-    "test": "node bin/governor-validate.js --help"
+    "test": "node bin/governor-validate.js --help",
+    "eval": "node evals/eval-runner.js",
+    "eval:critical": "node evals/eval-runner.js --severity critical",
+    "eval:medical": "node evals/eval-runner.js --category medical-claims",
+    "eval:supplements": "node evals/eval-runner.js --category supplements-dosages",
+    "eval:verbose": "node evals/eval-runner.js --verbose",
+    "eval:test": "node evals/quick-test.js"
   },
   "files": [
     "index.js",
     "index.d.ts",
     "base-mcp-server.js",
     "bin/",
+    "evals/",
     "README.md"
   ],
   "keywords": [
