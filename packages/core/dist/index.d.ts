@@ -6,9 +6,15 @@
  */
 import { BaseGovernorMCPServer } from './base-mcp-server';
 import type { ServerConfig } from './base-mcp-server';
+export { RuntimeValidator, createValidator, validateText } from './validators/runtime-validator';
+export type { ValidatorConfig, ValidationResult, Violation, Domain, ViolationAction, SeverityLevel, ValidationRule, PatternCheckResult, LLMJudgeResult, } from './validators/types';
+export { governorValidator, validateField, validationErrorHandler } from './middleware/express';
+export { withGovernor, createGovernorValidator, withFieldValidation, validateResponse } from './middleware/nextjs';
+export { runPatternChecks, checkForbiddenPatterns, checkPrescriptiveLanguage, checkMedicalKeywords, checkSuggestivePatterns, checkAlarmingPatterns, } from './validators/pattern-matcher';
+export { generateSafeAlternative, attemptSanitization, getDisclaimer, } from './validators/sanitizer';
 export { BaseGovernorMCPServer };
 export type { ServerConfig };
-export interface ValidationResult {
+export interface LegacyValidationResult {
     isValid: boolean;
     violations: string[];
     message: string;
@@ -41,11 +47,11 @@ export declare const PRODUCT_PRINCIPLES: ProductPrinciples;
  * @param text - The text to validate
  * @returns Validation result with any violations found
  */
-export declare function validateLanguage(text: string): ValidationResult;
+export declare function validateLanguage(text: string): LegacyValidationResult;
 /**
  * Validate that a feature doesn't cross medical boundaries
  * @param feature - The feature description to validate
  * @returns Validation result with any violations found
  */
-export declare function validateScope(feature: string): ValidationResult;
+export declare function validateScope(feature: string): LegacyValidationResult;
 //# sourceMappingURL=index.d.ts.map

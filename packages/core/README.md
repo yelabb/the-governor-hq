@@ -6,6 +6,37 @@ This package contains shared safety rules, constraints, and utilities used acros
 
 ## What's Included
 
+### 🛡️ Runtime Validator (NEW!)
+**Hard post-generation gate: LLM → Validator → Output**
+
+Validates AI-generated content before showing it to users:
+
+```typescript
+import { createValidator } from '@yelabb/constitution-core';
+
+const validator = createValidator({ domain: 'wearables', onViolation: 'block' });
+
+const llmOutput = await callLLM(prompt);
+const result = await validator.validate(llmOutput);
+
+if (!result.safe) {
+  return result.safeAlternative; // Blocked unsafe content
+}
+
+return result.output; // Safe to show user
+```
+
+**Features:**
+- ⚡ Fast pattern matching (<10ms)
+- 🔍 Optional LLM judge for edge cases
+- 🎯 Express & Next.js middleware
+- 🔧 Customizable violation actions (block/warn/log/sanitize)
+- 📊 Built-in monitoring and metrics
+
+**[📖 Full Validator Guide →](./VALIDATOR-GUIDE.md)** | **[See Examples →](./examples/runtime-validator-examples.ts)**
+
+---
+
 ### Universal Safety Rules
 - No medical diagnoses or claims
 - No treatment recommendations
@@ -45,9 +76,21 @@ This package is written in **TypeScript** and provides native type definitions. 
 import { 
   BaseGovernorMCPServer, 
   ServerConfig,
+  createValidator,
+  ValidatorConfig,
+  ValidationResult,
   validateLanguage,
   UNIVERSAL_RULES 
 } from '@yelabb/constitution-core';
+
+// Runtime Validator (fully typed)
+const validator = createValidator({
+  domain: 'wearables',
+  onViolation: 'block',
+  strictMode: true
+});
+
+const result: ValidationResult = await validator.validate(text);
 
 // ServerConfig is fully typed
 const config: ServerConfig = {
@@ -67,23 +110,22 @@ const server = new BaseGovernorMCPServer(config);
 
 ```javascript
 const { 
-  BaseGovernorMCPServer, 
+  BaseGovernorMCPServer,
+  createValidator,
   validateLanguage,
   UNIVERSAL_RULES 
 } = require('@yelabb/constitution-core');
 
 // Full autocomplete and IntelliSense support in VS Code
-const config = {
-  serverName: 'my-constitution',
-  uriScheme: 'my-uri',
-  baseDir: __dirname,
-  resources: {
-    'hard-rules': './rules.md'
-  },
-  contextSummary: 'My context'
-};
+const validator = createValidator({ 
+  domain: 'wearables',
+  onViolation: 'block'
+});
 
-const server = new BaseGovernorMCPServer(config);
+const result = await validator.validate(text);
+if (!result.safe) {
+  console.log(result.safeAlternative);
+}
 ```
 
 ## Development

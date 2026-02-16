@@ -8,10 +8,44 @@
 import { BaseGovernorMCPServer } from './base-mcp-server';
 import type { ServerConfig } from './base-mcp-server';
 
+// Runtime Validator (Hard Post-Generation Gate)
+export { RuntimeValidator, createValidator, validateText } from './validators/runtime-validator';
+export type {
+  ValidatorConfig,
+  ValidationResult,
+  Violation,
+  Domain,
+  ViolationAction,
+  SeverityLevel,
+  ValidationRule,
+  PatternCheckResult,
+  LLMJudgeResult,
+} from './validators/types';
+
+// Middleware
+export { governorValidator, validateField, validationErrorHandler } from './middleware/express';
+export { withGovernor, createGovernorValidator, withFieldValidation, validateResponse } from './middleware/nextjs';
+
+// Pattern Matching & Sanitization (for advanced use cases)
+export {
+  runPatternChecks,
+  checkForbiddenPatterns,
+  checkPrescriptiveLanguage,
+  checkMedicalKeywords,
+  checkSuggestivePatterns,
+  checkAlarmingPatterns,
+} from './validators/pattern-matcher';
+export {
+  generateSafeAlternative,
+  attemptSanitization,
+  getDisclaimer,
+} from './validators/sanitizer';
+
+// MCP Server
 export { BaseGovernorMCPServer };
 export type { ServerConfig };
 
-export interface ValidationResult {
+export interface LegacyValidationResult {
   isValid: boolean;
   violations: string[];
   message: string;
@@ -71,7 +105,7 @@ export const PRODUCT_PRINCIPLES: ProductPrinciples = {
  * @param text - The text to validate
  * @returns Validation result with any violations found
  */
-export function validateLanguage(text: string): ValidationResult {
+export function validateLanguage(text: string): LegacyValidationResult {
   const prescriptive = LANGUAGE_RULES.AVOID_PRESCRIPTIVE;
   const found = prescriptive.filter(word => 
     text.toLowerCase().includes(word.toLowerCase())
@@ -91,7 +125,7 @@ export function validateLanguage(text: string): ValidationResult {
  * @param feature - The feature description to validate
  * @returns Validation result with any violations found
  */
-export function validateScope(feature: string): ValidationResult {
+export function validateScope(feature: string): LegacyValidationResult {
   // Helper to check if a feature crosses safety boundaries
   const medicalKeywords = [
     'diagnose', 'diagnosis', 'treat', 'treatment', 'cure', 
