@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "governor-hq-constitution": {
+      "command": "node",
+      "args": [
+        "./node_modules/@governor-hq/constitution/mcp-server.js"
+      ],
+      "description": "AI Safety Constitution for Wearable Data Projects",
+      "enabled": true
+    }
+  }
+}

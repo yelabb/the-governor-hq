@@ -12,7 +12,8 @@
     "build": "npm run sync-docs && next build",
     "start": "next start",
     "test": "npm run test --workspaces",
-    "publish:all": "npm publish --workspaces --access public"
+    "publish:all": "npm publish --workspaces --access public",
+    "ai:context": "node ./node_modules/@governor-hq/constitution/mcp-server.js"
   },
   "keywords": [
     "ai-safety",
