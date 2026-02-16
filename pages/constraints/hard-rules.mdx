@@ -1,0 +1,162 @@
+# Hard Rules
+
+> Absolute system limits — the product constitution. These override everything.
+
+---
+
+## Purpose
+
+This document defines the **non-negotiable boundaries** of the system. These rules apply to all agents, all features, all content, and all future development.
+
+No feature, no optimization, no user request, and no business pressure overrides these rules.
+
+They exist to protect:
+- **Users** from harm and misinformation
+- **The product** from legal liability
+- **The team** from building the wrong things
+
+---
+
+## The Rules
+
+### 1. No Medical Claims
+
+The system **must never** claim, imply, or suggest that it provides medical information, advice, or diagnosis.
+
+| Forbidden | Why |
+|---|---|
+| "This indicates a health problem" | Medical claim |
+| "Your readings suggest you may have..." | Implied diagnosis |
+| "This is a sign of..." | Causal medical inference |
+| "Healthy HRV range is..." | Implies medical authority |
+
+**Test:** If a statement could appear in a medical consultation, it does not belong in this system.
+
+---
+
+### 2. No Supplements or Dosages
+
+The system **must never** recommend, mention, or reference any supplement, vitamin, mineral, or dosage.
+
+| Forbidden | Examples |
+|---|---|
+| Supplement names | Melatonin, magnesium, ashwagandha, vitamin D, CBD |
+| Dosage amounts | "3mg", "400mg", "2 capsules" |
+| Timing of supplements | "Take X before bed" |
+| Indirect references | "Some people find certain supplements helpful" |
+
+**No exceptions.** Even "commonly used" or "natural" supplements are out of scope.
+
+---
+
+### 3. No Disease Names
+
+The system **must never** mention, reference, or imply specific diseases, conditions, or disorders.
+
+| Forbidden | Examples |
+|---|---|
+| Sleep disorders | Insomnia, sleep apnea, narcolepsy |
+| Mental health conditions | Anxiety, depression, burnout, PTSD |
+| Cardiovascular conditions | Arrhythmia, hypertension |
+| Metabolic conditions | Diabetes, thyroid disorders |
+| Overtraining syndrome | Even as a colloquial term |
+
+**If a user asks** "Do I have insomnia?", the correct response is: *"I'm not able to diagnose conditions. If you're concerned about your sleep, a healthcare professional can help."*
+
+---
+
+### 4. No Treatment Language
+
+The system **must never** use words that imply therapeutic or curative intent.
+
+| Forbidden Word | Replacement |
+|---|---|
+| "Treatment" | (no replacement — don't discuss treatments) |
+| "Diagnosis" / "Diagnose" | (no replacement — don't diagnose) |
+| "Prevent" / "Prevention" | "Support" or remove |
+| "Cure" | (never use) |
+| "Heal" | "Recover" (in behavioral context only) |
+| "Therapy" / "Therapeutic" | (never use) |
+| "Prescribe" / "Prescription" | (never use) |
+| "Clinically proven" | (never use) |
+
+---
+
+### 5. No Authority Framing
+
+The system **must never** position itself as an authority that commands user behavior.
+
+| Forbidden | Allowed Alternative |
+|---|---|
+| "You should..." | "You might consider..." |
+| "You must..." | "It can sometimes help to..." |
+| "You need to..." | "Some people find it helpful to..." |
+| "Do this now" | "When you're ready, this might help" |
+| "It's important that you..." | "One thing that often supports recovery is..." |
+| "Warning: ..." | (use neutral headers like "Check-in") |
+
+---
+
+## Rule Hierarchy
+
+These hard rules form a hierarchy that overrides all other system behavior:
+
+```
+HARD RULES (this document)
+    ↓ overrides
+LANGUAGE RULES
+    ↓ overrides
+AGENT-SPECIFIC RULES
+    ↓ overrides
+FEATURE IMPLEMENTATIONS
+    ↓ overrides
+UI/UX DECISIONS
+```
+
+If an agent generates a recommendation that conflicts with a hard rule, **the hard rule wins** and the recommendation is blocked.
+
+---
+
+## Implementation Requirements
+
+### For LLM-generated content
+
+Every output from an LLM component must be validated against these rules before delivery to the user. This validation must be:
+
+- **Automated** — not dependent on human review for every message
+- **Blocking** — non-compliant content is never shown to the user
+- **Logged** — violations are recorded for system improvement
+
+### For human-written content
+
+All UI copy, notifications, marketing materials, and documentation must pass a hard-rules review before publication.
+
+### For future features
+
+Any new feature proposal must include a "Hard Rules Compliance" section that demonstrates compatibility with every rule in this document.
+
+---
+
+## Enforcement
+
+| Level | Action |
+|---|---|
+| **Build time** | Linting rules catch forbidden words in code and content |
+| **Runtime** | Output filter checks all user-facing text against rule patterns |
+| **Review** | PR reviews include hard-rules compliance check |
+| **Testing** | Integration tests include adversarial prompts designed to trigger rule violations |
+
+---
+
+## What happens when a rule is violated?
+
+1. The violating content is **blocked** — never shown to the user
+2. A fallback message is shown instead (generic, safe, compliant)
+3. The violation is **logged** with full context
+4. The team is notified for review
+
+There is no "soft violation." A rule is either met or it isn't.
+
+---
+
+> **Bottom line:** These rules are not guidelines. They are walls. Build within them. Do not test them. Do not negotiate them. They exist to keep users safe and the product trustworthy.

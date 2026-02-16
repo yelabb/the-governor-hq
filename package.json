@@ -1,0 +1,60 @@
+{
+  "name": "@the-governor-hq/constitution",
+  "version": "1.0.0",
+  "description": "AI Safety Constitution for Wearable Data Projects - Instant context for AI coding assistants",
+  "main": "mcp-server.js",
+  "types": "index.d.ts",
+  "bin": {
+    "governor-install": "./install.js"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "test": "node mcp-server.test.js",
+    "ai:context": "node mcp-server.js",
+    "postinstall": "node install.js"
+  },
+  "keywords": [
+    "ai-safety",
+    "wearable-data",
+    "health-data",
+    "mcp",
+    "ai-context",
+    "copilot",
+    "cursor",
+    "claude",
+    "chatgpt",
+    "constitutional-framework",
+    "biometric-data",
+    "safety-constraints"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yelabb/the-governor-hq"
+  },
+  "author": "Governor HQ",
+  "license": "MIT",
+  "files": [
+    "pages/",
+    "mcp-server.js",
+    "mcp-config.json",
+    "install.js",
+    ".cursorrules",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "dependencies": {
+    "next": "^14.2.0",
+    "nextra": "^2.13.4",
+    "nextra-theme-docs": "^2.13.4",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "25.2.3",
+    "typescript": "5.9.3"
+  }
+}

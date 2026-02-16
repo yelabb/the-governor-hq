@@ -1,0 +1,108 @@
+# Baseline
+
+> How the system learns "normal" for each person.
+
+---
+
+## Purpose
+
+The baseline is the system's internal model of **what normal looks like for a specific individual**. Without a baseline, the system cannot detect meaningful deviations — and without meaningful deviations, agents must remain silent.
+
+This document explains:
+1. How a baseline is established
+2. Why personal baselines are superior to generic thresholds
+3. How baselines adapt over time
+4. Why the system suppresses advice during the learning phase
+
+---
+
+## Baseline Learning Phase
+
+### Duration: 30–90 days (passive)
+
+During this phase, the system **collects data and says nothing**.
+
+| Phase | Days | System Behavior |
+|---|---|---|
+| **Cold start** | 0–14 | Insufficient data. No baseline. No recommendations. System acknowledges it is learning. |
+| **Early baseline** | 14–30 | Preliminary patterns emerge. System may show trends but does **not** activate agents. |
+| **Stable baseline** | 30–90 | Baseline confidence increases. Agents may begin responding to significant deviations. |
+| **Mature baseline** | 90+ | High-confidence personal model. Slow adaptation continues. |
+
+### Why passive?
+
+Giving advice without a baseline means relying on population averages or arbitrary thresholds — both of which violate the system's core principles. Without context, advice is noise.
+
+**User-facing message during learning phase:**
+
+> *"I'm learning your patterns. This takes a few weeks. I'll reach out when I notice something meaningful."*
+
+---
+
+## Why Personal Baselines > Generic Thresholds
+
+| Approach | Problem |
+|---|---|
+| **Population average** | Ignores individual genetics, fitness level, age, lifestyle. Creates false alerts. |
+| **Static threshold** | A fixed "good HRV" number is meaningless across individuals. |
+| **Personal baseline** | Detects *change* relative to the individual. Reduces false positives. Increases trust. |
+
+### Example
+
+- **User A**: Average HRV = 65ms. A drop to 45ms is a 30% deviation → meaningful.
+- **User B**: Average HRV = 32ms. A reading of 45ms is *above* their baseline → not alarming.
+- A static threshold of "HRV < 50ms = bad" would misfire for both users.
+
+---
+
+## Baseline Adaptation
+
+Baselines are not fixed. They evolve — **slowly**.
+
+### Adaptation Rules
+
+| Rule | Detail |
+|---|---|
+| **Slow decay** | Older data is weighted less. Recent weeks matter more than months ago. |
+| **Outlier resistance** | Single extreme nights do not shift the baseline. |
+| **Seasonal awareness** | The system accounts for natural variation (e.g., summer vs. winter sleep patterns). |
+| **Life event buffer** | If the user reports a major change (new job, travel, illness), the baseline can be flagged for recalibration. |
+
+### Adaptation rate
+
+The baseline should shift at a pace that reflects **genuine lifestyle change**, not daily noise. A rolling window of 30–90 days with exponential decay weighting is the target approach.
+
+---
+
+## Advice Suppression During Baseline Phase
+
+This is a **hard rule**, not a preference.
+
+During the baseline learning phase:
+
+- ❌ No agent recommendations
+- ❌ No deviation alerts
+- ❌ No "your sleep was bad" messages
+- ✅ Data collection and visualization allowed
+- ✅ "Still learning" status messages allowed
+- ✅ User can view their own raw trends
+
+---
+
+## Developer Guidance
+
+### DO
+- Implement a clear state machine: `LEARNING → EARLY → STABLE → MATURE`
+- Gate all agent activations behind baseline confidence checks
+- Show the user their baseline progress ("70% learned")
+- Allow the user to reset their baseline if they choose
+
+### DON'T
+- Ship recommendations without a baseline
+- Use "average" or "normal" as baseline substitutes
+- Let marketing pressure override the silent learning phase
+- Set the learning phase shorter than 30 days
+
+---
+
+> **Bottom line:** The system earns the right to speak by listening first. No baseline = no advice.

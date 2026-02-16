@@ -1,0 +1,142 @@
+# The Governor HQ Constitutional Framework
+
+## AI Safety Constitution for Wearable Data Projects
+
+> **This documentation is a safety layer for AI-assisted development on wearable health data projects.**
+
+The Governor HQ is an AI constitutional framework that defines behavioral constraints, safety boundaries, and operational rules for any AI system or product that processes wearable biometric data.
+
+This documentation is **prescriptive and executable** — not decorative. It encodes:
+
+- **Product scope** — What wearable data systems should (and must not) do
+- **Safety boundaries** — Hard rules that prevent medical claims, diagnoses, and treatment advice
+- **Language constraints** — How systems communicate with users about their health data
+- **Product identity** — Clear positioning in the consumer wellness (not medical) space
+- **AI agent guidance** — Explicit instructions for AI coding assistants
+
+---
+
+## Who This Is For
+
+### Developers Building Wearable Data Products
+
+If you're building products that process biometric data from consumer wearables (Garmin, Apple Watch, Whoop, Oura, Fitbit, etc.) and use AI coding assistants (GitHub Copilot, ChatGPT, Claude, Cursor, etc.), **this framework should be in your AI agent's context**.
+
+### Use Cases
+
+- Sleep and recovery optimization
+- Fitness and training load management
+- Stress and readiness scoring
+- Activity and movement insights
+- Circadian rhythm and timing recommendations
+- Any biometric feedback system for consumer wellness
+
+### Not For
+
+- Clinical medical devices (FDA-regulated)
+- Diagnostic tools
+- Treatment planning systems
+- Professional medical software
+
+---
+
+## Core Principles
+
+| Principle | Detail |
+|---|---|
+| **Personal baseline** | Systems must learn each user's normal over time (30–90 days) |
+| **Deviation-driven** | Recommendations only when meaningful change is detected |
+| **Behavioral suggestions** | Timing adjustments, rest cues, activity modifications — not medical interventions |
+| **Non-medical** | No diagnoses, no supplements, no treatment protocols, no disease names |
+| **Optionality** | "Consider" and "might help" — never "you must" or "you should" |
+| **Safety first** | When in doubt about a feature, default to NO until confirmed safe |
+
+---
+
+## The Reference Implementation: The Governor
+
+These principles originated from The Governor, a personal recovery-aware AI coach that:
+- Reads wearable data (HRV, sleep, resting heart rate, activity)
+- Learns your personal baseline over 30-90 days
+- Detects meaningful deviations from your normal patterns
+- Offers targeted behavioral guidance (timing, rest, activity adjustments)
+- Never makes medical claims or recommendations
+
+**The framework is broader than this single product** — it applies to any wearable data application.
+
+---
+
+## Documentation Map
+
+### **[AI Agent Guide](/ai-agent-guide)** ⭐ Start Here for AI-Assisted Development
+Comprehensive instructions for AI coding assistants. Includes code patterns, decision trees, validation checklists, and common pitfalls.
+
+### Core System
+How data-driven systems should read, learn, and make decisions.
+
+- [**Signals**](/core/signals) — What data wearables provide (and what it cannot tell us)
+- [**Baseline**](/core/baseline) — How systems learn "normal" for each person
+- [**Deviation Engine**](/core/deviation-engine) — When and why recommendation systems activate
+
+### Agents
+What data-driven recommendation systems can suggest.
+
+- [**Recovery Agent**](/agents/recovery-agent) — Allowed recovery guidance (HRV-based)
+- [**Stress Agent**](/agents/stress-agent) — Stress load interpretation and behavioral suggestions
+
+### Constraints
+What systems must never do — the constitutional boundaries.
+
+- [**Hard Rules**](/constraints/hard-rules) — Absolute system limits (product constitution)
+- [**Language Rules**](/constraints/language-rules) — Tone, wording, and phrasing controls
+
+### Positioning & Boundaries
+- [**Product Identity**](/positioning) — What wearable data products are and are not
+- [**What We Don't Do**](/what-we-dont-do) — Explicit domain boundaries and scope limits
+
+---
+
+## Quick Start for AI Coding Assistants
+
+If you're an AI assistant helping a developer, read this workflow:
+
+1. **First-time setup:** Read `/ai-agent-guide` completely
+2. **Before implementing features:** Check `/constraints/hard-rules` and `/what-we-dont-do`
+3. **When writing user-facing text:** Validate against `/constraints/language-rules`
+4. **When processing biometric data:** Reference `/core/signals` and `/core/baseline`
+
+**Golden Rule:** If unsure whether something is allowed, assume NO until confirmed.
+
+---
+
+## Why This Matters
+
+### Legal & Ethical Risk
+
+AI coding assistants, without constraints, will generate code that:
+- Makes medical claims
+- Recommends supplements and dosages
+- Uses diagnostic language
+- Commands users to take health actions
+- Compares users to population averages (creating anxiety)
+
+**This exposes you to legal liability and harms users.**
+
+### Regulatory Boundaries
+
+Consumer wellness products live in a gray area between "helpful data visualization" and "medical device." Stay clearly on the wellness side by:
+- Never diagnosing
+- Never treating
+- Never prescribing
+- Always deferring to healthcare professionals for medical concerns
+
+### User Trust
+
+Users trust you with intimate biometric data. Reciprocate by:
+- Learning their personal patterns (not judging against generic standards)
+- Speaking calmly and optionally (not alarmingly or commandingly)
+- Staying in your lane (wellness feedback, not medical advice)
+
+---
+
+> *This documentation is not optional. It is not decorative. It is a constitutional framework that must be enforced in code.*

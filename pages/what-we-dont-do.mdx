@@ -1,0 +1,177 @@
+# What We Don't Do
+
+> Domain boundaries for all wearable data systems
+
+---
+
+## Purpose
+
+This document defines **scope boundaries** for consumer wellness products that process wearable biometric data. Every item on this list has been deliberately excluded from the domain.
+
+**This applies universally:** Whether you're building sleep optimization, training readiness, stress awareness, or any biometric feedback system.
+
+When someone asks "can the system do X?" — check this list first. If X is here, the answer is **no**, and the reason is documented.
+
+**For AI coding assistants:** Before implementing any feature, verify it is not on this refusal list. If uncertain, assume NO.
+
+---
+
+## The Refusal List
+
+### 1. Supplements
+
+**Consumer wearable systems do not recommend, reference, or suggest any supplements.**
+
+This includes:
+- Melatonin
+- Magnesium (any form)
+- Ashwagandha or adaptogens
+- Vitamin D, B12, or any vitamin
+- CBD, THC, or cannabis products
+- Protein powders or amino acids
+- Creatine, BCAAs, or performance supplements
+- "Sleep aids" of any kind
+- "Natural" or "herbal" remedies
+- Nootropics or cognitive enhancers
+
+**Why:** Supplement recommendations require medical knowledge, dosage expertise, interaction awareness, and regulatory compliance. Consumer wellness systems have none of these. Even "commonly used" supplements carry risk and require professional guidance. This is not our domain.
+
+**Zero tolerance:** Not even "some people find...", "research suggests...", or indirect mentions. Complete exclusion.
+
+---
+
+### 2. Diet Prescriptions
+
+**We do not provide dietary advice, meal plans, or nutrition guidance.**
+
+This includes:
+- Caloric recommendations or targets
+- Macronutrient ratios or splits
+- Specific food recommendations ("eat more X")
+- Elimination diets
+- Fasting protocols (intermittent or otherwise)
+- Timing of meals relative to sleep or exercise
+- Anti-inflammatory diet claims
+- "Foods that improve [metric]" lists
+- Hydration prescriptions
+- Caffeine/alcohol limits (can observe patterns, cannot prescribe limits)
+
+**Why:** Nutrition is complex, individual, and culturally sensitive. Dietary advice requires professional nutritionist expertise. We are not nutritionists. We can observe patterns (e.g., "your HRV was lower on nights after late caffeine"), but we cannot prescribe dietary changes.
+
+---
+
+### 3. Training Plans
+
+**We do not create, suggest, or modify workout programs.**
+
+This includes:
+- Exercise prescriptions ("do 30 minutes of cardio")
+- Periodization schedules
+- Volume or intensity targets
+- Specific exercise recommendations
+- Sport-specific training advice
+- "Active recovery" protocols (we may suggest rest, but not specific activities)
+- RPE or training load targets
+
+**Why:** Training programming requires expertise in exercise science, knowledge of the user's goals, injury history, and capabilities. Our system reads recovery signals — it does not program training. Suggesting a rest day is within scope. Designing a workout is not.
+
+---
+
+### 4. Medical Advice
+
+**We do not provide medical advice of any kind.**
+
+This includes:
+- Suggesting diagnoses ("you might have sleep apnea")
+- Recommending medical tests ("get a sleep study")
+- Interpreting medical results
+- Recommending prescription medications
+- Suggesting users change prescribed treatment
+- Second-guessing medical professionals
+- Providing "alternative medicine" recommendations
+
+**The one exception:** We may display a generic safety message: *"If you're concerned about your health, we recommend speaking with a healthcare professional."* This is not medical advice — it is a navigation pointer.
+
+**Why:** We are not doctors. We are not qualified. We are not regulated for this. Full stop.
+
+---
+
+### 5. Longevity Claims
+
+**We do not make claims about lifespan, healthspan, or aging.**
+
+This includes:
+- "Better sleep extends your life"
+- "HRV is correlated with longevity"
+- "Recovery optimization slows aging"
+- Anti-aging framing of any kind
+- Biological age estimates
+- "Add X years to your life"
+- References to longevity research as justification for features
+
+**Why:** Longevity claims are unverifiable at the individual level and drift into medical territory. We track recovery patterns — we do not promise longer life.
+
+---
+
+### 6. Psychological / Mental Health Guidance
+
+**We do not address psychological state, emotions, or mental health.**
+
+This includes:
+- "You seem stressed / anxious / depressed"
+- Mood tracking or mood inference
+- Therapy suggestions
+- Mindfulness prescriptions (specific protocols)
+- Emotional regulation advice
+- Cognitive behavioral techniques
+- Trauma-informed content
+- Self-help or personal development frameworks
+
+**Why:** Mental health requires professional training. Wearable data cannot diagnose or treat mental health conditions. The Stress Agent observes physiological patterns — it does not interpret psychological state.
+
+---
+
+### 7. Disease Prevention Claims
+
+**We do not claim that using the product prevents any disease.**
+
+This includes:
+- "Reduce your risk of heart disease"
+- "Prevent burnout"
+- "Avoid chronic fatigue"
+- "Lower your risk of X"
+- "Early warning system for Y"
+- Preventive health framing
+
+**Why:** Disease prevention claims are medical claims. They are regulated. They require clinical evidence specific to our product. We have no such evidence. Using words like "prevent" positions the product as a medical intervention.
+
+---
+
+## How to Use This Document
+
+### For contributors
+
+Before building a new feature, check: does it touch anything on this list? If yes, **stop** and discuss with the team. The feature is likely out of scope.
+
+### For product decisions
+
+When evaluating feature requests, user feedback, or competitive pressure, use this list as a filter. If the request asks us to do something on this list, the answer is no — and we should explain why, not apologize.
+
+### For marketing
+
+This list also applies to marketing and positioning. We cannot claim in marketing what the product does not do. If it's on this list, it's not a feature — it's not a benefit — it's not a future roadmap item.
+
+### For investors / stakeholders
+
+This document demonstrates **product discipline**. These boundaries are structural, not limitations.
+
+---
+
+## The Principle Behind the List
+
+> **We do less, done right.**
+
+Every item on this list represents a category where:
+- The required expertise exceeds our domain
+- The regulatory requirements exceed our scope
+- Silence is more valuable than noise

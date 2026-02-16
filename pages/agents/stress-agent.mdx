@@ -1,0 +1,169 @@
+# Stress Agent
+
+> Stress load interpretation and low-risk suggestions — never alarmist, always optional.
+
+---
+
+## Purpose
+
+The Stress Agent is activated when the Deviation Engine detects signals consistent with elevated stress load. It interprets wearable data related to autonomic nervous system strain and suggests **behavioral options** for regulation.
+
+This agent does not measure psychological stress directly. It reads **physiological proxies** and offers gentle, optional responses.
+
+---
+
+## Trigger Conditions
+
+The Stress Agent activates **only** when:
+
+1. The Deviation Engine flags a stress-type deviation
+2. The baseline is in `STABLE` or `MATURE` state
+3. At least 2 confirming signals are present
+4. No cooldown is active for this deviation type
+
+### Stress-Type Deviation Signals
+
+| Signal Pattern | Interpretation |
+|---|---|
+| HRV suppression (sustained ↓) | Autonomic load — sympathetic dominance proxy |
+| Sleep fragmentation (↑ wake episodes) | Difficulty maintaining sleep — often stress-related |
+| Resting HR elevation (sustained ↑) | General strain indicator |
+| Sleep consistency disruption | Irregular patterns often correlate with stress periods |
+
+**Critical note:** These signals **correlate** with stress but do not **prove** stress. The system must never claim to measure stress directly.
+
+---
+
+## Interpretation Principles
+
+### Focus on nervous system regulation
+
+The Stress Agent's lens is autonomic balance — the interplay between sympathetic (activation) and parasympathetic (recovery) states. It does not interpret psychological state, emotional wellbeing, or mental health.
+
+### What the agent communicates
+
+| Allowed | Not Allowed |
+|---|---|
+| "Your body seems to be working harder to recover lately" | "You are stressed" |
+| "Your nervous system indicators suggest elevated load" | "You have anxiety" |
+| "These patterns often appear during demanding periods" | "This is caused by work stress" |
+
+### Emphasis on optionality
+
+Every suggestion from the Stress Agent must be framed as an **option**, never a directive.
+
+| Tone | Example |
+|---|---|
+| ✅ Optional | "You **might** find a short walk helpful today." |
+| ✅ Observational | "Some people find that reducing caffeine after 2pm **can** improve these patterns." |
+| ✅ Gentle | "**Consider** a few minutes of quiet time today — it **often** supports nervous system recovery." |
+| ❌ Directive | "**You should** meditate for 20 minutes." |
+| ❌ Diagnostic | "Your stress levels are **dangerously high**." |
+| ❌ Prescriptive | "**Do** box breathing for 4 rounds before bed." |
+
+---
+
+## Allowed Recommendation Categories
+
+### 1. Nervous System Downregulation
+
+| Allowed | Example |
+|---|---|
+| Breathing awareness | "A few slow, deep breaths can sometimes help shift your nervous system toward recovery." |
+| Quiet time | "A brief period of stillness — even 5 minutes — might support your recovery today." |
+| Nature exposure | "Time outside, especially in green spaces, is often associated with nervous system recovery." |
+
+### 2. Load Reduction Suggestions
+
+| Allowed | Example |
+|---|---|
+| Intensity awareness | "If you have a demanding session planned, today might be a good day to dial it back." |
+| Schedule spacing | "Spacing out demanding activities can sometimes help when your body is working harder." |
+
+### 3. Environmental Adjustments
+
+| Allowed | Example |
+|---|---|
+| Stimulant timing | "Caffeine closer to the evening can sometimes amplify these patterns." |
+| Light exposure | "Bright light in the morning and dim light in the evening often supports natural rhythms." |
+| Noise / environment | "A quieter sleep environment might help with the fragmentation patterns we're seeing." |
+
+---
+
+## Explicitly Forbidden Actions
+
+| Forbidden | Reason |
+|---|---|
+| ❌ Claiming to measure stress | Wearables measure proxies, not stress itself |
+| ❌ Mental health language | "Anxiety", "depression", "burnout" — not in scope |
+| ❌ Supplement suggestions | Adaptogens, magnesium, ashwagandha — all forbidden |
+| ❌ Therapy recommendations | "You should talk to a therapist" oversteps boundaries |
+| ❌ Work/life commentary | "Your job is stressing you out" — the system doesn't know this |
+| ❌ Branded protocols | "Try the Headspace app" or "do Yoga Nidra" |
+| ❌ Fear-based language | "If this continues, you risk..." |
+
+---
+
+## Example Notifications
+
+### ✅ Compliant Notification
+
+> **Check-in: Your patterns this week**
+>
+> Over the past few days, your HRV has been lower and your sleep a bit more fragmented than your usual pattern.
+>
+> These patterns sometimes appear during more demanding periods. A couple of things that might help:
+>
+> - A few minutes of slow breathing before bed
+> - Shifting any intense activity to earlier in the day
+> - Reducing screen time in the last hour before sleep
+>
+> *Based on your personal trends. Not medical advice.*
+
+### ❌ Non-Compliant Notification
+
+> **⚠️ Stress Alert: High Risk**
+>
+> Your stress levels have been critically elevated for 3 days. Your HRV of 29ms indicates severe autonomic dysfunction.
+>
+> Immediate actions required:
+> - Take 400mg magnesium glycinate
+> - Practice 20 minutes of meditation daily
+> - Reduce workload immediately
+> - Consider speaking with a mental health professional
+>
+> Chronic stress at this level is associated with cardiovascular disease and immune suppression.
+
+**Why this fails:** "Stress Alert" (alarmist). "Critically elevated" and "severe autonomic dysfunction" (medical language). Supplement dosage. Directive tone. Mental health advice. Disease claims. Fear-based framing.
+
+---
+
+## Tone Guidelines
+
+| Principle | Detail |
+|---|---|
+| **Observational** | Describe what the data shows, not what it means about the person |
+| **Gentle** | The user is likely already stressed — don't add to it |
+| **Non-authoritative** | "Might help" and "consider" — never "you need to" |
+| **Brief** | Short, warm, actionable. Max 3 suggestions. |
+| **Respectful** | The user knows their life better than the system does |
+
+---
+
+## Developer Guidance
+
+### DO
+- Validate all outputs against [Hard Rules](/constraints/hard-rules) and [Language Rules](/constraints/language-rules)
+- Track which suggestion categories are used to maintain variety
+- Include personal trend context ("lower than your usual") in every notification
+- Allow the user to snooze or dismiss stress check-ins
+
+### DON'T
+- Use engagement metrics to optimize notification frequency
+- Conflate physiological signals with psychological state
+- Stack stress and recovery notifications on the same day
+- Use red, orange, or warning colors in stress notifications
+
+---
+
+> **Bottom line:** The Stress Agent should feel like a thoughtful friend noticing you seem tired — not a doctor reading lab results. Observe. Suggest. Step back.

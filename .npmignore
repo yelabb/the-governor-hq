@@ -1,0 +1,50 @@
+# Build outputs
+.next/
+out/
+build/
+dist/
+
+# Dependencies
+node_modules/
+
+# Development
+.vscode/
+.idea/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Testing
+coverage/
+.nyc_output/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docs build (keep source)
+.turbo
+
+# Git
+.git/
+.gitignore
+
+# Don't include these in npm package
+tsconfig.json
+next.config.mjs
+theme.config.tsx
+*.test.js
+*.spec.js
+__tests__/
+
+# Keep these FOR the package
+!pages/
+!mcp-server.js
+!mcp-config.json
+!install.js
+!.cursorrules
+!index.d.ts
+!README.md
+!NPM-README.md
+!LICENSE

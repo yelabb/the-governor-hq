@@ -1,0 +1,310 @@
+# Quick Reference
+
+> One-page cheat sheet for developers and AI coding assistants
+
+---
+
+## The Five Absolute Rules
+
+| Rule | What It Means |
+|---|---|
+| 🚫 **No Medical Claims** | Never diagnose, treat, or claim medical authority. No "this indicates...", "you may have...", "this is a sign of..." |
+| 🚫 **No Supplements** | Zero mentions of supplements, vitamins, minerals, dosages. Not even "some people find..." |
+| 🚫 **No Disease Names** | Never mention insomnia, sleep apnea, anxiety, depression, or any medical condition |
+| 🚫 **No Treatment Language** | Avoid: treat, cure, prevent, heal, therapy, prescription, clinically proven |
+| 🚫 **No Commanding** | Never "you should/must/need to". Always "consider", "might", "when you're ready" |
+
+---
+
+## Safe vs. Unsafe Language
+
+### ❌ Forbidden Phrases
+
+| Don't Say | Why |
+|---|---|
+| "You should rest today" | Commanding |
+| "Your HRV indicates stress" | Medical framing |
+| "Take magnesium before bed" | Supplement recommendation |
+| "You might have insomnia" | Medical diagnosis |
+| "This will prevent burnout" | Treatment claim |
+| "Healthy range is 50-100ms" | Medical authority |
+| "You need 8 hours of sleep" | Prescriptive |
+
+### ✅ Allowed Phrases
+
+| Say Instead | Why |
+|---|---|
+| "You might consider resting today" | Optional suggestion |
+| "Your HRV has been lower than your baseline" | Observation vs. diagnosis |
+| "Earlier wind-down might help" | Behavioral, not supplement |
+| "If sleep concerns persist, consult a doctor" | Appropriate referral |
+| "This often supports recovery patterns" | Probabilistic, not treatment |
+| "Compared to your recent average" | Personal baseline |
+| "Some people feel better with consistent timing" | Soft suggestion |
+
+---
+
+## Decision Flowcharts
+
+### Can I Implement This Feature?
+
+```
+START: New feature request
+│
+├─ Does it make medical claims? ──YES──> ❌ STOP
+├─ Does it mention supplements? ──YES──> ❌ STOP
+├─ Does it name diseases? ──YES──> ❌ STOP
+├─ Does it command the user? ──YES──> 🔄 REVISE (make optional)
+├─ Does it need personal baseline? ──YES──> ✓ Ensure baseline gate exists
+│                                   └─NO──> ❌ ADD baseline requirement
+│
+└─ Proceed with ✅ SAFE implementation
+```
+
+### Can I Display This Text to Users?
+
+```
+START: User-facing message
+│
+├─ Contains: "should", "must", "need to" ──YES──> 🔄 REVISE
+├─ Contains: supplement names ──YES──> ❌ REMOVE
+├─ Contains: disease names ──YES──> ❌ REMOVE
+├─ Contains: "treat", "cure", "prevent" ──YES──> ❌ REMOVE
+├─ Uses personal baseline reference? ──NO──> 🔄 ADD baseline context
+├─ Includes disclaimer? ──NO──> 🔄 ADD disclaimer
+│
+└─ ✅ SAFE to display
+```
+
+---
+
+## Critical Code Patterns
+
+### Pattern 1: Baseline Gating
+
+Every recommendation must check baseline status first:
+
+```javascript
+// ✅ CORRECT
+function generateRecommendation(user) {
+  if (user.baselineStatus !== 'STABLE') {
+    return null; // Silent during learning phase
+  }
+  
+  // Recommendation logic here...
+}
+
+// ❌ WRONG
+function generateRecommendation(user) {
+  // Immediate recommendation without baseline check
+  return "You should rest today";
+}
+```
+
+### Pattern 2: Personal Baseline Comparison
+
+Always compare to individual's baseline, never population average:
+
+```javascript
+// ✅ CORRECT
+const isSignificantDeviation = 
+  user.currentHRV < user.personalBaseline.hrv * 0.8;
+
+// ❌ WRONG
+const isSignificantDeviation = 
+  user.currentHRV < 50; // population threshold
+```
+
+### Pattern 3: Safe Message Template
+
+```javascript
+// ✅ CORRECT message structure
+{
+  title: "Pattern Update",  // Neutral, not alarming
+  body: `Your ${metric} has been ${observation} compared to your recent baseline. 
+         ${probabilistic_context}. 
+         ${optional_suggestion}. 
+         Based on your personal trends. Not medical advice.`,
+  tone: "neutral"
+}
+
+// ❌ WRONG message structure
+{
+  title: "Warning: Health Risk",  // Alarmist
+  body: `Your HRV is dangerously low. You should avoid exercise and take supplements.`,
+  tone: "urgent"
+}
+```
+
+---
+
+## Validation Checklist
+
+Before submitting any code that touches wearable data or user-facing health content:
+
+### Must-Check Items
+
+- [ ] No medical terms (diagnose, treat, cure, prevent, disorder, condition)
+- [ ] No supplement names (magnesium, melatonin, vitamins, CBD, etc.)
+- [ ] No disease names (insomnia, anxiety, depression, sleep apnea)
+- [ ] No commanding language ("should", "must", "need to")
+- [ ] Uses personal baseline (not population average)
+- [ ] Includes baseline gate (`if (baselineStatus !== 'STABLE')`)
+- [ ] Uses optional framing ("consider", "might", "often")
+- [ ] Includes disclaimer if making suggestions
+- [ ] Calm tone (no "Warning", "Danger", "Critical")
+- [ ] User can ignore without consequences
+
+**If all checkboxes ✅, proceed. If any ❌, fix before implementing.**
+
+---
+
+## Domain Boundaries
+
+### IN SCOPE ✅
+
+- Behavioral timing suggestions (earlier bedtime, rest days)
+- Pattern observations (relative to personal baseline)
+- General education (without commands)
+- Data visualization
+- Personal trend tracking
+
+### OUT OF SCOPE ❌
+
+| Category | Examples |
+|---|---|
+| **Supplements** | Melatonin, magnesium, vitamins, CBD, "sleep aids" |
+| **Diet** | Calorie targets, meal plans, fasting protocols |
+| **Training** | Workout plans, periodization, exercise prescriptions |
+| **Medical** | Diagnoses, medical tests, prescription drugs |
+| **Conditions** | Any disease or disorder name |
+| **Longevity** | Lifespan claims, anti-aging promises |
+
+---
+
+## When Uncertain
+
+### AI Agent Workflow
+
+```
+1. 🛑 STOP implementation
+2. 📖 Check /what-we-dont-do.mdx
+3. 📖 Check /constraints/hard-rules.mdx
+4. 🤔 Still uncertain?
+   └─> Default to NO
+   └─> Ask developer with explanation
+   └─> Propose safer alternative
+```
+
+### Default to Safety
+
+**Better to under-feature than to harm users or expose legal liability.**
+
+If you're 80% sure something is safe, that's not enough. Be 100% sure or don't implement it.
+
+---
+
+## Common Pitfalls
+
+| Pitfall | Why It Happens | How to Avoid |
+|---|---|---|
+| Population comparisons | Feels like the "right" reference | Always use personal baseline |
+| Causal language | Trying to explain patterns | Use "often associated with", never "causes" |
+| Medical vocabulary | Sounds professional | Use plain behavioral language |
+| Urgent tone | Want users to take it seriously | Urgency creates anxiety—stay calm |
+| Single-metric decisions | Simpler to implement | Require multi-signal confirmation |
+| Immediate recommendations | Want to be helpful quickly | Respect 30-90 day learning phase |
+
+---
+
+## Emergency Contacts
+
+### If a user reports a health concern:
+
+```
+✅ CORRECT RESPONSE:
+"If you're concerned about your health, we recommend 
+speaking with a healthcare professional."
+
+❌ WRONG RESPONSES:
+- Attempting to diagnose
+- Recommending home remedies
+- Suggesting medical tests
+- Minimizing their concern
+```
+
+### If asked "Do I have [condition]?"
+
+```
+✅ CORRECT RESPONSE:
+"I'm not able to diagnose conditions. If you're concerned, 
+a healthcare professional can help."
+
+❌ WRONG RESPONSE:
+Based on your symptoms/data, you might have...
+```
+
+---
+
+## grep Commands for Validation
+
+Run these before committing code:
+
+```bash
+# Find medical terms
+grep -ri "diagnose\|treat\|cure\|prevent\|disorder\|condition" src/
+
+# Find supplement mentions
+grep -ri "melatonin\|magnesium\|vitamin\|supplement\|CBD" src/
+
+# Find commanding language
+grep -r "should\|must\|need to" src/ | grep -i "you"
+
+# Find disease names
+grep -ri "insomnia\|apnea\|anxiety\|depression\|burnout" src/
+
+# Find alarmist language
+grep -ri "warning\|danger\|critical\|severe\|risk" src/
+```
+
+**Expected result for all: No matches in user-facing strings.**
+
+---
+
+## Resources
+
+| Document | When to Use |
+|---|---|
+| [AI Agent Guide](/ai-agent-guide) | Full implementation guidance with code examples |
+| [Hard Rules](/constraints/hard-rules) | Absolute boundaries—read first |
+| [Language Rules](/constraints/language-rules) | Validate all user-facing text |
+| [What We Don't Do](/what-we-dont-do) | Check feature scope |
+| [Signals](/core/signals) | Understand data limitations |
+| [Baseline](/core/baseline) | Implement learning phases |
+
+---
+
+## Print This Card
+
+```
+╔════════════════════════════════════════════╗
+║  WEARABLE DATA AI SAFETY CHECKLIST         ║
+╠════════════════════════════════════════════╣
+║  Before implementing ANY feature:          ║
+║                                            ║
+║  ☐ Personal baseline required?             ║
+║  ☐ No medical/diagnostic language?         ║
+║  ☐ No supplements mentioned?               ║
+║  ☐ No disease names?                       ║
+║  ☐ Optional framing (not commanding)?      ║
+║  ☐ Calm tone (not alarmist)?               ║
+║  ☐ Compared to user's baseline?            ║
+║  ☐ Disclaimer included?                    ║
+║                                            ║
+║  ALL ✓ = PROCEED   |   ANY ✗ = REVISE     ║
+╚════════════════════════════════════════════╝
+```
+
+---
+
+> **When in doubt, choose user safety over feature richness.**
