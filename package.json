@@ -1,5 +1,5 @@
 {
-  "name": "@the-governor-hq/constitution",
+  "name": "@yelabb/constitution",
   "version": "1.0.0",
   "description": "AI Safety Constitution for Wearable Data Projects - Instant context for AI coding assistants",
   "main": "mcp-server.js",

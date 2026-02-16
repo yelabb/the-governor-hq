@@ -5,7 +5,7 @@
 
 ### AI Safety Constitution for Wearable Data Projects
 
-[![npm version](https://img.shields.io/npm/v/@the-governor-hq/constitution?color=blue&style=flat-square)](https://www.npmjs.com/package/@the-governor-hq/constitution)
+[![npm version](https://img.shields.io/npm/v/@yelabb/constitution?color=blue&style=flat-square)](https://www.npmjs.com/package/@yelabb/constitution)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/yelabb/the-governor-hq?style=flat-square)](https://github.com/yelabb/the-governor-hq/stargazers)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://github.com/yelabb/the-governor-hq/pulls)
@@ -59,7 +59,7 @@ AI coding assistants (Copilot, Claude, ChatGPT) can generate dangerous code when
 
 ```bash
 # Install as dev dependency
-npm install --save-dev @the-governor-hq/constitution
+npm install --save-dev @yelabb/constitution
 
 # Auto-configures: ✓ Cursor ✓ VS Code ✓ Copilot ✓ MCP
 # Your AI is now context-aware instantly!
@@ -99,7 +99,7 @@ cp docs/constitution/.cursorrules .
 ### Installation
 
 ```bash
-npm install --save-dev @the-governor-hq/constitution
+npm install --save-dev @yelabb/constitution
 ```
 
 **That's it!** Auto-configuration creates:
@@ -414,7 +414,7 @@ All code was tested and validated by human developers.
 ## 🔗 Links
 
 - 📖 **Documentation:** [https://the-governor-hq.vercel.app](https://the-governor-hq.vercel.app)
-- 📦 **NPM Package:** [@the-governor-hq/constitution](https://www.npmjs.com/package/@the-governor-hq/constitution)
+- 📦 **NPM Package:** [@yelabb/constitution](https://www.npmjs.com/package/@yelabb/constitution)
 - 💬 **Discussions:** [GitHub Discussions](https://github.com/yelabb/the-governor-hq/discussions)
 - 🐛 **Issues:** [Issue Tracker](https://github.com/yelabb/the-governor-hq/issues)
 - 🌐 **MCP Protocol:** [Model Context Protocol](https://modelcontextprotocol.io)
