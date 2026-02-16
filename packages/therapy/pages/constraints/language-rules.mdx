@@ -1,0 +1,447 @@
+# Language Rules
+
+> Communication guidelines for therapy data systems  
+> How to speak about mental health safely and supportively
+
+---
+
+## Overview
+
+Language matters enormously in mental health contexts.
+
+The words you choose can:
+- ✅ Validate and support users
+- ❌ Pathologize normal emotions
+- ❌ Trigger shame or distress
+- ❌ Create false authority
+
+This guide provides **specific language rules** for therapy data systems.
+
+---
+
+## Core Principle
+
+**Speak as a supportive companion, never a clinical authority.**
+
+You are observing patterns alongside the user, not diagnosing from above.
+
+---
+
+## Rule 1: Observation Over Diagnosis
+
+### ❌ Diagnostic language (forbidden):
+- "You have depression"
+- "You're anxious"
+- "This is a panic attack"
+- "You suffer from bipolar disorder"
+- "Your symptoms indicate PTSD"
+
+### ✅ Observational language (required):
+- "You've been feeling down lately"
+- "You mentioned feeling anxious"
+- "That sounds really overwhelming"
+- "You've noticed big mood swings"
+- "You've described some difficult experiences"
+
+**The difference:**
+- Diagnostic language claims medical authority
+- Observational language reflects what the user has shared
+
+**Apply everywhere:**
+- UI copy
+- Notifications
+- Prompts
+- Insights
+- Reports
+
+---
+
+## Rule 2: Person-First Language
+
+### ❌ Identity-based (avoid):
+- "You're depressed"
+- "Anxious users"
+- "Bipolar individuals"
+- "A depressive"
+
+### ✅ Person-first (use):
+- "You've been feeling depressed"
+- "People experiencing anxiety"
+- "People with bipolar disorder" (when referring to diagnosed individuals)
+- "Someone experiencing depression"
+
+**Why:** People are not their conditions. Language should reflect full personhood.
+
+**Exception:** Some communities prefer identity-first (e.g., "autistic person" vs. "person with autism"). When referring to specific communities, respect their preference. For general communication, default to person-first.
+
+---
+
+## Rule 3: Normalize Emotions, Not Disorders
+
+### ❌ Pathologizing normal emotions:
+- "Your sadness is abnormal"
+- "Feeling anxious isn't normal"
+- "This level of emotion is concerning"
+
+### ✅ Normalizing human emotion:
+- "It's okay to feel sad"
+- "Anxiety is a common human emotion"
+- "Everyone experiences difficult feelings"
+
+**But also:**
+- Know when to suggest professional help
+- Don't minimize persistent, severe symptoms
+- Balance normalization with appropriate referrals
+
+**Example:**
+```typescript
+if (lowMoodDays < 3) {
+  return "It's normal to have down days. Be gentle with yourself.";
+}
+
+if (lowMoodDays >= 14) {
+  return `
+    You've been feeling low for a while. While difficult emotions are normal,
+    persistent low mood might benefit from professional support.
+    Consider talking to a mental health professional.
+  `;
+}
+```
+
+---
+
+## Rule 4: Validate Feelings
+
+### ❌ Dismissive language:
+- "Just think positive"
+- "Others have it worse"
+- "You're overreacting"
+- "Snap out of it"
+- "It's not that bad"
+
+### ✅ Validating language:
+- "That sounds really difficult"
+- "Your feelings are valid"
+- "It makes sense you'd feel that way"
+- "I hear that this has been tough for you"
+
+**Validation doesn't mean agreement.** It means acknowledging the person's emotional experience.
+
+**Examples:**
+
+| Situation | ❌ Don't say | ✅ Do say |
+|---|---|---|
+| User feels overwhelmed | "Everyone gets stressed sometimes" | "That sounds really overwhelming" |
+| User is sad | "Just be grateful for what you have" | "It's okay to feel sad" |
+| User is anxious | "There's nothing to worry about" | "Anxiety can feel really uncomfortable" |
+| User is frustrated | "Calm down" | "That sounds frustrating" |
+
+---
+
+## Rule 5: Suggest, Don't Prescribe
+
+### ❌ Prescriptive (authoritative):
+- "You need therapy"
+- "You should try CBT"
+- "You must talk to a doctor"
+- "Stop doing [behavior]"
+
+### ✅ Suggestive (supportive):
+- "Talking to a therapist might help"
+- "Some people find therapy helpful"
+- "Consider consulting a mental health professional"
+- "You might find it helpful to..."
+
+**The difference:**
+- Prescriptive language assumes authority
+- Suggestive language offers options
+
+**User autonomy is critical.** They make decisions about their care.
+
+---
+
+## Rule 6: Avoid Clinical Jargon
+
+### ❌ Clinical terms (avoid):
+- "Major depressive episode"
+- "Generalized anxiety disorder"
+- "Comorbidity"
+- "Psychopathology"
+- "Differential diagnosis"
+
+### ✅ Plain language (use):
+- "Persistent low mood"
+- "Ongoing anxiety"
+- "Multiple challenges"
+- "Mental health"
+- "Understanding what's happening"
+
+**Exception:** When quoting professional resources or educational content, clinical terms are okay if explained in plain language.
+
+**Example:**
+> "If you're diagnosed with major depressive disorder (persistent depression that affects daily life), your doctor may recommend..."
+
+---
+
+## Rule 7: Crisis Language = Immediate Resources
+
+### ❌ Therapeutic response to crisis:
+- "Tell me more about these feelings"
+- "I'm here for you"
+- "Let's work through this together"
+
+### ✅ Immediate external referral:
+```
+🚨 If you're in crisis or considering self-harm:
+
+• Call 988 (Suicide & Crisis Lifeline)
+• Text HOME to 741741 (Crisis Text Line)
+• Call 911 for emergencies
+
+These resources are available 24/7.
+```
+
+**No other response during crisis detection.**
+
+**Crisis keywords:**
+- Suicide, kill myself, end my life
+- Self-harm, hurt myself, cut myself
+- Not worth living, want to die
+- Overdose, pills, hanging, gun (in context)
+
+**Always:** Display resources prominently, clickable/callable, no shame language.
+
+---
+
+## Rule 8: Respect Privacy and Anonymity
+
+### ❌ Sharing assumptions:
+- "Tell your therapist about this app"
+- "Share your insights with your doctor"
+- (Implying they're in treatment when they might not be)
+
+### ✅ Respecting privacy:
+- "If you're working with a therapist, you might want to share..."
+- "Some people find it helpful to discuss patterns with their doctor"
+- (Offering options without assumptions)
+
+**Never assume:**
+- User is in therapy
+- User has told anyone about their mental health
+- User wants others to know
+
+**Always:**
+- Respect that mental health is private
+- Give user control over data sharing
+- Avoid pressure to disclose
+
+---
+
+## Rule 9: Inclusive, Non-Discriminatory Language
+
+### ❌ Exclusionary language:
+- Assuming gender, relationship status, ability, etc.
+- "Your husband/wife" (assume heterosexual relationship)
+- "Walk it off" (assumes physical ability)
+- Cultural insensitivity
+
+### ✅ Inclusive language:
+- "Your partner" (gender-neutral)
+- "Take a break" or "Go easy on yourself" (accessible)
+- Culturally aware (understand different expressions of distress)
+
+**Mental health is universal.** Language should be accessible to all.
+
+---
+
+## Rule 10: Strengths-Based Framing
+
+### ❌ Deficit-focused:
+- "You failed to journal today"
+- "Your mood is bad again"
+- "You're struggling"
+
+### ✅ Strengths-focused:
+- "You've journaled 5 days this week!"
+- "You've been tracking your mood consistently"
+- "You're working on understanding yourself"
+
+**Acknowledge effort and growth**, even in difficult times.
+
+**Example:**
+```typescript
+if (journalStreak >= 5) {
+  return "You've been so consistent with journaling. That takes real commitment.";
+}
+
+if (journalStreak === 0) {
+  return "Ready to journal when you are. No pressure.";
+  // NOT: "You haven't journaled in a while. Try to be more consistent."
+}
+```
+
+---
+
+## Practical Examples
+
+### Feature: Mood Insights
+
+❌ **Bad:**
+```
+Your mood has been low for 2 weeks. You're showing signs of depression.
+You need to see a therapist immediately.
+```
+
+✅ **Good:**
+```
+You've been feeling low for a couple of weeks. Persistent low mood can be tough.
+
+Consider talking to a mental health professional who can provide support.
+In the meantime, be gentle with yourself.
+```
+
+---
+
+### Feature: Journal Prompt
+
+❌ **Bad:**
+```
+Tell me about your childhood trauma and how it's affecting you today.
+```
+
+✅ **Good:**
+```
+What's one positive moment from today, no matter how small?
+```
+
+---
+
+### Feature: Notification
+
+❌ **Bad:**
+```
+You haven't logged your mood today. Your depression tracking won't be accurate.
+```
+
+✅ **Good:**
+```
+Check in with yourself today 💙
+(No pressure—just a gentle reminder)
+```
+
+---
+
+### Feature: Crisis Detection
+
+❌ **Bad:**
+```
+[User mentions suicide]
+
+I'm detecting that you're at high risk. Let me help you work through this.
+```
+
+✅ **Good:**
+```
+🚨 If you're in crisis or considering self-harm:
+
+• Call 988 (Suicide & Crisis Lifeline)
+• Text HOME to 741741 (Crisis Text Line)
+• Call 911 for emergencies
+
+These resources are available 24/7.
+```
+
+---
+
+### Feature: Professional Referral
+
+❌ **Bad:**
+```
+You have severe depression. You must see a psychiatrist for medication.
+```
+
+✅ **Good:**
+```
+You've been experiencing persistent low mood for a while.
+
+Consider reaching out to a mental health professional:
+• Find a therapist: psychologytoday.com/us/therapists
+• Free/low-cost options: openpathcollective.org
+
+They can provide personalized support.
+```
+
+---
+
+## Testing Language
+
+### Automated checks:
+```typescript
+const FORBIDDEN_PHRASES = [
+  "you have depression",
+  "you're bipolar",
+  "you suffer from",
+  "this is a panic attack",
+  "you need therapy",
+  // ...hundreds more
+];
+
+function validateCopy(text: string): boolean {
+  return !FORBIDDEN_PHRASES.some(phrase =>
+    text.toLowerCase().includes(phrase)
+  );
+}
+```
+
+### Human review:
+- Mental health professionals review all copy
+- Test with diverse users
+- Solicit feedback on tone and language
+- Iterate based on sensitivity feedback
+
+---
+
+## Language Validation Checklist
+
+Before shipping UI copy, verify:
+
+- [ ] **Observational**, not diagnostic
+- [ ] **Person-first** language (when appropriate)
+- [ ] **Normalizes** emotions without minimizing
+- [ ] **Validates** feelings without being dismissive
+- [ ] **Suggests**, doesn't prescribe
+- [ ] **Plain language**, avoids jargon
+- [ ] **Crisis language** triggers immediate resources
+- [ ] **Respects privacy** and autonomy
+- [ ] **Inclusive** and non-discriminatory
+- [ ] **Strengths-based** framing
+
+---
+
+## Summary
+
+**Language rules for therapy data systems:**
+
+1. **Observation over diagnosis** — "You've been feeling down" not "You have depression"
+2. **Person-first** — "People experiencing anxiety" not "anxious people"
+3. **Normalize emotions** — But refer serious symptoms to professionals
+4. **Validate feelings** — "That sounds hard" not "Just think positive"
+5. **Suggest, don't prescribe** — "Might help" not "You need"
+6. **Avoid jargon** — Plain language over clinical terms
+7. **Crisis = resources** — 988, Crisis Text Line, 911 (no therapeutic response)
+8. **Respect privacy** — Don't assume treatment status
+9. **Inclusive language** — Accessible to all
+10. **Strengths-based** — Acknowledge effort and growth
+
+**Why it matters:**
+- Language shapes how users experience the product
+- Wrong language can pathologize, shame, or mislead
+- Right language validates, supports, and empowers
+
+**Enforce through:**
+- Automated validation (keyword checks)
+- Professional review (therapist feedback)
+- User testing (diverse feedback)
+- Continuous iteration
+
+Get the language right, and you create a genuinely supportive experience.

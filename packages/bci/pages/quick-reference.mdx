@@ -1,0 +1,333 @@
+# Quick Reference
+
+> One-page cheat sheet for developers and AI coding assistants working with BCI data
+
+---
+
+## The Five Absolute BCI Rules
+
+| Rule | What It Means |
+|---|---|
+| 🚫 **No Neurological Diagnoses** | Never diagnose epilepsy, ADHD, dementia, autism, seizures, or any brain condition |
+| 🚫 **No Thought/Emotion Reading** | Brain signals are patterns, not mind reading. Never claim "you're thinking/feeling X" |
+| 🚫 **No Cognitive Claims** | Never assess IQ, intelligence, learning disabilities, or cognitive abilities |
+| 🚫 **No Medical Neurofeedback** | Consumer wellness only (meditation, focus), not clinical treatment |
+| 🚫 **Privacy Paramount** | Explicit informed consent required before collecting any neural data |
+
+---
+
+## Safe vs. Unsafe Language
+
+### ❌ Forbidden Phrases for BCI
+
+| Don't Say | Why |
+|---|---|
+| "You're thinking about..." | Claims thought reading |
+| "This shows you have ADHD" | Medical diagnosis |
+| "You're feeling anxious" | Claims emotion detection |
+| "Your IQ is approximately..." | Cognitive ability claim |
+| "This indicates epilepsy" | Neurological diagnosis |
+| "Use neurofeedback to treat depression" | Medical treatment claim |
+| "Your cognitive performance is below average" | Compares to population, makes ability claims |
+
+### ✅ Allowed Phrases for BCI
+
+| Say Instead | Why |
+|---|---|
+| "Your alpha wave pattern suggests relaxation" | Pattern observation, not thought reading |
+| "Your focus pattern has changed from your baseline" | Personal comparison, no diagnosis |
+| "This brain activity is similar to past calm states" | Pattern matching, not emotion certainty |
+| "Your typical brain patterns show..." | Personal baseline reference |
+| "During meditation, your alpha waves increase" | Behavioral correlation, not cognitive claim |
+| "Neurofeedback can support relaxation practice" | Wellness framing, not treatment |
+| "Compared to your personal baseline..." | Individual reference only |
+
+---
+
+## Decision Flowcharts
+
+### Can I Implement This BCI Feature?
+
+```
+START: New BCI feature request
+│
+├─ Does it diagnose brain/mental conditions? ──YES──> ❌ STOP
+├─ Does it claim thought/emotion reading? ──YES──> ❌ STOP
+├─ Does it assess cognitive abilities? ──YES──> ❌ STOP
+├─ Does it collect neural data without consent? ──YES──> 🔄 ADD consent flow
+├─ Does it compare to population norms? ──YES──> 🔄 CHANGE to personal baseline
+├─ Does it need personal baseline? ──YES──> ✓ Ensure 30-90 day gate
+│                                   └─NO──> ❌ ADD baseline requirement
+│
+└─ Proceed with ✅ SAFE implementation
+```
+
+### Can I Display This Brain-Related Text?
+
+```
+START: User-facing message about brain activity
+│
+├─ Contains: "ADHD", "epilepsy", "autism", "dementia" ──YES──> ❌ REMOVE
+├─ Contains: "thought", "feeling", "emotion" (as certainty) ──YES──> 🔄 REVISE to pattern
+├─ Contains: "IQ", "intelligence", "cognitive ability" ──YES──> ❌ REMOVE
+├─ Contains: "diagnose", "disorder", "condition" ──YES──> ❌ REMOVE
+├─ Says "you are [mental state]" ──YES──> 🔄 CHANGE to "pattern shows"
+├─ Compares to population average ──YES──> 🔄 CHANGE to personal baseline
+├─ Includes privacy explanation ──NO──> 🔄 ADD consent context
+├─ Includes "not medical advice" disclaimer ──NO──> 🔄 ADD disclaimer
+│
+└─ ✅ SAFE to display
+```
+
+---
+
+## Critical Code Patterns
+
+### Pattern 1: Baseline Gating (Essential for BCI)
+
+Every BCI recommendation must check baseline status first:
+
+```javascript
+// ✅ CORRECT
+function generateNeurofeedback(user, eegData) {
+  // Must have 30-90 days of personal brain pattern data
+  if (user.bciBaselineStatus !== 'STABLE') {
+    return null; // Silent during learning phase
+  }
+  
+  // Now safe to compare to personal baseline
+  const alphaDeviation = eegData.alphaPower / user.personalBaseline.alphaPower;
+  
+  if (alphaDeviation > 1.2) {
+    return "Your alpha wave activity is elevated, similar to your relaxed states.";
+  }
+}
+
+// ❌ WRONG
+function generateNeurofeedback(user, eegData) {
+  // Immediate feedback without baseline - DANGEROUS
+  if (eegData.alphaPower > 50) { // Population threshold
+    return "You're feeling very relaxed right now."; // Claims emotion
+  }
+}
+```
+
+### Pattern 2: Personal Baseline Comparison
+
+Always compare to individual's brain patterns, never population norms:
+
+```javascript
+// ✅ CORRECT
+const isSignificantDeviation = 
+  user.currentBetaWaves < user.personalBaseline.betaWaves * 0.8;
+
+// ❌ WRONG
+const isSignificantDeviation = 
+  user.currentBetaWaves < 15; // population threshold - FORBIDDEN
+```
+
+### Pattern 3: Safe Brain Pattern Message Template
+
+```javascript
+// ✅ CORRECT message structure
+{
+  title: "Brain Pattern Update", // Neutral, not diagnostic
+  body: `Your ${brainwave} activity has been ${deviation_observation} compared to your recent baseline. 
+         This pattern sometimes appears during ${behavioral_context}. 
+         ${optional_suggestion}. 
+         Based on your personal brain patterns. Not medical advice.`,
+  tone: "neutral",
+  privacyNote: "Your neural data is private and encrypted."
+}
+
+// ❌ WRONG message structure
+{
+  title: "Warning: Cognitive Impairment Detected", // Diagnostic + alarmist
+  body: `Your brain waves indicate ADHD. You should see a neurologist immediately.`,
+  tone: "urgent" // Never use urgent for brain patterns
+}
+```
+
+### Pattern 4: Informed Consent for Neural Data
+
+```javascript
+// ✅ CORRECT
+async function startBrainRecording(device, user) {
+  if (!user.neuralDataConsentGiven) {
+    const consent = await showDetailedConsentDialog({
+      whatWeCollect: "EEG brainwave data (alpha, beta, theta, delta frequencies)",
+      whyWeCollect: "To learn your personal brain patterns and provide neurofeedback",
+      whatWeDontDo: [
+        "Read your thoughts or emotions",
+        "Make medical diagnoses",
+        "Share data without permission"
+      ],
+      retention: "90 days, deletable anytime",
+      encryption: "End-to-end encrypted"
+    });
+    
+    if (!consent.accepted) return { status: "declined" };
+    user.neuralDataConsentGiven = true;
+  }
+  
+  return await device.startEEGStream();
+}
+
+// ❌ WRONG
+async function startBrainRecording(device) {
+  return await device.startEEGStream(); // No consent!
+}
+```
+
+---
+
+## Validation Checklist
+
+Before submitting any BCI code or brain-related content:
+
+### Must-Check Items
+
+- [ ] No neurological conditions named (ADHD, epilepsy, dementia, autism, seizure, concussion)
+- [ ] No psychiatric conditions (anxiety, depression, bipolar, PTSD, schizophrenia)
+- [ ] No cognitive ability claims (IQ, intelligence, learning disabilities, memory disorders)
+- [ ] No thought reading assertions ("you're thinking...")
+- [ ] No emotion certainty ("you are happy/sad/anxious")
+- [ ] No medical treatment recommendations
+- [ ] Explicit informed consent before neural data collection
+- [ ] Privacy and encryption explained
+- [ ] Personal baseline required (30-90 day minimum)
+- [ ] Comparisons to individual baseline only (never population)
+- [ ] Observational language ("pattern shows") not diagnostic ("you have")
+- [ ] "Not medical advice" disclaimer included
+- [ ] Brain data described as patterns, not meanings
+- [ ] User can delete all neural data
+- [ ] No third-party sharing without explicit permission
+
+---
+
+## BCI Domain Boundaries
+
+### ✅ Allowed (Consumer Wellness)
+
+| Application | Scope |
+|---|---|
+| **Meditation neurofeedback** | Real-time feedback during meditation practice |
+| **Focus pattern tracking** | Personal brain activity trends over time |
+| **Sleep stage estimation** | EEG-based sleep architecture (not diagnosis) |
+| **Relaxation training** | Neurofeedback for stress management practice |
+| **Personal baseline learning** | Individual brain pattern characterization |
+| **Attention games** | Neurofeedback-controlled interactive experiences |
+
+### ❌ Forbidden (Medical/Diagnostic)
+
+| Application | Why Forbidden |
+|---|---|
+| **ADHD diagnosis/treatment** | Medical diagnosis and clinical neurofeedback |
+| **Seizure detection** | Neurological diagnosis requiring clinical EEG |
+| **Lie detection** | Claims thought/emotion reading |
+| **IQ testing** | Cognitive ability assessment |
+| **Cognitive decline monitoring** | Neurological diagnosis (dementia, etc.) |
+| **Mental health diagnosis** | Psychiatric conditions from brain signals |
+| **Concussion impact tracking** | Medical brain injury assessment |
+| **Cognitive enhancement claims** | Treatment claims about brain performance |
+
+---
+
+## BCI-Specific Terminology
+
+### Use These Terms (Safe)
+
+- "Brain pattern"
+- "Brain activity"
+- "Brainwave data"
+- "Neural signal"
+- "EEG reading"
+- "Alpha/beta/theta/delta waves"
+- "Personal brain baseline"
+- "Brain activity trend"
+
+### Never Use These Terms (Unsafe)
+
+- "Brain diagnosis"
+- "Neural disorder"
+- "Cognitive impairment"
+- "Brain health score"
+- "Mental state detection"
+- "Thought pattern"
+- "Emotion sensor"
+- "Brain performance level"
+
+---
+
+## Emergency Situations
+
+If brain data shows highly unusual patterns:
+
+```javascript
+// ✅ CORRECT response to anomaly
+function handleUnusualBrainPattern(eegData, user) {
+  return {
+    message: `We're noticing an unusual pattern in your brain activity that's outside your typical range.
+    
+              Consumer EEG devices are not medical-grade diagnostic tools. This might be a sensor placement issue.
+              
+              If you're experiencing any symptoms (headache, dizziness, confusion, vision changes), please consult a healthcare professional.
+              
+              Try adjusting the device and see if the pattern normalizes.`,
+    suggestedAction: "reposition_device",
+    calmTone: true, // Never alarmist
+    disclaimer: "Not medical advice. Consumer EEG is not diagnostic."
+  };
+}
+
+// ❌ WRONG response
+function handleUnusualBrainPattern(eegData) {
+  return {
+    message: "WARNING: Seizure activity detected! Seek emergency medical attention immediately!",
+    urgency: "critical"
+  }; // Claims diagnosis, creates panic, inappropriate for consumer device
+}
+```
+
+---
+
+## Quick Tests for Your Code
+
+### Test 1: The "Could This Be Medical?" Test
+If your feature could appear in a doctor's office or hospital, it's probably out of scope.
+
+### Test 2: The "Mind Reading" Test
+If your message claims to know what the user is thinking or feeling with certainty, it's forbidden.
+
+### Test 3: The "Baseline" Test
+If your code generates insights without checking personal baseline status, it's wrong.
+
+### Test 4: The "Consent" Test
+If your code collects brain data without explicit informed consent, it's a privacy violation.
+
+### Test 5: The "Population Comparison" Test
+If your code uses phrases like "normal range" or "average is", it's using population data incorrectly.
+
+---
+
+## Summary Card
+
+**BCI GOLDEN RULES:**
+1. Brain signals = **patterns**, not thoughts/feelings
+2. Personal **baseline required** (30-90 days)
+3. **Privacy first** - explicit consent always
+4. **No diagnoses** - neurological or psychiatric
+5. **Consumer wellness** - meditation/focus, not medical
+6. **Observational tone** - "pattern shows" not "you are"
+7. **When uncertain, say NO** until confirmed safe
+
+---
+
+## Resources
+
+- [AI Agent Guide](/ai-agent-guide) - Detailed patterns and workflows
+- [Hard Rules](/constraints/hard-rules) - Absolute boundaries
+- [Language Rules](/constraints/language-rules) - Communication guidelines
+- [What We Don't Do](/what-we-dont-do) - Scope limitations
+- [Focus Agent](/agents/focus-agent) - Attention pattern guidance
+- [Neurofeedback Agent](/agents/neurofeedback-agent) - Meditation/relaxation examples

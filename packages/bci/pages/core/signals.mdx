@@ -1,0 +1,281 @@
+# Signals
+
+> What BCI data the system reads — and what it cannot tell us.
+
+---
+
+## Purpose
+
+This document defines the **exact data inputs** available to consumer BCI systems. Every signal listed here comes from consumer neurotechnology devices (EEG headbands, neurofeedback systems, etc.). No signal in this list constitutes a medical measurement.
+
+A developer reading this page should know:
+1. What can be **read** from the hardware
+2. What can be **derived** with reasonable confidence  
+3. What **must never be inferred** from this data
+
+---
+
+## Supported Signals
+
+| Signal | Source | Characteristics | Update Frequency |
+|---|---|---|---|
+| **Alpha Waves (8-12 Hz)** | EEG | Associated with relaxation, eyes-closed rest, meditation. Noisy, position-sensitive. | Real-time / 1-second windows |
+| **Beta Waves (12-30 Hz)** | EEG | Associated with active thinking, focus, alertness. Highly variable. | Real-time / 1-second windows |
+| **Theta Waves (4-8 Hz)** | EEG | Associated with drowsiness, light sleep, deep meditation. Artifact-prone. | Real-time / 1-second windows |
+| **Delta Waves (0.5-4 Hz)** | EEG | Associated with deep sleep. Easily contaminated by movement. | Real-time / 1-second windows |
+| **Gamma Waves (30-100 Hz)** | EEG (if available) | Associated with complex cognitive tasks. Often noisy in consumer devices. | Real-time (if supported) |
+| **Sleep Stages** | Derived (multi-channel EEG + accelerometer) | Estimated stages: Wake, Light, Deep, REM. Not clinical-grade. | Sleep session / nightly |
+| **Focus Patterns** | Derived (beta/theta ratio, frontal EEG) | Pattern similarity to past focused states. Personal baseline required. | Real-time / multi-second windows |
+| **Meditation Patterns** | Derived (alpha power, theta, relaxation markers) | Pattern similarity to past meditative states. Personal baseline required. | Real-time / multi-second windows |
+
+---
+
+## Signal Characteristics
+
+### Pattern-based, not state-reading
+
+Brainwave signals show **patterns**, not mental states. High alpha waves correlate with relaxation in research—but cannot definitively prove "you are relaxed right now."
+
+### Personal baseline required
+
+A frequency band value (e.g., "alpha power = 45 microvolts") means nothing without context. The same value could indicate calm for one person and agitation for another. **Only personal baseline comparisons are meaningful.**
+
+### Noisy and artifact-prone
+
+Consumer EEG is extremely sensitive to:
+- Electrode placement and contact quality
+- Muscle tension (jaw clenching, eyebrow movement)
+- Eye movements and blinks
+- Electrical noise (phones, computers, power lines)
+- Movement and position changes
+
+**Single-moment readings are noise.** Systems must average over time windows and require multi-day baselines.
+
+### Delayed and indirect
+
+Brain signals don't directly encode thoughts. They reflect underlying neural activity that correlates with—but doesn't causally determine—mental states and behaviors.
+
+### Individual variability
+
+Research shows population-level correlations (e.g., "alpha increases during meditation"), but individual patterns vary widely. Some people  have high baseline alpha; others low. **Population norms are not decision inputs.**
+
+---
+
+## What BCI Signals Cannot Tell Us
+
+| Impossible Inference | Why |
+|---|---|
+| **Specific thoughts** | EEG measures aggregate activity of millions of neurons—not specific thought content |
+| **Definite emotions** | Correlations exist, but cannot definitively determine "you are happy" from brainwaves alone |
+| **Cognitive abilities** | IQ, intelligence, learning disabilities cannot be measured from consumer EEG |
+| **Medical diagnoses** | ADHD, epilepsy, dementia, etc. require clinical evaluation—consumer EEG cannot diagnose |
+| **Deception/lies** | No validated lie detection from consumer EEG—impossible with current technology |
+| **Memory content** | Cannot determine what someone remembers or access specific memories |
+| **Intentions** | Cannot predict actions or read intentions from brain patterns |
+
+---
+
+## Population Averages Are Not Decision Inputs
+
+The system **explicitly rejects** population averages as primary decision criteria.
+
+**Why:**
+- "Normal alpha range" varies by age, genetics, meditation experience, device calibration
+- Telling someone their beta is "low" (compared to population) creates anxiety without actionable insight
+- The only meaningful comparison is **you vs. your own baseline**
+
+**Rule:** Population data may be used for educational context ("research shows alpha often increases during meditation") but must **never** drive agent recommendations or pattern notifications.
+
+---
+
+## Signal Processing Requirements
+
+### Artifact Detection
+
+Before using EEG data for neurofeedback, filter out:
+- **Eye blinks** (sharp, large amplitude signals)
+- **Muscle tension** (high-frequency noise)
+- **Movement artifacts** (sudden large deflections)
+- **Electrode disconnection** (flatline or extreme amplitude)
+
+### Time Windows
+
+- **Real-time neurofeedback:** 1-5 second windows (with artifact rejection)
+- **Pattern recognition:** 10-60 second windows
+- **Baseline calculation:** 30-90 days of daily recordings
+
+### Multi-Signal Confirmation
+
+Never trigger high-confidence feedback from a single signal. Require:
+- Multiple frequency bands (e.g., alpha + theta for meditation)
+- Temporal consistency (pattern sustained for X seconds)
+- Baseline deviation threshold (e.g., >20% change)
+
+---
+
+## BCI-Specific Data Types
+
+### Raw EEG
+
+**What it is:** Voltage measurements from scalp electrodes (~10-100 microvolts)
+
+**What it's good for:** Computing frequency bands, detecting artifacts, research
+
+**What it's NOT:** Readable thought or emotion data
+
+### Frequency Band Power
+
+**What it is:** Amount of activity in alpha/beta/theta/delta ranges
+
+**What it's good for:** Comparing to personal baseline, neurofeedback
+
+**What it's NOT:** Absolute indicators of mental states
+
+### Derived Metrics (Focus, Relaxation, etc.)
+
+**What they are:** Algorithmic combinations of frequency bands and patterns
+
+**What they're good for:** Simplified feedback to users (when based on personal baseline)
+
+**What they're NOT:** Cognitive ability scores or medical assessments
+
+---
+
+## Consumer Devices vs. Medical-Grade EEG
+
+| Aspect | Consumer BCI | Medical EEG |
+|---|---|---|
+| **Electrode count** | 1-4 channels | 10-256 channels |
+| **Spatial resolution** | Very limited | High |
+| **Signal quality** | Moderate, artifact-prone | Clinical-grade |
+| **Calibration** | User-dependent | Professionally calibrated |
+| **Use case** | Wellness neurofeedback | Medical diagnosis |
+| **FDA regulation** | Not regulated (wellness) | Class II medical device |
+| **Cost** | $100-500 | $10,000-100,000+ |
+
+**Implication:** Consumer BCI data is fundamentally different from clinical EEG. Systems must not claim medical-grade accuracy.
+
+---
+
+## Developer Guidance
+
+### DO
+- Compare signals to the user's personal baseline (30-90 days)
+- Require multi-signal, multi-timepoint confirmation before high-confidence feedback
+- Treat single-moment readings as noise
+- Display trends and patterns, not absolute values
+- Provide artifact rejection and signal quality indicators
+- Explain that EEG shows patterns, not thoughts
+
+### DON'T
+- Use population "normal ranges" for decision-making
+- Generate insights without stable personal baseline
+- Show raw numbers without context (e.g., "alpha = 45 μV" means nothing alone)
+- Claim to know thoughts, emotions, or cognitive states with certainty
+- Present consumer EEG as medically accurate
+- Use brain data to assess intelligence or make diagnoses
+
+---
+
+## Signal-to-Insight Pathway
+
+```
+HARDWARE
+  ↓
+Raw EEG voltage
+  ↓
+Artifact rejection & filtering
+  ↓
+Frequency band extraction (alpha, beta, theta, delta)
+  ↓
+Personal baseline comparison (requires 30-90 days)
+  ↓
+Pattern matching (similarity to past states)
+  ↓
+Multi-signal confirmation
+  ↓
+NEUROFEEDBACK / OBSERVATION
+  ↓
+User sees: "Your alpha pattern is similar to past relaxed states"
+  ↓
+User DOES NOT see: "You are relaxed" (too definitive)
+```
+
+---
+
+## Privacy Considerations for Neural Signals
+
+**Brain data is the most sensitive biometric.**
+
+### Why it's sensitive:
+- Reflects mental activity (even if we can't read specific thoughts)
+- Could potentially reveal medical conditions (epilepsy signatures)
+- Highly personal (everyone's baseline is different)
+- Permanent biometric (brain patterns are stable over time)
+
+### Required protections:
+- **Explicit informed consent** before any EEG collection
+- **End-to-end encryption** for storage and transmission
+- **User control** (delete all data anytime)
+- **No third-party sharing** without explicit permission
+- **Minimal retention** (30-90 days for baseline, then rolling deletion)
+
+---
+
+## Example: Alpha Wave Interpretation
+
+### ❌ Wrong Interpretation
+
+```javascript
+if (alphaPower > 50) {
+  return "You are relaxed and calm."; // Definitive mental state claim
+}
+```
+
+**Problems:**
+- Uses absolute threshold (population norm)
+- Claims certainty about mental state
+- Ignores personal baseline
+
+### ✅ Correct Interpretation
+
+```javascript
+if (user.bciBaselineStatus !== 'STABLE') {
+  return null; // No feedback without baseline
+}
+
+const alphaRatio = alphaPower / user.personalBaseline.alphaPower;
+
+if (alphaRatio > 1.2 && sustainedFor > 5seconds) {
+  return {
+    message: "Your alpha wave activity is elevated compared to your recent baseline. This pattern is similar to your past meditation sessions.",
+    disclaimer: "Based on your personal brain patterns. Brain signals show patterns, not definitive mental states."
+  };
+}
+```
+
+**Why this is correct:**
+- Requires personal baseline
+- Uses relative comparison (ratio, not absolute)
+- Temporal consistency check (sustained pattern)
+- Observational language ("pattern is similar to")
+- Disclaimer about limitations
+
+---
+
+## Summary
+
+**BCI signals provide:**
+- ✅ Brain activity patterns (frequency bands)
+- ✅ Similarity to past personal states
+- ✅ Trends over time (with baseline)
+- ✅ Neurofeedback for meditation/focus practice
+
+**BCI signals do NOT provide:**
+- ❌ Specific thoughts or mental content
+- ❌ Definitive emotion states
+- ❌ Cognitive ability measurements
+- ❌ Medical diagnoses
+- ❌ Lie detection or intention reading
+
+**Bottom line:** These signals are pattern observation tools for wellness neurofeedback, not mind-reading devices or medical instruments.

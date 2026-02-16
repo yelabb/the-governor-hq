@@ -1,0 +1,438 @@
+# Deviation Engine
+
+> When and why BCI neurofeedback systems activate
+
+---
+
+## Purpose
+
+The **deviation engine** determines when a BCI system provides neurofeedback or pattern observations to the user.
+
+**Core principle:** Only notify when brain activity meaningfully deviates from personal baseline—not for every fluctuation.
+
+This document defines:
+- When neurofeedback is appropriate
+- How to detect meaningful deviations
+- What "meaningful" means for brain patterns
+- When to stay silent
+
+---
+
+## The Core Question
+
+**"Should the system say something to the user right now?"**
+
+This depends on:
+1. **Is baseline stable?** (30-90 days of data)
+2. **Is current pattern different enough from baseline to matter?**
+3. **Is the deviation sustained (not just noise)?**
+4. **Can the user take any action based on this information?**
+5. **Is this the right time to provide feedback?**
+
+**If any answer is NO → stay silent.**
+
+---
+
+## Deviation Detection Logic
+
+### Step 1: Baseline Gate
+
+```javascript
+function shouldProvideFeedback(user, eegData) {
+  // MANDATORY FIRST CHECK
+  if (user.bciBaselineStatus !== 'STABLE') {
+    return false; // Silent during learning phase (30-90 days)
+  }
+  
+  // Continue to step 2...
+}
+```
+
+**No baseline = no feedback. Ever.**
+
+---
+
+### Step 2: Calculate Deviation from Personal Baseline
+
+For each frequency band, compare current activity to personal baseline:
+
+```javascript
+const alphaDeviation = {
+  current: eegData.alphaPower,
+  baseline: user.personalBaseline.alpha.currentState.median,
+  ratio: eegData.alphaPower / user.personalBaseline.alpha.currentState.median,
+  percentChange: ((eegData.alphaPower / user.personalBaseline.alpha.currentState.median) - 1) * 100,
+  zScore: (eegData.alphaPower - user.personalBaseline.alpha.currentState.mean) / 
+          user.personalBaseline.alpha.currentState.stdDev
+};
+```
+
+---
+
+### Step 3: Define "Meaningful" Deviation
+
+**Not every deviation warrants feedback.** Use thresholds:
+
+| Deviation Type | Threshold | Why |
+|---|---|---|
+| **Minimal** | <15% from baseline | Normal noise, ignore |
+| **Noticeable** | 15-25% from baseline | Potentially meaningful if sustained |
+| **Significant** | >25% from baseline | Likely meaningful if sustained |
+| **Extreme** | >50% from baseline | Very unusual; verify sensor connection first |
+
+**Also consider z-scores:**
+- **z < 1.0:** Within normal variation
+- **z = 1.0-2.0:** Moderate deviation
+- **z > 2.0:** Significant deviation
+
+---
+
+### Step 4: Temporal Consistency Requirement
+
+**Single-moment spikes are noise.** Require sustained patterns:
+
+```javascript
+function isPatternSustained(eegStream, deviationThreshold, minDuration) {
+  const windowSize = minDuration; // e.g., 10 seconds
+  const samples = eegStream.last(windowSize);
+  
+  // Check if >80% of samples in window exceed threshold
+  const exceedingThreshold = samples.filter(s => 
+    Math.abs(s.deviation) > deviationThreshold
+  );
+  
+  return (exceedingThreshold.length / samples.length) > 0.8;
+}
+```
+
+**Minimum sustain durations:**
+- **Real-time neurofeedback:** 3-5 seconds
+- **Pattern notifications:** 10-30 seconds
+- **State change detection:** 60+ seconds
+
+---
+
+### Step 5: Actionability Filter
+
+**Only provide feedback if the user can do something with the information.**
+
+| Scenario | Actionable? | Feedback |
+|---|---|---|
+| **During meditation** | ✅ Yes | "Your alpha waves are rising—you're entering a calm state" |
+| **While sleeping** | ❌ No | Silent (they can't act on it) |
+| **Mid-work task** | ⚠️ Maybe | Only if it's helpful ("focus pattern shifted; break might help") |
+| **Driving** | ❌ No | Never distract during safety-critical tasks |
+
+---
+
+## Deviation Categories and Responses
+
+### Category 1: Positive Reinforcement (Neurofeedback)
+
+**When:** User is meditating/practicing and achieves desired brain state
+
+**Trigger:**
+- Alpha power >20% above baseline (meditation)
+- Beta/theta ratio matches "focused" baseline state (concentration practice)
+- Pattern sustained for 5+ seconds
+
+**Response:**
+```javascript
+return {
+  type: "positive_feedback",
+  message: "Nice! Your alpha waves are elevated—you're entering a relaxed state.",
+  visual: "calm_indicator", // e.g., green light, expanding circle
+  tone: "encouraging"
+};
+```
+
+**Purpose:** Real-time reinforcement to help user learn what the desired state *feels* like.
+
+---
+
+### Category 2: Pattern Observation (Informational)
+
+**When:** User's brain pattern deviates significantly from typical in a noticeable way
+
+**Trigger:**
+- Any frequency band >30% different from baseline
+- Pattern sustained for 30+ seconds
+- Outside active neurofeedback session (general awareness)
+
+**Response:**
+```javascript
+return {
+  type: "pattern_update",
+  message: "Your beta wave activity has been elevated compared to your recent baseline. This pattern sometimes appears during focused or alert states.",
+  actionSuggestion: null, // Informational only
+  tone: "neutral"
+};
+```
+
+**Purpose:** Help user notice patterns they might not be aware of.
+
+---
+
+### Category 3: State Change Detection
+
+**When:** Brain activity transitions from one characteristic state to another
+
+**Trigger:**
+- Pattern similarity shifts from "focused baseline" to "relaxed baseline" (or vice versa)
+- Transition sustained for 60+ seconds
+
+**Response:**
+```javascript
+return {
+  type: "state_transition",
+  message: "Your brain pattern has shifted from your typical focused state toward a more relaxed pattern.",
+  implication: "If you're trying to concentrate, this might be a sign to take a break or re-engage.",
+  tone: "informative"
+};
+```
+
+**Purpose:** Awareness of natural state transitions.
+
+---
+
+### Category 4: Anomaly / Sensor Issue
+
+**When:** Extreme or impossible values that suggest sensor problems
+
+**Trigger:**
+- Any frequency band >100% different from baseline
+- Flatline (all zeros)
+- Extreme amplitude (sensor disconnection)
+- Multiple bands simultaneously at extremes
+
+**Response:**
+```javascript
+return {
+  type: "sensor_check",
+  message: "We're seeing an unusual pattern that might be due to sensor placement or connection. Try adjusting the device.",
+  possibleCauses: ["Sensor not making good contact", "Device shifted position", "Electrical interference"],
+  tone: "calm_troubleshooting"
+};
+```
+
+**Purpose:** Help user troubleshoot hardware issues without alarming them.
+
+---
+
+## When to Stay Silent
+
+**The system should NOT provide feedback when:**
+
+### 1. Baseline Not Stable
+- User has <30 days of data
+- Learning individual patterns still ongoing
+
+### 2. Deviation Too Small
+- <15% change from baseline
+- Within normal fluctuation range
+
+### 3. Pattern Not Sustained
+- Brief spike or dip (<3 seconds)
+- Intermittent pattern (not consistent)
+
+### 4. User Cannot Act
+- During sleep
+- While driving
+- Not engaged with the app
+
+### 5. Too Frequent
+- Last feedback was <5 minutes ago
+- Risk of notification fatigue
+
+### 6. State is Expected
+- Brain patterns match current activity (focused during work = expected)
+- No deviation from baseline for current context
+
+---
+
+## Deviation Engine Configuration
+
+### Sensitivity Settings
+
+Allow users to control feedback frequency:
+
+| Mode | Deviation Threshold | Frequency |
+|---|---|---|
+| **Silent** | (feedback disabled) | Never |
+| **Minimal** | >40% deviation, 60s sustain | Rare |
+| **Balanced** | >25% deviation, 30s sustain | Moderate |
+| **Sensitive** | >15% deviation, 10s sustain | Frequent |
+
+### Context-Aware Activation
+
+```javascript
+const deviationRules = {
+  duringMeditation: {
+    enabled: true,
+    threshold: 0.15, // 15% deviation
+    sustainDuration: 5, // seconds
+    frequencyLimit: "none" // Real-time ok
+  },
+  
+  duringGeneralUse: {
+    enabled: true,
+    threshold: 0.30, // 30% deviation
+    sustainDuration: 30,
+    frequencyLimit: "max_1_per_hour"
+  },
+  
+  duringSleep: {
+    enabled: false // Never interrupt sleep
+  },
+  
+  duringCriticalTasks: {
+    enabled: false // Never distract during driving, etc.
+  }
+};
+```
+
+---
+
+## Multi-Signal Confirmation
+
+**Never trigger feedback from a single signal.** Require multiple confirming signals:
+
+### Example: Meditation State Detection
+
+```javascript
+function detectMeditationState(eeg, user) {
+  const alphaElevated = (eeg.alphaPower / user.baseline.alpha.median) > 1.20;
+  const betaReduced = (eeg.betaPower / user.baseline.beta.median) < 0.85;
+  const thetaModerate = (eeg.thetaPower / user.baseline.theta.median) > 0.90;
+  
+  const meditationScore = 
+    (alphaElevated ? 40 : 0) +
+    (betaReduced ? 30 : 0) +
+    (thetaModerate ? 30 : 0);
+  
+  // Require combined evidence, not just one signal
+  return meditationScore > 60; // At least 2 of 3 signals present
+}
+```
+
+---
+
+## Deviation Presentation to Users
+
+### For Real-Time Neurofeedback
+
+**Visual indicator preferred over text** (less distracting during meditation):
+
+```javascript
+{
+  visual: "expanding_circle", // Size corresponds to alpha power
+  color: "gradient_blue_to_green", // Calm palette
+  audio: "soft_chime", // Optional subtle sound
+  text: null // Minimal or no text during active practice
+}
+```
+
+### For Pattern Observations
+
+**Text notification appropriate:**
+
+```javascript
+{
+  title: "Brain Pattern Update",
+  body: `Your beta wave activity has been higher than your recent baseline. 
+         This pattern sometimes appears during alert or focused states.`,
+  timestamp: new Date(),
+  dismissable: true
+}
+```
+
+---
+
+## Avoiding Notification Fatigue
+
+### Frequency Limits
+
+```javascript
+const notificationLimits = {
+  maxPerHour: 2, // General pattern updates
+  maxPerDay: 10,
+  minIntervalBetween: 15 * 60 // 15 minutes
+};
+
+function shouldAllowNotification(user) {
+  const recentNotifications = user.notifications.filter(n => 
+    n.timestamp > now() - 1hour
+  );
+  
+  return recentNotifications.length < notificationLimits.maxPerHour;
+}
+```
+
+### Smart Grouping
+
+If multiple deviations detected in short time:
+
+```javascript
+// Instead of 3 separate notifications:
+// ❌ "Alpha elevated"
+// ❌ "Beta reduced"
+// ❌ "Theta moderate"
+
+// Combine into one:
+✅ "Your brain pattern has shifted toward a relaxed, meditative state 
+    (elevated alpha, reduced beta). This is similar to your past 
+    meditation sessions."
+```
+
+---
+
+## Testing Deviation Logic
+
+### Test Cases
+
+1. **Baseline not stable:** Should return `null` regardless of current patterns
+2. **Noise (5% deviation):** Should ignore
+3. **Brief spike (25% for 1 second):** Should ignore (not sustained)
+4. **Sustained deviation (25% for 20 seconds):** Should trigger observation
+5. **Sensor disconnection (flatline):** Should suggest sensor check, not pattern observation
+6. **Meditation state (multi-signal confirmation):** Should provide real-time feedback
+
+### Example Test
+
+```javascript
+describe('Deviation Engine', () => {
+  it('should not provide feedback without stable baseline', () => {
+    const user = { bciBaselineStatus: 'LEARNING' };
+    const eeg = { alphaPower: 100 }; // Extreme deviation
+    
+    const result = deviationEngine.check(user, eeg);
+    expect(result).toBeNull(); // No feedback during learning
+  });
+  
+  it('should ignore brief fluctuations', () => {
+    const user = { bciBaselineStatus: 'STABLE', baseline: { alpha: { median: 50 } } };
+    const eeg = [
+      { alphaPower: 65, timestamp: 0 },    // 30% spike
+      { alphaPower: 52, timestamp: 1 },    // Back to baseline
+    ];
+    
+    const result = deviationEngine.check(user, eeg);
+    expect(result).toBeNull(); // Not sustained
+  });
+});
+```
+
+---
+
+## Summary
+
+**The deviation engine activates when:**
+1. ✅ Baseline is stable (30-90 days)
+2. ✅ Deviation is meaningful (>15-30%)
+3. ✅ Pattern is sustained (5-30 seconds)
+4. ✅ User can take action
+5. ✅ Not too frequent (prevents fatigue)
+
+**Purpose:** Provide signal when the signal matters—stay quiet when it doesn't.
+
+**Philosophy:** Less is more. Quality over quantity. Only speak when you have something useful to say.

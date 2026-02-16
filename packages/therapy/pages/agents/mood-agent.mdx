@@ -1,0 +1,522 @@
+# Mood Agent
+
+> Allowed mood tracking and pattern observation  
+> Safe implementation of mood-based features
+
+---
+
+## Overview
+
+**Mood agents** are features that help users track and understand their emotional patterns over time.
+
+They observe, visualize, and provide insights—but **never diagnose, treat, or replace professional care**.
+
+---
+
+## What a Mood Agent Does
+
+### ✅ 1. Mood Logging
+
+**Allow users to record how they're feeling.**
+
+```typescript
+interface MoodEntry {
+  id: string;
+  userId: string;
+  date: Date;
+  mood: 1 | 2 | 3 | 4 | 5; // Simple scale
+  note?: string;           // Optional context
+  tags?: string[];         // e.g., "work", "social", "exercise"
+}
+
+async function logMood(userId: string, mood: number, note?: string): Promise<MoodEntry> {
+  const entry = {
+    id: generateId(),
+    userId,
+    date: new Date(),
+    mood: clamp(mood, 1, 5),
+    note,
+    tags: extractTags(note)
+  };
+  
+  await saveMoodEntry(entry);
+  return entry;
+}
+```
+
+**UI:**
+- Simple 1-5 scale (or emoji-based)
+- Optional text note for context
+- Quick to log (low friction)
+
+**Language:**
+- ✅ "How are you feeling today?"
+- ✅ "Rate your mood (1=very low, 5=very high)"
+- ❌ "Track your depression severity"
+
+---
+
+### ✅ 2. Mood Visualization
+
+**Show mood patterns over time.**
+
+```typescript
+// Mood calendar view
+function renderMoodCalendar(entries: MoodEntry[]): CalendarView {
+  return entries.map(entry => ({
+    date: entry.date,
+    color: getMoodColor(entry.mood), // Gradient from blue to yellow
+    value: entry.mood
+  }));
+}
+
+// Mood graph
+function renderMoodGraph(entries: MoodEntry[], range: "week" | "month" | "year"): GraphData {
+  return {
+    labels: entries.map(e => formatDate(e.date)),
+    values: entries.map(e => e.mood),
+    baseline: calculateBaseline(entries).average
+  };
+}
+```
+
+**Visualizations:**
+- Calendar heatmap (see patterns at a glance)
+- Line graphs (track trends)
+- Bar charts (compare weeks/months)
+
+**Why useful:**
+- Easy pattern recognition
+- Spot correlations (mood vs. activities)
+- Concrete data for therapy discussions
+
+---
+
+### ✅ 3. Pattern Insights
+
+**Observe correlations and trends (not diagnoses).**
+
+```typescript
+function generateInsights(entries: MoodEntry[]): Insight[] {
+  const insights: Insight[] = [];
+  
+  // Activity correlations
+  const exerciseDays = entries.filter(e => e.tags?.includes("exercise"));
+  if (mean(exerciseDays.map(e => e.mood)) > mean(entries.map(e => e.mood)) + 0.5) {
+    insights.push({
+      type: "positive_correlation",
+      message: "You tend to feel better on days you exercise. Keep it up!"
+    });
+  }
+  
+  // Weekly patterns
+  const weekendMood = entries.filter(e => isWeekend(e.date));
+  const weekdayMood = entries.filter(e => !isWeekend(e.date));
+  if (mean(weekendMood.map(e => e.mood)) > mean(weekdayMood.map(e => e.mood)) + 0.7) {
+    insights.push({
+      type: "weekly_pattern",
+      message: "Your mood tends to improve on weekends. How can you bring more of that into your week?"
+    });
+  }
+  
+  return insights;
+}
+```
+
+**Safe insights:**
+- "You tend to feel better on days with [activity]"
+- "Your mood improves on weekends"
+- "You've been more consistent this month"
+
+**Unsafe insights:**
+- ❌ "This pattern indicates depression"
+- ❌ "You need to exercise to fix your mood"
+- ❌ "Your mood instability suggests bipolar disorder"
+
+---
+
+### ✅ 4. Trend Observation
+
+**Notice when mood shifts from baseline.**
+
+```typescript
+function observeTrend(recentEntries: MoodEntry[], baseline: Baseline): TrendObservation {
+  const recentAvg = mean(recentEntries.map(e => e.mood));
+  const change = recentAvg - baseline.average;
+  
+  if (change < -1.0) {
+    return {
+      trend: "declining",
+      message: `
+        You've been feeling lower than usual lately.
+        If this continues, consider talking to someone about how you're feeling.
+      `
+    };
+  }
+  
+  if (change > 1.0) {
+    return {
+      trend: "improving",
+      message: "Your mood has been better than usual lately. What's been helping?"
+    };
+  }
+  
+  return {
+    trend: "stable",
+    message: "Your mood has been relatively stable."
+  };
+}
+```
+
+**Language:**
+- ✅ "Your mood has been lower than usual"
+- ✅ "You've felt better this week"
+- ❌ "You're experiencing a depressive episode"
+
+---
+
+### ✅ 5. Professional Referral Suggestions
+
+**Recognize when patterns warrant professional attention.**
+
+```typescript
+function checkForReferral(entries: MoodEntry[], baseline: Baseline): ReferralMessage | null {
+  const last14Days = entries.slice(-14);
+  const lowMoodDays = last14Days.filter(e => e.mood <= 2).length;
+  
+  if (lowMoodDays >= 10) {
+    return {
+      message: `
+        You've been feeling low for a couple of weeks.
+        Persistent low mood can benefit from professional support.
+        
+        Consider talking to a mental health professional:
+        • Find a therapist: psychologytoday.com/us/therapists
+        • Free/low-cost options: openpathcollective.org
+        
+        You don't have to navigate this alone.
+      `
+    };
+  }
+  
+  return null;
+}
+```
+
+**When to suggest professional help:**
+- Persistent low mood (2+ weeks)
+- Significant deviation from baseline
+- User explicitly asks for help
+
+**What NOT to say:**
+- ❌ "You need therapy immediately"
+- ❌ "You have depression, see a doctor"
+- ✅ "Consider talking to a professional"
+
+---
+
+## What a Mood Agent Does NOT Do
+
+### ❌ Diagnose Disorders
+
+**Never:**
+- "You have major depressive disorder"
+- "This indicates anxiety"
+- "You're bipolar"
+
+**Instead:**
+- "You've been feeling low lately"
+- "Consider talking to a professional about persistent low mood"
+
+---
+
+### ❌ Assess Suicide Risk
+
+**Never:**
+- Build risk prediction models
+- Score suicide risk
+- Alert based on mood patterns alone
+
+**Instead:**
+- Display crisis resources (988, Crisis Text Line) when user explicitly mentions crisis
+- Prominently feature crisis button in UI
+
+---
+
+### ❌ Prescribe Treatments
+
+**Never:**
+- "You should try CBT"
+- "Start taking Lexapro"
+- "Do exposure therapy"
+
+**Instead:**
+- "Some people find therapy helpful"
+- "For medication questions, talk to your doctor"
+
+---
+
+## Safe Implementation Examples
+
+### Example 1: Mood Check-In Notification
+
+✅ **Good:**
+```typescript
+const notification = {
+  title: "How are you feeling today?",
+  body: "Take a moment to check in with yourself 💙",
+  action: "Log Mood"
+};
+```
+
+❌ **Bad:**
+```typescript
+const notification = {
+  title: "Depression tracking",
+  body: "You haven't logged your symptoms today",
+  action: "Track Depression"
+};
+```
+
+**Why:** "Depression tracking" implies diagnosis. "Check in with yourself" is supportive.
+
+---
+
+### Example 2: Mood Insight
+
+✅ **Good:**
+```typescript
+return "You've felt better on days with social activities. Connection can be helpful!";
+```
+
+❌ **Bad:**
+```typescript
+return "Your social withdrawal indicates depression. You need to force yourself to socialize.";
+```
+
+**Why:** Observation + gentle suggestion, not diagnosis + prescriptive command.
+
+---
+
+### Example 3: Low Mood Response
+
+✅ **Good:**
+```typescript
+if (mood === 1) {
+  return "Sorry you're having a tough day. Want to write about what's on your mind?";
+}
+```
+
+❌ **Bad:**
+```typescript
+if (mood === 1) {
+  return "Severe depression detected. Seek immediate psychiatric help.";
+}
+```
+
+**Why:** One bad day ≠ clinical emergency. Gentle support, not alarm.
+
+---
+
+## Testing Mood Agent Features
+
+### Test scenarios:
+
+**1. Daily mood logging**
+- User should be able to log mood in <10 seconds
+- Optional note field for context
+- No forced fields (respect user autonomy)
+
+**2. Mood visualization**
+- Calendar heatmap shows clear patterns
+- Graph displays trend over time
+- Baseline indicated on charts
+
+**3. Positive correlation insight**
+- "Better mood on exercise days" (if correlation exists)
+- Phrased as observation, not prescription
+
+**4. Persistent low mood**
+- After 14 days of mostly low mood, suggest professional help
+- Language: supportive, not prescriptive
+- Includes therapist finder links
+
+**5. Crisis language detection**
+- If journal note mentions "suicide", display 988 immediately
+- No risk assessment, just immediate resources
+
+**6. Privacy**
+- All mood data encrypted
+- User can export/delete
+- No third-party sharing
+
+---
+
+## UI/UX Guidelines
+
+### Mood logging should be:
+- **Fast** — Log in <10 seconds
+- **Simple** — No overwhelming questionnaires
+- **Optional** — Never forced daily
+- **Visual** — Emoji or colors for quick selection
+
+### Visualizations should be:
+- **Clear** — Easy to interpret at a glance
+- **Personal** — Focus on user's own patterns (no comparisons to others)
+- **Actionable** — Insights lead to useful reflections
+
+### Language should be:
+- **Supportive** — "How are you feeling?"
+- **Non-clinical** — Avoid jargon
+- **Validating** — "It's okay to have down days"
+- **Empowering** — Focus on patterns user can influence
+
+---
+
+## Privacy & Security
+
+**Mood data is extremely sensitive.**
+
+### Encryption
+```typescript
+// Encrypt mood entries at rest
+const encrypted = await encrypt(moodEntry, userKey);
+await storage.save(encrypted);
+```
+
+### User control
+```typescript
+// Export all mood data
+async function exportMoodData(userId: string): Promise<MoodDataExport> {
+  const entries = await getAllMoodEntries(userId);
+  return {
+    entries,
+    format: "JSON",
+    exportedAt: new Date()
+  };
+}
+
+// Delete all mood data
+async function deleteMoodData(userId: string): Promise<void> {
+  await deleteAllMoodEntries(userId);
+}
+```
+
+### No sharing
+- **Never** share mood data with advertisers
+- **Never** use for targeting ads
+- Minimal anonymous analytics only (e.g., "feature usage" not "user's mood")
+
+---
+
+## Complete Mood Agent Implementation
+
+```typescript
+class MoodAgent {
+  // Log mood
+  async logMood(userId: string, mood: number, note?: string): Promise<MoodEntry> {
+    const entry = {
+      id: generateId(),
+      userId,
+      date: new Date(),
+      mood: clamp(mood, 1, 5),
+      note,
+      tags: extractTags(note)
+    };
+    
+    await this.saveMoodEntry(entry);
+    
+    // Check for crisis language
+    if (note && detectCrisisLanguage(note)) {
+      await this.displayCrisisResources(userId);
+    }
+    
+    // Check for referral triggers
+    await this.checkDeviations(userId);
+    
+    return entry;
+  }
+  
+  // Get mood insights
+  async getInsights(userId: string): Promise<Insight[]> {
+    const entries = await this.getMoodEntries(userId, 30);
+    const baseline = await this.getBaseline(userId);
+    
+    const insights: Insight[] = [];
+    
+    // Activity correlations
+    const exerciseCorrelation = this.correlateMoodWithTag(entries, "exercise");
+    if (exerciseCorrelation > 0.5) {
+      insights.push({
+        type: "positive_correlation",
+        message: "You tend to feel better on days you exercise!"
+      });
+    }
+    
+    // Trend observation
+    const recentAvg = mean(entries.slice(-7).map(e => e.mood));
+    if (recentAvg > baseline.average + 0.7) {
+      insights.push({
+        type: "positive_trend",
+        message: "Your mood has been better than usual this week. Great to see!"
+      });
+    }
+    
+    return insights;
+  }
+  
+  // Check for professional referral
+  async checkDeviations(userId: string): Promise<void> {
+    const entries = await this.getMoodEntries(userId, 14);
+    const baseline = await this.getBaseline(userId);
+    
+    const lowMoodDays = entries.filter(e => e.mood <= 2).length;
+    
+    if (lowMoodDays >= 10) {
+      await this.sendProfessionalReferral(userId, {
+        pattern: "persistent low mood",
+        duration: "2+ weeks"
+      });
+    }
+  }
+  
+  // Display crisis resources
+  async displayCrisisResources(userId: string): Promise<void> {
+    const message = `
+      🚨 If you're in crisis or considering self-harm:
+      
+      • Call 988 (Suicide & Crisis Lifeline)
+      • Text HOME to 741741 (Crisis Text Line)
+      • Call 911 for emergencies
+      
+      These resources are available 24/7.
+    `;
+    
+    await this.showAlert(userId, message);
+  }
+}
+```
+
+---
+
+## Summary
+
+**Mood agents help users:**
+- Track emotional patterns
+- Visualize trends
+- Recognize correlations
+- Know when to seek professional help
+
+**They do NOT:**
+- Diagnose disorders
+- Predict suicide
+- Replace therapy
+- Prescribe treatments
+
+**Key principles:**
+- Observation, not diagnosis
+- Referral, not treatment
+- Support, not authority
+- Privacy first
+
+Build mood tracking that genuinely supports self-awareness—not pseudo-clinical tools masquerading as mental health care.

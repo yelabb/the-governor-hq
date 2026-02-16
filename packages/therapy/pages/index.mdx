@@ -1,0 +1,158 @@
+# The Governor HQ Constitutional Framework
+
+## AI Safety Constitution for Therapy Data Projects
+
+> **This documentation is a safety layer for AI-assisted development on therapy and mental health data projects.**
+
+The Governor HQ Therapy framework defines behavioral constraints, safety boundaries, and operational rules for any AI system or product that processes therapy, mental health, or emotional wellbeing data.
+
+This documentation is **prescriptive and executable** — not decorative. It encodes:
+
+- **Product scope** — What therapy data systems should (and must not) do
+- **Safety boundaries** — Hard rules that prevent mental health diagnoses, therapy replacement claims, and crisis mishandling
+- **Language constraints** — How systems communicate sensitively about mental health data
+- **Product identity** — Clear positioning in the consumer wellness (not medical) space
+- **AI agent guidance** — Explicit instructions for AI coding assistants
+
+---
+
+## Who This Is For
+
+### Developers Building Therapy/Mental Health Data Products
+
+If you're building products that process therapy-adjacent data (mood tracking, journaling, symptom logging, wellness check-ins, etc.) and use AI coding assistants (GitHub Copilot, ChatGPT, Claude, Cursor, etc.), **this framework should be in your AI agent's context**.
+
+### Use Cases
+
+- Mood and emotion tracking
+- Personal journaling platforms
+- Gratitude and wellbeing practices
+- Therapy companion apps (for licensed professionals)
+- Self-care and wellness check-ins
+- Mental health pattern observation
+- Therapist-client communication tools
+
+### Not For
+
+- Clinical therapy platforms (replacing licensed therapists)
+- Diagnostic tools for mental health conditions
+- Crisis intervention services
+- Suicide risk assessment systems
+- Medical mental health treatment
+
+---
+
+## Core Principles
+
+| Principle | Detail |
+|---|---|
+| **Professional boundaries** | Never position as replacement for licensed therapy |
+| **Pattern observation** | Notice trends, never diagnose conditions |
+| **User empowerment** | Support self-awareness and reflection |
+| **Professional referral** | Always direct to licensed professionals when appropriate |
+| **Crisis protocols** | Clear escalation paths to crisis services (988, emergency) |
+| **Privacy paramount** | Mental health data requires highest confidentiality |
+
+---
+
+## Critical Therapy Boundaries
+
+### Absolute Prohibitions
+
+- ❌ **No mental health diagnoses** - Never diagnose depression, anxiety, PTSD, bipolar, etc.
+- ❌ **No replacement for therapy** - Cannot substitute for licensed professional help
+- ❌ **No crisis intervention** - Not equipped for suicide prevention or emergency response
+- ❌ **No therapeutic techniques** - Cannot prescribe CBT, DBT, exposure therapy protocols
+- ❌ **No medication recommendations** - Never suggest psychiatric medications or dosages
+- ❌ **No risk assessment** - Cannot determine self-harm or suicide risk levels
+- ❌ **Mandatory professional referrals** - When concerning patterns detected, direct to professionals
+
+### Allowed Therapy-Adjacent Applications
+
+✅ **Mood pattern tracking** - "Your mood has been lower this week..."  
+✅ **Journaling prompts** - "Consider reflecting on..."  
+✅ **Self-care reminders** - "You haven't logged wellness activity today..."  
+✅ **Behavioral insights** - "When you exercise, your mood tends to..."  
+✅ **Progress visualization** - Charts showing mood trends  
+✅ **Gratitude practices** - Prompts for positive reflection  
+
+---
+
+## Documentation Map
+
+### **[AI Agent Guide](/ai-agent-guide)** ⭐ Start Here for AI-Assisted Development
+Comprehensive instructions for AI coding assistants. Includes code patterns, decision trees, validation checklists, and therapy-specific pitfalls.
+
+### Core System
+How mental health data systems should collect, learn, and respond.
+
+- [**Signals**](/core/signals) — What therapy data provides (and what it cannot tell us)
+- [**Baseline**](/core/baseline) — How systems learn "normal" emotional patterns for each person
+- [**Deviation Engine**](/core/deviation-engine) — When and why support systems activate
+
+### Agents
+What therapy-adjacent systems can offer.
+
+- [**Mood Agent**](/agents/mood-agent) — Allowed mood tracking and pattern observation
+- [**Journaling Agent**](/agents/journaling-agent) — Self-reflection prompts and insights
+
+### Constraints
+What systems must never do — the constitutional boundaries.
+
+- [**Hard Rules**](/constraints/hard-rules) — Absolute system limits (product constitution)
+- [**Language Rules**](/constraints/language-rules) — Tone, wording, and sensitivity controls
+
+### Positioning & Boundaries
+- [**Product Identity**](/positioning) — What therapy data products are and are not
+- [**What We Don't Do**](/what-we-dont-do) — Explicit domain boundaries and scope limits
+
+---
+
+## Quick Start for AI Coding Assistants
+
+If you're an AI coding assistant working on a therapy data project:
+
+1. **Read** [AI Agent Guide](/ai-agent-guide) — Critical patterns and requirements
+2. **Check** [Hard Rules](/constraints/hard-rules) — before implementing any mental health feature
+3. **Validate** [Language Rules](/constraints/language-rules) — before generating any user-facing text
+4. **Consult** [What We Don't Do](/what-we-dont-do) — when uncertain about feature scope
+
+**Golden rule:** If uncertain whether a feature is allowed, the answer is **NO** until confirmed safe.
+
+---
+
+## Installation
+
+```bash
+npm install --save-dev @yelabb/constitution-therapy
+```
+
+The post-install script automatically configures AI safety rules for your development environment.
+
+See [Getting Started](/getting-started) for complete setup instructions.
+
+---
+
+## Crisis Resources
+
+All therapy-adjacent systems must display:
+
+- **988 Suicide & Crisis Lifeline** (US)
+- **911** for emergencies
+- **Crisis Text Line:** Text HOME to 741741
+
+**These are never hidden or buried—always prominent and accessible.**
+
+---
+
+## Related Packages
+
+- [`@yelabb/constitution-core`](https://npmjs.com/package/@yelabb/constitution-core) - Core safety infrastructure (auto-installed)
+- [`@yelabb/constitution-wearables`](https://npmjs.com/package/@yelabb/constitution-wearables) - Smartwatch/fitness tracker data
+- [`@yelabb/constitution-bci`](https://npmjs.com/package/@yelabb/constitution-bci) - Brain-computer interface data
+
+---
+
+## License
+
+MIT

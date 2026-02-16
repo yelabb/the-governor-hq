@@ -1,0 +1,333 @@
+# Hard Rules
+
+> Absolute system limits for BCI Products — the product constitution. These override everything.
+
+---
+
+## Purpose
+
+This document defines the **non-negotiable boundaries** for consumer BCI/neurotechnology systems. These rules apply to all agents, all features, all content, and all future development.
+
+No feature, no optimization, no user request, and no business pressure overrides these rules.
+
+They exist to protect:
+- **Users** from harm, misinformation, and privacy violations
+- **The product** from legal liability and ethical catastrophe
+- **The team** from building dangerous or misleading things
+
+---
+
+## The Rules
+
+### 1. No Neurological or Psychiatric Diagnoses
+
+The system **must never** claim, imply, or suggest that it can diagnose any neurological or psychiatric condition.
+
+| Forbidden | Why |
+|---|---|
+| "This pattern indicates ADHD" | Medical diagnosis |
+| "You may have epilepsy" | Neurological claim |
+| "This suggests depression" | Psychiatric diagnosis |
+| "Signs of cognitive decline" | Dementia/neurological inference |
+
+**Test:** If a statement could lead someone to believe they have (or don't have) a medical condition, it does not belong in this system.
+
+---
+
+### 2. No Thought or Emotion Reading Claims
+
+The system **must never** claim to read thoughts, know intentions, or definitively determine emotional states.
+
+| Forbidden | Why |
+|---|---|
+| "You're thinking about..." | Thought reading claim |
+| "You're feeling anxious" (as certainty) | Definitive emotion claim |
+| "You're lying" | Deception detection |
+| "You remember X" | Memory content access |
+
+**Allowed alternative:** "Your brain pattern is similar to past [relaxed/focused] states" (pattern observation, not mind reading)
+
+**Test:** Could this statement be used to claim we can read minds? If yes, forbidden.
+
+---
+
+### 3. No Cognitive Ability Claims
+
+The system **must never** assess, measure, or claim to know cognitive abilities.
+
+| Forbidden | Examples |
+|---|---|
+| Intelligence claims | "Your IQ is approximately...", "cognitive performance is..." |
+| Learning disabilities | "This suggests dyslexia", "indicators of learning disorder" |
+| Brain age | "Your brain is functioning like a 65-year-old's" |
+| Cognitive capacity | "Your working memory capacity is..." |
+
+**No exceptions.** Not even "focus scores" that obviously proxy for cognitive ability.
+
+---
+
+### 4. No Medical Neurofeedback
+
+The system **must never** position itself as clinical neurofeedback therapy.
+
+| Forbidden | Allowed Alternative |
+|---|---|
+| "Neurofeedback to treat ADHD" | "Neurofeedback to support focus practice" |
+| "Clinical protocol for anxiety" | "Relaxation feedback during meditation" |
+| "Therapeutic brain training" | "Personal pattern awareness for wellness" |
+
+**Critical distinction:** Wellness neurofeedback for meditation ≠ medical neurofeedback for treatment.
+
+---
+
+### 5. No Supplement or Drug Recommendations
+
+The system **must never** recommend, mention, or reference any nootropics, supplements, or medications.
+
+| Forbidden | Examples |
+|---|---|
+| Nootropics | Modafinil, racetams, Alpha-GPC |
+| Supplements | L-theanine, caffeine pills, omega-3 |
+| Medications | Stimulants, antidepressants, any Rx |
+
+---
+
+### 6. Mandatory Personal Baseline
+
+The system **must not** generate any brain pattern insights without a stable personal baseline (30-90 days minimum).
+
+| Forbidden | Required |
+|---|---|
+| Immediate feedback based on population norms | 30-90 day silent learning period |
+| "Your alpha waves are low" (compared to who?) | "Your alpha waves are lower than your recent baseline" |
+
+**No population comparisons.** Only individual baseline comparisons.
+
+---
+
+### 7. Explicit Informed Consent for Neural Data
+
+The system **must never** collect brain data without explicit informed consent that explains:
+
+**Required consent elements:**
+- **What** is being collected (EEG, brainwave data)
+- **Why** it's collected (personal baseline learning, neurofeedback)
+- **What we DON'T do** (no thought reading, no selling data, no medical diagnosis)
+- **Privacy** protections (encryption, deletion rights)
+- **Retention** policy (how long data is kept)
+
+**No silent data collection.** Neural data is the most sensitive biometric data.
+
+---
+
+### 8. No Authority Framing
+
+The system **must never** command user behavior or claim medical authority.
+
+| Forbidden | Allowed Alternative |
+|---|---|
+| "You should..." | "You might consider..." |
+| "You must..." | "Some people find it helpful to..." |
+| "This is dangerous" | "This pattern is unusual for you" |
+| "Warning: ..." | "Pattern Update" or "Check-in" |
+
+---
+
+### 9. No Third-Party Decisions from Brain Data
+
+The system **must never** support using brain data for consequential decisions about people.
+
+**Forbidden applications:**
+- Hiring decisions
+- Employee monitoring
+- Student grading or placement
+- Security clearance
+- Lie detection
+- Trustworthiness assessment
+
+**Consumer wellness only.** Never for evaluating people in professional/legal contexts.
+
+---
+
+### 10. Mandatory Medical Disclaimers
+
+The system **must** display clear disclaimers that it is not a medical device.
+
+**Required disclaimer:**
+```
+"This is not a medical device. This system does not diagnose, treat, 
+or monitor medical conditions. Consumer EEG is not equivalent to 
+medical-grade equipment. If you have health concerns, consult a 
+healthcare professional."
+```
+
+**Where required:**
+- First launch / onboarding
+- Before neural data collection
+- In any brain pattern notification
+- In settings / about section
+- Privacy policy
+- Marketing materials
+
+---
+
+## Rule Hierarchy
+
+These hard rules form a hierarchy that overrides all other system behavior:
+
+```
+HARD RULES (this document)
+    ↓ overrides
+LANGUAGE RULES
+    ↓ overrides
+AGENT-SPECIFIC RULES
+    ↓ overrides
+FEATURE IMPLEMENTATIONS
+    ↓ overrides
+UI/UX DECISIONS
+```
+
+If an agent generates a neurofeedback message that conflicts with a hard rule, **the hard rule wins** and the message is blocked.
+
+---
+
+## Implementation Requirements
+
+### For LLM-generated content
+
+Every output from an LLM component must be validated against these rules before delivery to the user. This validation must be:
+
+- **Automated** — not dependent on human review for every message
+- **Blocking** — non-compliant content is never shown to the user
+- **Logged** — violations are recorded for system improvement
+
+### For human-written content
+
+All UI copy, notifications, marketing materials, and documentation must pass a hard-rules review before publication.
+
+### For future features
+
+Any new feature proposal must include a "Hard Rules Compliance" section that demonstrates compatibility with every rule in this document.
+
+---
+
+## Enforcement
+
+| Level | Action |
+|---|---|
+| **Build time** | Linting rules catch forbidden words: ADHD, epilepsy, IQ, diagnose, treat, cure |
+| **Runtime** | Output filter validates all user-facing text against rule patterns |
+| **Review** | PR reviews include hard-rules compliance check |
+| **Testing** | Integration tests include adversarial prompts designed to trigger violations |
+
+---
+
+## Examples of Rule Violations
+
+### Violation 1: Diagnosis
+
+```javascript
+// ❌ WRONG
+return "Your beta wave pattern indicates ADHD. Consult a psychiatrist.";
+// Violates: Rule 1 (diagnosis), Rule 4 (medical claim), Rule 8 (commanding)
+```
+
+### Violation 2: Thought Reading
+
+```javascript
+// ❌ WRONG
+return "You're thinking about work stress right now.";
+// Violates: Rule 2 (thought reading)
+```
+
+### Violation 3: Cognitive Claim
+
+```javascript
+// ❌ WRONG
+const iqEstimate = calculateCognitiveScore(eegData);
+return `Your cognitive performance: ${iqEstimate}/100`;
+// Violates: Rule 3 (cognitive ability assessment)
+```
+
+### Violation 4: No Baseline
+
+```javascript
+// ❌ WRONG
+if (eegData.alphaPower < 50) { // population threshold
+  return "Your alpha waves are low.";
+}
+// Violates: Rule 6 (no personal baseline), uses population norm
+```
+
+### Violation 5: No Consent
+
+```javascript
+// ❌ WRONG
+async function startRecording(device) {
+  await device.startEEGStream(); // No consent!
+}
+// Violates: Rule 7 (explicit consent required)
+```
+
+---
+
+## Correct Implementations
+
+### ✅ Correct: Pattern Observation with Baseline
+
+```javascript
+function generateFeedback(eegData, user) {
+  if (user.bciBaselineStatus !== 'STABLE') {
+    return null; // Silent during learning
+  }
+  
+  const alphaRatio = eegData.alphaPower / user.personalBaseline.alphaPower;
+  
+  if (alphaRatio > 1.2) {
+    return {
+      message: "Your alpha wave activity is elevated compared to your recent baseline. This pattern sometimes appears during relaxed states.",
+      disclaimer: "Based on your personal brain patterns. Not medical advice."
+    };
+  }
+}
+```
+
+### ✅ Correct: Consent Flow
+
+```javascript
+async function initializeBCI(device, user) {
+  if (!user.neuralDataConsent) {
+    const consent = await showConsentDialog({
+      what: "EEG brainwave signals",
+      why: "To learn your personal brain patterns",
+      dontDo: ["Read thoughts", "Diagnose conditions", "Share without permission"],
+      privacy: "End-to-end encrypted, deletable anytime",
+      retention: "90 days"
+    });
+    
+    if (!consent.accepted) return { status: "declined" };
+    user.neuralDataConsent = true;
+  }
+  
+  return await device.startEEGStream();
+}
+```
+
+---
+
+## Summary
+
+**These 10 rules are absolute:**
+
+1. ❌ No diagnoses (neurological or psychiatric)
+2. ❌ No thought/emotion reading claims
+3. ❌ No cognitive ability assessment
+4. ❌ No medical neurofeedback therapy
+5. ❌ No supplements or drugs
+6. ✅ Personal baseline required (30-90 days)
+7. ✅ Explicit informed consent for neural data
+8. ❌ No commanding or authority framing
+9. ❌ No third-party decisions from brain data
+10. ✅ Medical disclaimers mandatory
+
+**No exceptions. No overrides.**

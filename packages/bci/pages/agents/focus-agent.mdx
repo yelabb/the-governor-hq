@@ -1,0 +1,379 @@
+# Focus Agent
+
+> Allowed focus and attention pattern guidance for BCI systems
+
+---
+
+## Purpose
+
+The **Focus Agent** provides neurofeedback and pattern observations related to attention and concentration states based on brain activity (primarily beta waves and beta/theta ratios).
+
+**What it is:** Pattern recognition for personal focus states  
+**What it's NOT:** Cognitive ability assessment, ADHD diagnosis, or productivity measurement
+
+---
+
+## Scope and Boundaries
+
+### ✅ Allowed
+
+- Notice when brain patterns match past "focused" states
+- Provide real-time neurofeedback during concentration practice
+- Track personal focus pattern trends over time
+- Suggest breaks when focus patterns shift toward fatigue
+- Help users identify environmental factors that correlate with focus patterns
+
+### ❌ Forbidden
+
+- Diagnose ADHD or attention disorders
+- Measure cognitive ability or intelligence
+- Assess "focus performance" against population norms
+- Make claims about productivity or work quality
+- Recommend medications (stimulants, nootropics, etc.)
+- Claim certainty about what the user is thinking about
+
+---
+
+## Brain Signal Indicators
+
+### Primary Signals
+
+| Signal | Association with Focus | Reliability |
+|---|---|---|
+| **Beta waves (12-30 Hz)** | Elevated during active thinking, concentration | Moderate correlation |
+| **Beta/theta ratio** | Higher ratio during alert focused states | Moderate correlation |
+| **Frontal EEG** |Activity in frontal regions during executive function | High correlation (if device positioned correctly) |
+| **Alpha suppression** | Reduced alpha during engaged attention vs. rest | Moderate correlation |
+
+### Important Caveats
+
+- **Individual variability:** Some people have naturally high/low beta
+- **Context matters:** Beta can be elevated during anxiety, not just focus
+- **Multi-signal required:** Never use beta alone to determine focus state
+
+---
+
+## Personal Baseline Requirements
+
+### Focused State Baseline
+
+Before the Focus Agent can provide feedback, it must learn the user's personal "focused" brain pattern:
+
+**Minimum requirements:**
+- 20+ sessions labeled as "focused" or "concentration tasks"
+- Across different times of day
+- 30-90 days to establish stable baseline
+
+### How to Build Focused Baseline
+
+```javascript
+const focusedBaseline = {
+  betaPower: {
+    mean: 32.5,
+    stdDev: 6.2,
+    p25: 28.1,
+    median: 32.0,
+    p75: 36.8,
+    observances: 45 // sessions
+  },
+  betaThetaRatio: {
+    mean: 2.3,
+    stdDev: 0.5,
+    typical: 2.0-2.8
+  },
+  alphaPower: {
+    mean: 24.1, // Typically suppressed during focus
+    stdDev: 5.3
+  },
+  context: "User-reported focus sessions during work, coding, reading"
+};
+```
+
+**Without this baseline:** Focus Agent remains silent.
+
+---
+
+## Focus Pattern Detection
+
+### Detection Logic
+
+```javascript
+function detectFocusPattern(eeg, user) {
+  if (user.bciBaselineStatus !== 'STABLE') {
+    return null; // No feedback without baseline
+  }
+  
+  const betaRatio = eeg.betaPower / user.personalBaseline.focusedState.betaPower.median;
+  const betaThetaRatio = eeg.betaPower / eeg.thetaPower;
+  const alphaReduced = eeg.alphaPower < user.personalBaseline.restingState.alphaPower.median * 0.85;
+  
+  // Multi-signal confirmation
+  const focusScore = 
+    (betaRatio > 1.1 ? 30 : 0) +
+    (betaThetaRatio > user.personalBaseline.focusedState.betaThetaRatio.mean - 0.5 ? 40 : 0) +
+    (alphaReduced ? 30 : 0);
+  
+  // Require at least 2 of 3 signals for focus state
+  if (focusScore >= 60) {
+    return {
+      state: "focused_pattern",
+      confidence: focusScore / 100,
+      patternMatch: "similar_to_past_focus_sessions"
+    };
+  }
+  
+  return null;
+}
+```
+
+### Temporal Requirements
+
+Focus pattern must be **sustained for 10+ seconds** before triggering feedback. Brief spikes are noise.
+
+---
+
+## Neurofeedback Modes
+
+### Mode 1: Active Focus Training
+
+**Context:** User is explicitly practicing concentration (e.g., "focus mode" enabled)
+
+**Feedback style:** Real-time, visual
+
+**Example:**
+```javascript
+{
+  visual: "focus_indicator_strengthening", // Bar graph or circle intensity
+  message: null, // Minimal text during active practice
+  audio: "subtle_tone_increase", // Optional audio feedback
+  updateFrequency: "every_2_seconds"
+}
+```
+
+**Purpose:** Help user learn what focused brain patterns *feel* like through immediate reinforcement.
+
+---
+
+### Mode 2: Pattern Observation (General Use)
+
+**Context:** User is not actively practicing, but system notices focus pattern shift
+
+**Feedback style:** Occasional notification
+
+**Example:**
+```javascript
+{
+  title: "Focus Pattern Update",
+  message: `Your brain activity shows a pattern similar to your past 
+            focused sessions. Your beta waves are elevated and alpha 
+            waves are reduced compared to your resting baseline.`,
+  suggestion: null, // Informational only
+  tone: "neutral"
+}
+```
+
+**Purpose:** Increase self-awareness of natural focus state transitions.
+
+---
+
+### Mode 3: Focus Fatigue Detection
+
+**Context:** Brain pattern shifts away from focused state toward fatigue/distraction
+
+**Feedback style:** Gentle suggestion for break
+
+**Example:**
+```javascript
+{
+  title: "Pattern Shift",
+  message: `Your brain activity has shifted from your typical focused 
+            pattern. Your beta/theta ratio is lower than usual during 
+            concentration tasks.
+            
+            This sometimes happens during mental fatigue.`,
+  suggestion: "Consider a short break when you reach a stopping point—it might help you return to a focused state.",
+  tone: "helpful_not_commanding"
+}
+```
+
+**Purpose:** Suggest breaks at natural attention transition points.
+
+---
+
+## Safe Language Examples
+
+### ✅ Allowed Phrases
+
+| Phrase | Why It's Safe |
+|---|---|
+| "Your brain pattern resembles your past focused states" | Pattern observation, not ability claim |
+| "Beta wave activity is elevated compared to your resting baseline" | Personal comparison |
+| "This pattern sometimes appears during concentration tasks" | Probabilistic correlation |
+| "Your focus pattern has been more variable today" | Trend observation |
+| "When you see this pattern, you might be in a good state for deep work" | Soft suggestion |
+
+### ❌ Forbidden Phrases
+
+| Phrase | Why It's Forbidden |
+|---|---|
+| "Your focus level is 72/100" | Becomes cognitive performance score |
+| "This indicates ADHD" | Medical diagnosis |
+| "Your attention span is below average" | Population comparison + ability claim |
+| "You're thinking about work" | Thought reading |
+| "Your concentration ability is improving" | Cognitive enhancement claim |
+
+---
+
+## Use Cases
+
+### Use Case 1: Concentration Practice App
+
+**Goal:** Help users train sustained attention through neurofeedback
+
+**Implementation:**
+```javascript
+// User starts "focus session"
+app.startFocusSession();
+
+// Real-time neurofeedback
+setInterval(() => {
+  const pattern = detectFocusPattern(getCurrentEEG(), user);
+  
+  if (pattern && pattern.state === 'focused_pattern') {
+    displayVisualFeedback("focus_indicator_strong");
+    // User sees visual confirmation they're in focused state
+  } else {
+    displayVisualFeedback("focus_indicator_weak");
+    // Neutral, not judgmental
+  }
+}, 2000); // Every 2 seconds
+```
+
+**Safety measures:**
+- No numeric scores
+- No comparison to others
+- Visual feedback only (non-distracting)
+- Personal baseline required
+
+---
+
+### Use Case 2: Work Session Awareness
+
+**Goal:** Help remote workers notice natural attention cycles
+
+**Implementation:**
+```javascript
+// Background monitoring during work
+function checkFocusPatterns() {
+  const currentPattern = classifyBrainState(getCurrentEEG(), user);
+  
+  if (currentPattern === 'focus_fatigue_detected') {
+    // Only notify if meaningful deviation sustained for 5+ minutes
+    if (sustainedFor(5 * 60)) {
+      notify({
+        message: "Your brain pattern has shifted from your typical focused state. A short break might help.",
+        frequency_limit: "max_once_per_hour"
+      });
+    }
+  }
+}
+```
+
+**Safety measures:**
+- Infrequent notifications (prevent spam)
+- Suggestive, not commanding
+- No judgment about productivity
+
+---
+
+## Pattern Correlation (Not Causation)
+
+The Focus Agent can observe **correlations** with user-tracked factors:
+
+### Allowed Correlations
+
+```javascript
+// User tracks: caffeine intake, time of day, environment
+const insights = {
+  observation: "Your focus patterns tend to be strongest in the morning between 9-11am",
+  correlation: "Sessions after coffee show 15% higher beta/theta ratio than your average",
+  environmental: "When using noise-cancelling headphones, your focus patterns are 20% more stable"
+};
+```
+
+**Language:** "tend to", "correlate with", "often appear when"
+
+**NOT:** "caused by", "because of", "requires"
+
+---
+
+## Integration with Other Contexts
+
+### Sleep and Focus
+
+Focus patterns can be weaker after poor sleep. The agent may observe:
+
+```javascript
+{
+  observation: "Your focus pattern today is less stable than your recent baseline.",
+  possibleContext: "Your sleep last night was shorter than usual. Focus patterns often vary with sleep quality.",
+  suggestion: "If possible, lighter tasks today might feel more natural."
+}
+```
+
+**Not a diagnosis.** Just pattern observation with context.
+
+---
+
+## Privacy Considerations
+
+Focus patterns can reveal:
+- When someone is working vs. resting
+- Attention cycles throughout the day
+- Potentially sensitive work patterns
+
+**Required protections:**
+- No third-party access to focus pattern data
+- User control over when Focus Agent is active
+- Explicit consent for background monitoring
+- Clear opt-out
+
+---
+
+## Testing Focus Agent
+
+### Test Scenarios
+
+1. **No baseline:** Should remain silent regardless of beta patterns
+2. **Brief beta spike:** Should ignore (not sustained)
+3. **Sustained focus pattern:** Should provide feedback if in active mode
+4. **Focus fatigue transition:** Should suggest break if appropriate
+5. **Sensor artifact (extreme beta):** Should recognize as sensor issue, not focus
+
+### Validation Checklist
+
+- [ ] Requires stable personal baseline before activation
+- [ ] Compares to individual baseline, not population
+- [ ] Uses "pattern suggests" language, not "you are focused"
+- [ ] No cognitive ability claims
+- [ ] No ADHD mention or diagnosis
+- [ ] Respects frequency limits (no notification fatigue)
+- [ ] Multi-signal confirmation (not beta alone)
+
+---
+
+## Summary
+
+**The Focus Agent:**
+- ✅ Recognizes personal focus patterns from baseline
+- ✅ Provides neurofeedback for concentration practice
+- ✅ Notices when patterns shift toward fatigue
+- ✅ Helps users identify focus-supporting conditions
+
+**It does NOT:**
+- ❌ Diagnose ADHD or attention disorders
+- ❌ Measure cognitive ability
+- ❌ Claim to know what user is thinking about
+- ❌ Command behavior or judge productivity
+
+**Philosophy:** Pattern recognition for personal awareness, not performance evaluation.

@@ -1,0 +1,642 @@
+# AI Agent Guide
+
+> Comprehensive instructions for AI coding assistants working with therapy data systems
+
+---
+
+## Overview
+
+If you are an AI coding assistant (GitHub Copilot, Claude, GPT, Cursor, etc.) helping build a therapy data system, **this document is for you.**
+
+This guide contains everything you need to build safe, ethical mental health applications that respect user wellbeing and professional boundaries.
+
+---
+
+## Core Principle
+
+**Your job is to help build self-awareness companions, not therapists.**
+
+Therapy data systems observe emotional patterns and support self-reflection. They **never** diagnose conditions, replace professional treatment, or intervene in crises.
+
+---
+
+## The 5 Absolute Rules
+
+These are non-negotiable. Every line of code must respect these boundaries.
+
+### 1. Never Diagnose
+
+**Do not generate code that diagnoses any mental health condition.**
+
+This includes:
+- Depression, anxiety, PTSD, bipolar, OCD, eating disorders, personality disorders
+- Any DSM-5 psychiatric diagnosis
+- Even phrases like "shows signs of" or "may indicate"
+
+❌ **Bad:**
+```typescript
+if (lowMoodDays >= 14) {
+  return "You may have depression. Consult a doctor.";
+}
+```
+
+✅ **Good:**
+```typescript
+if (lowMoodDays >= 14) {
+  return "You've reported low mood for 2+ weeks. Consider talking to a mental health professional.";
+}
+```
+
+**Key difference:** Observation of pattern → professional referral. Never diagnosis.
+
+---
+
+### 2. Crisis = Immediate External Referral
+
+**Never build crisis intervention features. Always redirect to 988/Crisis Text Line/911.**
+
+❌ **Bad:**
+```typescript
+if (journal.includes("suicide")) {
+  return "I'm here for you. Let's talk through this together.";
+}
+```
+
+✅ **Good:**
+```typescript
+if (detectsCrisisLanguage(journal)) {
+  return `
+    If you're in crisis or considering self-harm:
+    • Call 988 (Suicide & Crisis Lifeline)
+    • Text HOME to 741741 (Crisis Text Line)  
+    • Call 911 for emergencies
+    
+    These resources are available 24/7.
+  `;
+}
+```
+
+**Never:**
+- Assess suicide risk
+- Provide crisis counseling
+- Try to "keep the user safe"
+- Determine if someone is "at risk"
+
+**Always:** Display 988, Crisis Text Line, 911 prominently.
+
+---
+
+### 3. Never Replace Therapy
+
+**Do not position the app as a therapy substitute.**
+
+❌ **Bad UI copy:**
+- "AI therapy in your pocket"
+- "Cheaper than a therapist"
+- "Get professional help from our AI"
+
+✅ **Good UI copy:**
+- "Track your emotional patterns"
+- "Complements professional therapy"
+- "Not a replacement for licensed care"
+
+**In code:**
+- Don't use variables named `aiTherapist`, `virtualCounselor`
+- Don't create chat flows that mimic therapeutic relationships
+- Don't offer "sessions" or "treatment plans"
+
+---
+
+### 4. Defer Medications to Doctors
+
+**Never generate code that recommends, manages, or comments on psychiatric medications.**
+
+❌ **Bad:**
+```typescript
+if (symptoms.includes("anxiety")) {
+  suggest("SSRIs like Lexapro are commonly prescribed for anxiety.");
+}
+```
+
+✅ **Good:**
+```typescript
+if (symptoms.includes("anxiety")) {
+  suggest("For medication questions, consult your doctor or psychiatrist.");
+}
+```
+
+**Zero involvement in:**
+- Antidepressants, anti-anxiety meds, mood stabilizers, antipsychotics
+- Start/stop decisions
+- Dosage changes
+- Side effect management
+
+---
+
+### 5. Use Supportive, Non-Authoritative Language
+
+**Speak as a companion, not an authority.**
+
+| ❌ DON'T say (authoritative) | ✅ DO say (supportive) |
+|---|---|
+| "You have anxiety" | "You've mentioned feeling anxious" |
+| "You're depressed" | "You've been feeling down lately" |
+| "This is a panic attack" | "That sounds overwhelming" |
+| "You need therapy" | "Talking to a therapist might help" |
+| "You should try CBT" | "Some people find therapy helpful" |
+
+**Tone:** Supportive observer, never clinical expert.
+
+---
+
+## Decision Flowchart for Features
+
+When implementing a new feature, ask:
+
+```
+Is this feature observing patterns
+for personal self-awareness?
+         │
+         ├─ YES → Safe to build
+         │         (e.g., mood calendar, 
+         │          journal prompts,
+         │          gratitude tracking)
+         │
+         └─ NO → Does it diagnose, treat,
+                 prescribe, or intervene?
+                        │
+                        ├─ YES → ❌ DO NOT BUILD
+                        │         (refer to professional)
+                        │
+                        └─ NO → Review with mental
+                                health professional
+```
+
+**When in doubt:** Refer to professionals. Don't build it.
+
+---
+
+## Safe Code Patterns
+
+### Mood Tracking
+
+✅ **Safe:**
+```typescript
+interface MoodEntry {
+  date: Date;
+  mood: 1 | 2 | 3 | 4 | 5; // 1=very low, 5=very high
+  note?: string;
+  energyLevel?: number;
+  sleepQuality?: number;
+}
+
+// Visualize patterns
+function getMoodTrend(entries: MoodEntry[]): Trend {
+  const last7Days = entries.slice(-7);
+  const avg = average(last7Days.map(e => e.mood));
+  return { average: avg, direction: calculateTrend(last7Days) };
+}
+```
+
+❌ **Unsafe:**
+```typescript
+// Never diagnose based on mood patterns
+function diagnoseMood(entries: MoodEntry[]): string {
+  if (entries.filter(e => e.mood < 3).length > 14) {
+    return "Clinical depression detected"; // ❌ NEVER
+  }
+}
+```
+
+---
+
+### Professional Referrals
+
+✅ **Safe:**
+```typescript
+function suggestProfessionalHelp(pattern: EmotionalPattern): string {
+  if (pattern.concerningTrend) {
+    return `
+      We've noticed you've been feeling ${pattern.description} for ${pattern.duration}.
+      
+      Consider talking to a mental health professional:
+      • Find a therapist: psychologytoday.com/us/therapists
+      • Crisis support: 988 (24/7)
+      
+      Your wellbeing matters.
+    `;
+  }
+  return "";
+}
+```
+
+**When to suggest professional help:**
+- Persistent low mood (2+ weeks)
+- Significant life stressors (loss, trauma)
+- User explicitly asks for help
+- Any crisis language detected
+
+**Never:**
+- Force users to contact professionals
+- Diagnosis-based referrals ("You have X, see a doctor")
+- Guilt/shame language
+
+---
+
+### Crisis Detection
+
+✅ **Safe:**
+```typescript
+const CRISIS_KEYWORDS = [
+  "suicide", "kill myself", "end my life",
+  "self-harm", "hurt myself", "not worth living"
+];
+
+function checkForCrisisLanguage(text: string): boolean {
+  return CRISIS_KEYWORDS.some(kw => text.toLowerCase().includes(kw));
+}
+
+function displayCrisisResources(): string {
+  return `
+    🚨 If you're in crisis or considering self-harm:
+    
+    • Call 988 (Suicide & Crisis Lifeline)
+    • Text HOME to 741741 (Crisis Text Line)
+    • Call 911 for emergencies
+    
+    These resources are available 24/7 with trained counselors.
+  `;
+}
+```
+
+❌ **Unsafe:**
+```typescript
+// Never assess risk level
+function assessSuicideRisk(journal: string): RiskLevel {
+  // ❌ DO NOT BUILD THIS
+  // Apps cannot and should not assess suicide risk
+}
+```
+
+---
+
+### Journaling Prompts
+
+✅ **Safe:**
+```typescript
+const JOURNAL_PROMPTS = [
+  "What are you grateful for today?",
+  "What's one positive moment you experienced?",
+  "How did you take care of yourself today?",
+  "What's something you're looking forward to?",
+  "What challenged you today, and how did you handle it?"
+];
+
+function getRandomPrompt(): string {
+  return JOURNAL_PROMPTS[Math.floor(Math.random() * JOURNAL_PROMPTS.length)];
+}
+```
+
+❌ **Unsafe:**
+```typescript
+// Never therapeutic probing
+const BAD_PROMPTS = [
+  "Tell me about your childhood trauma", // ❌ Trauma processing
+  "Why do you think you're depressed?",  // ❌ Diagnostic
+  "What medications are you on?",        // ❌ Medical info
+];
+```
+
+**Safe prompts:** Gratitude, daily highlights, self-care, forward-looking  
+**Unsafe prompts:** Trauma, diagnosis, therapeutic techniques
+
+---
+
+## Validation Checklist
+
+Before shipping any feature, verify:
+
+- [ ] **Does not diagnose** any mental health condition
+- [ ] **Displays crisis resources** prominently (988, Crisis Text Line, 911)
+- [ ] **Never positioned as therapy** replacement
+- [ ] **No medication advice** (even "commonly prescribed")
+- [ ] **Language is supportive**, not authoritative
+- [ ] **Privacy-first** (encrypted storage, no third-party sharing)
+- [ ] **User controls data** (export, delete, opt-out)
+- [ ] **Professional boundaries** respected in all copy and features
+- [ ] **Tested with mental health professionals** (recommended)
+
+---
+
+## Domain Boundaries
+
+### ✅ What therapy data systems CAN do:
+
+1. **Track mood** (self-reported ratings, notes)
+2. **Support journaling** (prompts, organization, search)
+3. **Visualize patterns** (mood graphs, trends, calendars)
+4. **Remind about self-care** (sleep, exercise, social connection)
+5. **Gratitude practices** (daily gratitude journaling)
+6. **Refer to professionals** (therapist directories, crisis resources)
+7. **Encourage healthy habits** (meditation, exercise—general wellness)
+
+### ❌ What they CANNOT do:
+
+1. **Diagnose** mental health conditions
+2. **Replace therapy** or therapists
+3. **Crisis intervention** (suicide prevention, de-escalation)
+4. **Medication advice** (prescribing, dosing, managing)
+5. **Therapeutic techniques** (CBT protocols, trauma work, exposure therapy)
+6. **Couples counseling** (relationship therapy)
+7. **Eating disorder treatment**
+8. **Substance abuse treatment**
+9. **Child/teen mental health** (without extreme safeguards)
+
+---
+
+## Example: Building a Mood Calendar
+
+Here's a complete example of safe implementation:
+
+```typescript
+// ✅ Safe mood tracking system
+
+interface MoodEntry {
+  id: string;
+  userId: string;
+  date: Date;
+  mood: 1 | 2 | 3 | 4 | 5;
+  note?: string;
+  tags?: string[]; // e.g., "social", "work", "exercise"
+}
+
+class MoodTracker {
+  async logMood(userId: string, mood: number, note?: string): Promise<MoodEntry> {
+    const entry: MoodEntry = {
+      id: generateId(),
+      userId,
+      date: new Date(),
+      mood: clamp(mood, 1, 5),
+      note,
+      tags: extractTags(note)
+    };
+    
+    await this.save(entry);
+    
+    // Check for concerning patterns
+    await this.checkPatterns(userId);
+    
+    return entry;
+  }
+  
+  async checkPatterns(userId: string): Promise<void> {
+    const recentEntries = await this.getRecentEntries(userId, 14);
+    
+    // If 2+ weeks of low mood, suggest professional help
+    const lowMoodCount = recentEntries.filter(e => e.mood <= 2).length;
+    
+    if (lowMoodCount >= 10) {
+      await this.suggestProfessionalHelp(userId, {
+        pattern: "persistent low mood",
+        duration: "2+ weeks"
+      });
+    }
+  }
+  
+  async suggestProfessionalHelp(userId: string, context: PatternContext): Promise<void> {
+    const message = `
+      Hi there 👋
+      
+      We've noticed you've been experiencing ${context.pattern} for ${context.duration}.
+      
+      Your wellbeing matters. Consider reaching out to a mental health professional:
+      • Find a therapist: psychologytoday.com/us/therapists
+      • Free/low-cost options: openpathcollective.org
+      • Crisis support (24/7): Call 988 or text HOME to 741741
+      
+      This app is here to support your self-awareness, not replace professional care.
+    `;
+    
+    await this.sendNotification(userId, message);
+  }
+  
+  async getMoodInsights(userId: string): Promise<Insights> {
+    const entries = await this.getEntries(userId);
+    
+    return {
+      averageMood: this.calculateAverage(entries),
+      trend: this.calculateTrend(entries),
+      positivePatterns: this.findPositivePatterns(entries), // e.g., "Better mood on days with exercise"
+      // ❌ NEVER: diagnosis, risk assessment, treatment recommendations
+    };
+  }
+  
+  private findPositivePatterns(entries: MoodEntry[]): Pattern[] {
+    // Safe: correlating activities with better mood
+    return [
+      this.correlateMoodWith(entries, "exercise"),
+      this.correlateMoodWith(entries, "social"),
+      this.correlateMoodWith(entries, "sleep"),
+    ].filter(p => p.correlation > 0.5);
+  }
+}
+
+// Crisis detection always displayed
+function renderJournalEntry(entry: MoodEntry) {
+  if (checkForCrisisLanguage(entry.note)) {
+    return (
+      <CrisisAlert>
+        🚨 If you're in crisis or considering self-harm:
+        <ul>
+          <li>Call <a href="tel:988">988</a> (Suicide & Crisis Lifeline)</li>
+          <li>Text HOME to <a href="sms:741741">741741</a> (Crisis Text Line)</li>
+          <li>Call <a href="tel:911">911</a> for emergencies</li>
+        </ul>
+        These resources are available 24/7.
+      </CrisisAlert>
+    );
+  }
+  
+  return <NormalJournalView entry={entry} />;
+}
+```
+
+**Key safety features:**
+- Mood tracking, not diagnosis
+- Pattern observation, not clinical assessment
+- Professional referrals when concerning patterns emerge
+- Crisis resources displayed immediately when needed
+- Supportive language, never authoritative
+
+---
+
+## Common Mistakes AI Agents Make
+
+### Mistake 1: Medical Authority Voice
+
+❌ **Wrong:**
+```typescript
+return "Based on your symptoms, you have major depressive disorder.";
+```
+
+✅ **Correct:**
+```typescript
+return "You've mentioned feeling low for a while. Consider talking to a mental health professional.";
+```
+
+---
+
+### Mistake 2: Building "Smart" Crisis Assessment
+
+❌ **Wrong:**
+```typescript
+function assessCrisisRisk(user: User): RiskLevel {
+  let score = 0;
+  if (user.mentions("suicide")) score += 10;
+  if (user.lowMoodDays > 14) score += 5;
+  return score > 15 ? RiskLevel.HIGH : RiskLevel.LOW;
+}
+```
+
+✅ **Correct:**
+```typescript
+// Don't assess risk. Display crisis resources immediately.
+if (detectsCrisisLanguage(userInput)) {
+  displayCrisisResources(); // 988, Crisis Text Line, 911
+}
+```
+
+---
+
+### Mistake 3: Therapy-Like Interactions
+
+❌ **Wrong:**
+```typescript
+return "Let's explore why you feel this way. Tell me about your relationship with your parents.";
+```
+
+✅ **Correct:**
+```typescript
+return "What made today feel difficult? (You can write as much or as little as you want.)";
+```
+
+---
+
+### Mistake 4: Medication Normalization
+
+❌ **Wrong:**
+```typescript
+return "Many people with anxiety take SSRIs. Talk to your doctor about starting one.";
+```
+
+✅ **Correct:**
+```typescript
+return "For medication questions, consult your doctor or psychiatrist.";
+```
+
+---
+
+## Privacy & Data Protection
+
+Mental health data is **extremely sensitive**. Implement:
+
+### 1. Encryption
+```typescript
+// Encrypt all therapy data at rest
+const encryptedEntry = await encryptWithUserKey(journalEntry, userKey);
+await storage.save(encryptedEntry);
+```
+
+### 2. User Control
+```typescript
+// Users must be able to export and delete their data
+async function exportAllData(userId: string): Promise<ExportPackage> {
+  return {
+    moodEntries: await getMoodEntries(userId),
+    journalEntries: await getJournalEntries(userId),
+    metadata: await getMetadata(userId)
+  };
+}
+
+async function deleteAllData(userId: string): Promise<void> {
+  await deleteMoodEntries(userId);
+  await deleteJournalEntries(userId);
+  await deleteAccount(userId);
+}
+```
+
+### 3. No Third-Party Sharing
+```typescript
+// ❌ NEVER share mental health data with advertisers, analytics, etc.
+// ✅ Minimal, anonymized usage analytics only if truly necessary
+
+// Bad
+sendToAnalytics({ mood: user.mood, diagnosis: user.condition });
+
+// Acceptable (if truly needed)
+sendToAnalytics({ featureUsed: "mood_calendar" }); // No personal data
+```
+
+### 4. Transparent Privacy Policy
+- Explain exactly what data is collected
+- How it's stored (end-to-end encrypted?)
+- Who has access (no one but user?)
+- How to export/delete
+
+**Mental health data deserves highest privacy protections.**
+
+---
+
+## Testing Guidance
+
+### Test with mental health professionals
+Before launch, have licensed therapists or clinical psychologists review:
+- All UI copy and messaging
+- Crisis detection and referral flows
+- Professional boundary language
+- Feature positioning
+
+### Red team testing
+Test for failures:
+- What happens if user mentions suicide?
+- What if user asks for diagnosis?
+- What if user asks for medication advice?
+- What if journaling reveals severe symptoms?
+
+**Expected outcomes:**
+- Immediate crisis resources for any crisis language
+- Professional referrals (never diagnosis)
+- Consistent boundary-respecting responses
+
+---
+
+## Summary for AI Agents
+
+**When building therapy data features, remember:**
+
+1. **Observe patterns, never diagnose**
+2. **Crisis = 988/Crisis Text Line/911 immediately**
+3. **Never replace therapy** — complement it
+4. **No medication advice** — defer to doctors
+5. **Supportive tone**, not authoritative
+
+**Safe features:**
+- Mood tracking & calendars
+- Journaling prompts & organization
+- Pattern visualization
+- Self-care reminders
+- Gratitude practices
+- Professional referrals
+
+**Unsafe features:**
+- Diagnosis of any kind
+- Crisis intervention or risk assessment
+- Therapy replacement
+- Medication recommendations
+- Clinical therapeutic techniques
+
+**When in doubt:** Refer to mental health professionals. Don't build it.
+
+---
+
+Follow these guidelines, and you'll build systems that genuinely support wellbeing without crossing professional boundaries or putting users at risk.

@@ -1,0 +1,141 @@
+# Getting Started
+
+> How to integrate this AI constitution for therapy projects into your development workflow
+
+---
+
+## ⚡ Instant Setup (Recommended)
+
+```bash
+npm install --save-dev @yelabb/constitution-therapy
+```
+
+**That's it!** Post-install automatically configures:
+- ✅ `.cursorrules` -Cursor AI safety rules for therapy data
+- ✅ `.vscode/settings.json` - GitHub Copilot instructions
+- ✅ `.mcp-config.json` - MCP server for Claude/ChatGPT
+- ✅ `package.json` - Adds `ai:context` script
+
+Your AI coding assistant is now safety-aware for therapy/mental health data development.
+
+### Verify Installation
+
+```bash
+ls -la .cursorrules .mcp-config.json
+npm run ai:context
+```
+
+### For MCP-Compatible AI (Claude Desktop, etc.)
+
+**macOS:** `~/Library/Application Support/Claude/config.json`  
+**Windows:** `%APPDATA%\Claude\config.json`
+
+```json
+{
+  "mcpServers": {
+    "governor-hq-therapy": {
+      "command": "node",
+      "args": ["./node_modules/@yelabb/constitution-therapy/dist/mcp-server.js"]
+    }
+  }
+}
+```
+
+---
+
+## Code Review Checklist
+
+Before merging therapy-related code:
+
+- [ ] No mental health diagnoses (depression, anxiety, PTSD, etc.)
+- [ ] No therapy replacement claims
+- [ ] No medication recommendations
+- [ ] No crisis intervention (directs to 988/911)
+- [ ] Crisis resources prominently displayed
+- [ ] User-facing text uses supportive, non-diagnostic language
+- [ ] Personal baseline established before generating insights
+- [ ] Privacy and consent explicitly handled
+- [ ] Professional referral prompts when appropriate
+
+---
+
+## Therapy-Specific Development Workflow
+
+### Phase 1: Data Collection (0-30 days)
+
+**Silent learning period.** System observes patterns but provides minimal recommendations.
+
+```javascript
+if (user.therapyBaselineStatus !== 'STABLE') {
+  return null; // Limited insights during baseline learning
+}
+```
+
+### Phase 2: Pattern Recognition (30+ days)
+
+**Baseline established.** System can notice meaningful mood/wellbeing patterns.
+
+```javascript
+const isSignificantDeviation = 
+  user.currentMood < user.personalBaseline.mood * 0.8;
+
+if (isSignificantDeviation && persists(7days)) {
+  return {
+    observation: "Your mood has been lower than your recent baseline.",
+    suggestion: "If this persists, consider reaching out to a mental health professional.",
+    crisisResources: true
+  };
+}
+```
+
+---
+
+## Examples of Safe Therapy Features
+
+✅ **Mood tracking app**
+- Daily check ins with emotional trends
+- Personal baseline required
+- No diagnosis
+
+✅ **Journaling platform**
+- Reflection prompts
+- Pattern observation over time
+- No mental health diagnosis
+
+✅ **Therapist portal**
+- Communication tool for licensed professionals
+- Session notes for therapist use
+- Not AI therapy
+
+❌ **AI therapy chatbot** → Replaces therapist  
+❌ **Depression diagnosis tool** → Medical diagnosis  
+❌ **Suicide risk predictor** → Crisis intervention  
+
+---
+
+## Crisis Safety Requirements
+
+All therapy systems must:
+
+1. **Display 988 prominently** - US Suicide & Crisis Lifeline
+2. **Not claim crisis intervention ability**
+3. **Escalate appropriately** - "If you're in crisis, call 988 or 911"
+4. **Never assess suicide risk** -Not equipped for this
+5. **Terms of service** - Explicit "not therapy" disclaimers
+
+---
+
+## Next Steps
+
+1. Read [AI Agent Guide](/ai-agent-guide) for detailed patterns
+2. Review [Hard Rules](/constraints/hard-rules) for absolute boundaries
+3. Check [What We Don't Do](/what-we-dont-do) for scope clarity
+4. Consult agents: [Mood](/agents/mood-agent), [Journaling](/agents/journaling-agent)
+
+---
+
+## Support
+
+- 📖 [Full Documentation](https://the-governor-hq.vercel.app)
+- 🐙 [GitHub Repository](https://github.com/yelabb/the-governor-hq)
+- 💬 [Issues & Questions](https://github.com/yelabb/the-governor-hq/issues)

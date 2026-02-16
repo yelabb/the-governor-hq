@@ -1,0 +1,340 @@
+# Baseline
+
+> How BCI systems learn "normal" brain patterns for each person
+
+---
+
+## Purpose
+
+The **personal baseline** is the foundation of responsible BCI data systems. It is the learned model of an individual's typical brain activity patterns across different states (focused, relaxed, asleep, etc.).
+
+**Without a stable baseline, the system cannot provide meaningful insights.**
+
+This document defines:
+- What a baseline is
+- Why it's mandatory
+- How long it takes to establish
+- What can (and cannot) be done during the learning period
+
+---
+
+## What is a Personal Baseline?
+
+A personal baseline is **a statistical model of your typical brain activity** built from 30-90 days of EEG data across various states and times of day.
+
+### Components
+
+A complete BCI baseline includes:
+
+| Component | Description | Minimum Data Required |
+|---|---|---|
+| **Resting state patterns** | Typical alpha/beta/theta/delta during quiet rest | 30 observations |
+| **Focused state patterns** | Brain activity during concentration tasks | 20+ sessions |
+| **Relaxed/meditation patterns** | Brainwaves during calm, meditative states | 20+ sessions |
+| **Sleep patterns (if applicable)** | EEG across sleep stages | 14-30 nights |
+| **Time-of-day variation** | Morning vs. evening brain activity differences | Full 30-90 day range |
+| **Weekly patterns** | Workday vs. weekend differences | 4-12 weeks |
+
+### Why Personal?
+
+Population averages are meaningless for BCI data:
+
+- One person's "high alpha" (60 μV) = another person's "low alpha" (20 μV)
+- Meditation experience changes baseline brain patterns
+- Age, genetics, and neural architecture create huge individual differences
+- Device placement and calibration add person-specific variations
+
+**The only valid comparison is YOU vs. YOUR OWN BASELINE.**
+
+---
+
+## Baseline Learning Timeline
+
+### Phase 1: Initial Data Collection (Days 1-30)
+
+**Status:** `LEARNING`  
+**System behavior:** Silent observation, no neurofeedback or recommendations
+
+```
+Day 1-7:   📊 Collecting initial patterns
+Day 8-14:  📊 Observing state variations
+Day 15-21: 📊 Building preliminary model
+Day 22-30: 📊 Refining baseline estimates
+```
+
+**User sees:** "Building your personal brain pattern baseline. This takes 30-90 days."
+
+**System does:**
+- Collects raw EEG across different times of day
+- Detects and categorizes different states (focus, relaxation, rest)
+- Calculates preliminary statistical models
+- BUT: Provides no pattern-based feedback yet  (insufficient data)
+
+### Phase 2: Baseline Stabilization (Days 31-90)
+
+**Status:** `STABILIZING`  
+**System behavior:** Early, low-confidence feedback begins
+
+```
+Day 31-45: 📊 Baseline becoming more stable
+Day 46-60: 📊 Confidence increasing
+Day 61-75: 📊 Nearly stable
+Day 76-90: ✅ Baseline stable
+```
+
+**User sees:** "Your baseline is forming. Early insights may be available, but confidence is still building."
+
+**System does:**
+- Continues refining baseline models
+- May provide gentle, low-confidence pattern observations
+- Still learning individual variability and state transitions
+
+### Phase 3: Stable Baseline (Day 90+)
+
+**Status:** `STABLE`  
+**System behavior:** Full neurofeedback and pattern recognition active
+
+**User sees:** Normal neurofeedback and pattern observations
+
+**System does:**
+- Compares current brain activity to well-established baseline
+- Provides high-confidence neurofeedback during meditation/focus
+- Detects meaningful deviations from typical patterns
+- Continuously updates baseline as new data arrives (rolling window)
+
+---
+
+## Baseline Requirements Before Feedback
+
+### Hard Requirement
+
+**All agent-generated insights must check baseline status:**
+
+```javascript
+function generateNeurofeedback(user, eegData) {
+  // MANDATORY GATE
+  if (user.bciBaselineStatus !== 'STABLE') {
+    return null; // No feedback during learning phase
+  }
+  
+  // Only after baseline is stable can we proceed
+  const alphaDeviation = compareToBaseline(eegData, user.personalBaseline);
+  
+  if (significantDeviation(alphaDeviation)) {
+    return generatePatternObservation(alphaDeviation, user);
+  }
+}
+```
+
+### Why This Is Non-Negotiable
+
+**Without baseline:**
+- No context for whether a brainwave value is high/low/normal *for this person*
+- Cannot distinguish signal from noise
+- Risk of false positives (claiming relaxation when it's just that person's typical state)
+- Population comparisons would be used instead (forbidden)
+
+---
+
+## Baseline Calculation Methodology
+
+### Statistical Approach
+
+For each frequency band (alpha, beta, theta, delta):
+
+1. **Collect:** 30-90 days of data across states
+2. **Segment:** Separate by state (focused, relaxed, resting, etc.)
+3. **Calculate:** Mean, median, standard deviation, percentiles for each state
+4. **Model:** Distribution of typical values (not just a single number)
+5. **Update:** Rolling window update as new data arrives
+
+### Example: Alpha Band Baseline
+
+```javascript
+user.personalBaseline.alpha = {
+  restingState: {
+    mean: 42.3,
+    stdDev: 8.1,
+    p25: 36.2,
+    median: 41.8,
+    p75: 48.1,
+    dataPoints: 120 // from 30+ sessions
+  },
+  focusedState: {
+    mean: 28.5,
+    stdDev: 6.3,
+    p25: 24.1,
+    median: 28.0,
+    p75: 32.7,
+    dataPoints: 85
+  },
+  relaxedState: {
+    mean: 56.7,
+    stdDev: 11.2,
+    p25: 48.3,
+    median: 55.9,
+    p75: 64.2,
+    dataPoints: 95
+  }
+};
+```
+
+### State Detection
+
+The baseline must include **state models**—brain patterns typical of different activities:
+
+- **Focused:** High beta, moderate alpha, low theta
+- **Relaxed/meditation:** High alpha, moderate theta, low beta
+- **Drowsy:** High theta, moderate alpha
+- **Deep sleep:** High delta, low everything else
+
+This enables pattern similarity matching: "Your current pattern resembles your past focused states."
+
+---
+
+## Minimum Data Requirements
+
+| Requirement | Minimum | Recommended | Why |
+|---|---|---|---|
+| **Days of data** | 30 | 90 | Capture weekly cycles, lifestyle variations |
+| **Sessions per state** | 15 | 30+ | Statistical stability for each state baseline |
+| **Time of day coverage** | Morning + evening | All times | Circadian rhythm effects on brain activity |
+| **Weekly coverage** | 3 weeks | 12 weeks | Workday/weekend differences |
+| **Sleep nights (if applicable)** | 14 | 30+ | Sleep stage baseline stability |
+
+**If minimum requirements not met:** System remains in `LEARNING` status and provides no feedback.
+
+---
+
+## Handling Special Cases
+
+### Case 1: New Meditation Practice
+
+If a user starts meditating regularly *during* baseline learning:
+
+**Problem:** Meditation changes brain patterns (increases alpha, shifts baseline)
+
+**Solution:** 
+- Detect the shift (new pattern emerging)
+- Extend baseline period to capture new equilibrium
+- Segment data (pre-meditation baseline vs. post-meditation baseline)
+
+### Case 2: Lifestyle Changes
+
+Major life changes (new job, travel, illness) can shift baselines:
+
+**Solution:**
+- Allow baseline to adapt (rolling window update)
+- If dramatic shift detected, flag for baseline recalibration
+- Never lock baseline permanently—always evolving
+
+### Case 3: Illness or Medication
+
+Brain patterns may change during illness or medication use:
+
+**Solution:**
+- **Do NOT interpret as meaningful deviations**
+- Display: "Your brain patterns have changed significantly from baseline. This might be due to illness, medication, or other factors. Patterns may normalize when you return to your usual state."
+- **Do NOT diagnose** or make medical claims
+
+---
+
+## Baseline Updates (After Initial Establishment)
+
+Once a stable baseline exists (90+ days), it should **continuously update** using a rolling window:
+
+### Rolling Window Update
+
+```javascript
+const BASELINE_WINDOW = 90 days;
+
+function updateBaseline(user, newEegData) {
+  // Add new data
+  user.baselineData.push(newEegData);
+  
+  // Remove data older than window
+  user.baselineData = user.baselineData.filter(d => 
+    d.timestamp > now() - BASELINE_WINDOW
+  );
+  
+  // or recalculate statistics
+  user.personalBaseline = calculateBaselineStats(user.baselineData);
+}
+```
+
+### Why Continuous Updates?
+
+- Brain patterns evolve with age, lifestyle, meditation practice
+- Seasonal variations (winter vs. summer)
+- Device recalibration or replacement
+- Long-term stability requires adaptation
+
+---
+
+## Communicating Baseline Status to Users
+
+### During Learning Phase
+
+**Good:**
+```
+Building Your Brain Pattern Baseline
+
+We're learning your unique brain patterns across different states 
+(focused, relaxed, resting). This takes 30-90 days.
+
+Progress: Day 24 of 90
+  - Focused state: 18 sessions recorded ✓
+  - Relaxed state: 14 sessions recorded
+  - Sleep: 21 nights recorded ✓
+
+Keep using the device regularly to improve baseline accuracy.
+```
+
+**Bad:**
+❌ "Your brain is still calibrating" (sounds mechanical/diagnostic)  
+❌ "Baseline creation: 26% complete" (progress bar implies it's just processing, not learning individual patterns)
+
+### When Baseline is Stable
+
+**Good:**
+```
+Baseline Established ✓
+
+We've learned your personal brain patterns! 
+
+Now you'll receive neurofeedback when your brain activity 
+shows patterns similar to your focused or relaxed states.
+
+Your baseline will continue updating as you use the device.
+```
+
+---
+
+## Developer Checklist
+
+Before implementing any BCI feature that provides user insights:
+
+- [ ] Does it check `user.bciBaselineStatus === 'STABLE'` before activating?
+- [ ] Does it compare to personal baseline, not population norms?
+- [ ] Does it require minimum data thresholds (30+ days, 15+ sessions per state)?
+- [ ] Does the baseline update continuously (rolling window)?
+- [ ] Are users informed when they're in the learning phase?
+- [ ] Is there a clear communication about why baseline is necessary?
+
+---
+
+## Summary
+
+**Personal baseline is mandatory because:**
+1. Brain patterns vary hugely between individuals
+2. Population averages are meaningless
+3. Without baseline, "high alpha" or "low beta" has no context
+4. Comparing to self is the only valid approach
+
+**Baseline requirements:**
+- 30-90 days of data
+- Multiple states (focused, relaxed, resting, sleep)
+- Continuous rolling updates
+- No feedback until baseline is stable
+
+**Rule:** If `baselineStatus !== 'STABLE'`, no pattern-based insights. Period.

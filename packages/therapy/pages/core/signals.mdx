@@ -1,0 +1,450 @@
+# Signals
+
+> What therapy data provides — and what it doesn't
+
+---
+
+## Overview
+
+"Signals" are the data points therapy systems collect: mood ratings, journal entries, symptom logs, self-care tracking.
+
+But **what do these signals actually tell us?**
+
+This document defines what therapy data **can and cannot** reveal.
+
+---
+
+## What Therapy Data IS
+
+### Self-Reported Subjective Experience
+
+Therapy data captures **what users choose to share** about their emotional state.
+
+**Characteristics:**
+- **Subjective** — Based on personal perception
+- **Self-reported** — User decides what to share
+- **Momentary** — Snapshot of how someone feels right now
+- **Personal context** — Influenced by individual circumstances
+
+**Example signals:**
+```typescript
+interface MoodEntry {
+  date: Date;
+  mood: 1 | 2 | 3 | 4 | 5; // Self-rated
+  note?: string;           // Subjective description
+  tags?: string[];         // User-defined categories
+}
+
+interface JournalEntry {
+  content: string;  // Personal reflection
+  timestamp: Date;
+  private: boolean;
+}
+```
+
+**What this tells us:**
+- How the person **perceives** their mood
+- What they **choose to share**
+- Patterns **they've noticed**
+
+**What it doesn't tell us:**
+- Clinical diagnosis
+- Objective mental health status
+- Full context of their life
+- Underlying biological factors
+
+---
+
+## What Therapy Data IS NOT
+
+### ❌ Not Medical Diagnostics
+
+**Therapy data ≠ clinical assessment.**
+
+Medical diagnostics require:
+- Comprehensive clinical interviews
+- Standardized assessment tools (administered by professionals)
+- Differential diagnosis (ruling out other conditions)
+- Medical history and physical exams
+- Professional judgment from licensed clinicians
+
+**Mood tracking apps provide:**
+- Simple self-reported ratings
+- Unstructured journal entries
+- Pattern observations
+
+**These are fundamentally different.**
+
+❌ **Don't claim:**
+- "Diagnoses depression"
+- "Detects anxiety disorders"
+- "Clinical-grade assessment"
+
+✅ **Do say:**
+- "Tracks personal mood patterns"
+- "Supports self-awareness"
+- "Complements professional assessment"
+
+---
+
+### ❌ Not Predictive of Crisis
+
+**Therapy data cannot predict suicide or self-harm.**
+
+Why prediction fails:
+- Suicide is **not predictable** from mood data alone
+- False positives create unnecessary alarm
+- False negatives create dangerous false security
+- Complex interplay of factors beyond mood
+
+**Don't build:**
+- Suicide risk prediction models
+- "AI detects when you're at risk"
+- Automated crisis alerts based on mood patterns
+
+**Do build:**
+- Crisis resource displays when user mentions crisis language
+- Professional referral suggestions for persistent concerning patterns
+- Always-accessible crisis buttons
+
+**The difference:**
+- ❌ Predicting crisis before it happens (impossible)
+- ✅ Responding when user expresses crisis (keyword detection)
+
+---
+
+### ❌ Not Continuous Monitoring
+
+**Therapy data is sparse and episodic**, not continuous.
+
+Contrast with wearables:
+- Wearables: heart rate every second, 24/7
+- Therapy apps: user logs mood 0-3 times per day, *if they remember*
+
+**Implications:**
+- Big gaps in data
+- User decides when/what to log
+- Can't "monitor" mental state continuously
+
+**Don't position as:**
+- "24/7 mental health monitoring"
+- "Always watching over you"
+
+**Do position as:**
+- "Track your patterns when you check in"
+- "Reflective tool for self-awareness"
+
+---
+
+## Signal Characteristics
+
+### 1. Mood Ratings
+
+**What it is:**
+- User selects number (e.g., 1-5) representing current mood
+- Often with emoji or color coding
+- Sometimes includes dimensions (happiness, energy, anxiety)
+
+**What it tells us:**
+- User's subjective emotional state at moment of logging
+- Relative changes over time
+- Patterns across days/weeks
+
+**What it doesn't tell us:**
+- Absolute "truth" of mental health
+- Clinical severity
+- Underlying causes
+
+**Strengths:**
+- Easy to track over time
+- Visual patterns emerge (mood graphs)
+- Low friction (quick to log)
+
+**Limitations:**
+- Highly subjective (your "3" ≠ my "3")
+- Recall bias (did I feel this way all day, or just now?)
+- Missing context (why this mood?)
+
+---
+
+### 2. Journal Entries
+
+**What it is:**
+- Free-form text where users write about thoughts, feelings, events
+- Prompts may guide reflection
+
+**What it tells us:**
+- User's narrative about their experience
+- Events, thoughts, emotions they find significant
+- Self-reflection and insight
+
+**What it doesn't tell us:**
+- Objective "facts" (memory is reconstructive)
+- Full picture (people omit, forget, reinterpret)
+- Clinical assessment (narrative ≠ diagnosis)
+
+**Strengths:**
+- Rich qualitative data
+- Personal meaning and context
+- Supports self-reflection
+
+**Limitations:**
+- Unstructured (hard to analyze quantitatively)
+- Privacy-sensitive (requires encryption, user control)
+- Not everyone journals consistently
+
+---
+
+### 3. Symptom Logs
+
+**What it is:**
+- Checklists of common symptoms (e.g., "difficulty sleeping," "loss of interest")
+- Often yes/no or severity ratings
+
+**What it tells us:**
+- Presence/absence of specific experiences
+- Symptom patterns over time
+
+**What it doesn't tell us:**
+- Diagnosis (symptoms alone don't = disorder)
+- Severity in clinical context
+- Differential diagnosis (many conditions share symptoms)
+
+**Strengths:**
+- More structured than mood ratings
+- Can track specific issues (sleep, appetite, energy)
+- Helpful for conversations with professionals
+
+**Limitations:**
+- Not diagnostic
+- User interpretation varies
+- Easy to confuse symptom tracking with diagnosis
+
+**⚠️ Warning:** Symptom logs can easily slip into pseudo-diagnosis if not carefully positioned.
+
+❌ **Don't say:** "Your symptoms indicate depression."  
+✅ **Do say:** "You've checked several symptoms. Consider discussing with a professional."
+
+---
+
+### 4. Activity/Self-Care Tracking
+
+**What it is:**
+- Logs of activities (exercise, social time, sleep)
+- Self-care practices (meditation, gratitude)
+
+**What it tells us:**
+- Behavioral patterns
+- Correlations (e.g., better mood on days with exercise)
+
+**What it doesn't tell us:**
+- Causation (correlation ≠ cause)
+- Full context (maybe exercise correlates with good-weather days)
+
+**Strengths:**
+- Actionable insights (notice what helps)
+- Empowering (user can make changes)
+
+**Limitations:**
+- Correlation only
+- Oversimplification (mood is multi-causal)
+
+---
+
+## Signal Quality Issues
+
+### Reporting Bias
+
+**Users decide what to log.**
+
+- Might only log when feeling very good or very bad
+- Might avoid logging during difficult periods
+- Might present idealized version
+
+**Implication:** Data is **incomplete** and **selective**.
+
+**Don't assume:** Logged data = complete picture.
+
+---
+
+### Recall Bias
+
+**Memory is imperfect.**
+
+- "How did I feel today?" asked at 9 PM might only capture evening mood
+- Negative moods can color recall of entire day
+- Positive events may be forgotten in low mood
+
+**Implication:** Self-reports are **reconstructions**, not recordings.
+
+---
+
+### Subjectivity Variance
+
+**Your "3" isn't my "3."**
+
+- People have different baselines
+- Cultural differences in emotion expression
+- Scale interpretation varies
+
+**Implication:** Cross-person comparisons are **meaningless**. Focus on within-person patterns.
+
+---
+
+### Missing Context
+
+**Mood data lacks life context.**
+
+- User might not log major life events
+- External stressors unknown
+- Physical health factors invisible
+
+**Implication:** Patterns may have **hidden explanations**.
+
+**Don't over-interpret** mood drops without context.
+
+---
+
+## What We CAN Do with Therapy Data
+
+### ✅ 1. Personal Pattern Recognition
+
+Observe individual trends:
+- "You tend to feel better on days you exercise"
+- "Your mood dips on Sundays"
+- "Journaling seems to help you process"
+
+**Use for:**
+- Personal insights
+- Self-awareness
+- Informed conversations with therapists
+
+---
+
+### ✅ 2. Identify When to Seek Help
+
+Recognize concerning patterns:
+- Persistent low mood (2+ weeks)
+- Significant changes from baseline
+- Increasing symptom severity
+
+**Use for:**
+- Suggesting professional evaluation
+- Encouraging help-seeking
+- NOT diagnosis, just "worth discussing with a professional"
+
+---
+
+### ✅ 3. Support Self-Reflection
+
+Facilitate meaning-making:
+- Journal prompts
+- Reviewing past entries
+- Noticing personal growth
+
+**Use for:**
+- Self-awareness
+- Tracking progress
+- Complementing therapy
+
+---
+
+### ✅ 4. Complement Professional Treatment
+
+Provide data for therapists:
+- Mood graphs to discuss in session
+- Symptom patterns over time
+- Concrete data instead of memory alone
+
+**Use for:**
+- Patient-provider communication
+- Treatment planning (by professional)
+- Tracking progress in therapy
+
+---
+
+## What We CANNOT Do with Therapy Data
+
+### ❌ 1. Diagnose Mental Health Conditions
+
+**Never:**
+- "You have depression"
+- "This indicates anxiety disorder"
+- Any DSM-5 diagnosis
+
+**Why:** Diagnosis requires comprehensive clinical assessment, not just self-reported mood.
+
+---
+
+### ❌ 2. Predict Crisis or Suicide
+
+**Never:**
+- "AI predicts suicide risk"
+- "Alert: user at high risk"
+- Automated crisis intervention
+
+**Why:** Suicide is not predictable from mood data. False positives/negatives are dangerous.
+
+**Instead:** Display crisis resources when user expresses crisis language.
+
+---
+
+### ❌ 3. Replace Therapy
+
+**Never:**
+- Position app as therapy substitute
+- "AI therapist"
+- Treatment without professionals
+
+**Why:** Therapy requires trained humans, therapeutic relationship, evidence-based interventions.
+
+**Instead:** Support self-awareness, complement professional care.
+
+---
+
+### ❌ 4. Make Medical Recommendations
+
+**Never:**
+- Medication suggestions
+- Treatment protocols
+- Clinical interventions (CBT, exposure therapy, etc.)
+
+**Why:** Medical decisions require professional training and oversight.
+
+**Instead:** Defer all medical questions to doctors/therapists.
+
+---
+
+## Summary
+
+**Therapy data signals are:**
+- Self-reported subjective experiences
+- Episodic and sparse (not continuous)
+- Personal perception of emotional state
+- Useful for self-awareness and professional conversations
+
+**They are NOT:**
+- Medical diagnostics
+- Predictive of crisis
+- Continuous monitoring
+- Substitute for professional assessment
+
+**We can:**
+- Recognize personal patterns
+- Suggest professional help when appropriate
+- Support self-reflection
+- Complement therapy
+
+**We cannot:**
+- Diagnose conditions
+- Predict suicide
+- Replace therapy
+- Make medical recommendations
+
+**Use therapy data responsibly:**
+- Acknowledge limitations
+- Position appropriately
+- Refer to professionals
+- Respect user autonomy
+
+Signals are valuable for what they are — **self-awareness tools** — as long as we don't claim they're something more.

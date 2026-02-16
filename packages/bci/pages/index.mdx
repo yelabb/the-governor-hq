@@ -1,0 +1,146 @@
+# The Governor HQ Constitutional Framework
+
+## AI Safety Constitution for BCI Data Projects
+
+> **This documentation is a safety layer for AI-assisted development on brain-computer interface data projects.**
+
+The Governor HQ BCI framework defines behavioral constraints, safety boundaries, and operational rules for any AI system or product that processes consumer BCI/neurotechnology data.
+
+This documentation is **prescriptive and executable** — not decorative. It encodes:
+
+- **Product scope** — What BCI data systems should (and must not) do
+- **Safety boundaries** — Hard rules that prevent neurological claims, mental state diagnoses, and medical assertions
+- **Language constraints** — How systems communicate with users about their brain data
+- **Product identity** — Clear positioning in the consumer wellness (not medical) space
+- **AI agent guidance** — Explicit instructions for AI coding assistants
+
+---
+
+## Who This Is For
+
+### Developers Building BCI Data Products
+
+If you're building products that process brain data from consumer BCI/neurotechnology devices (EEG headbands, neurofeedback systems, fNIRS devices, focus trackers, meditation tools, etc.) and use AI coding assistants (GitHub Copilot, ChatGPT, Claude, Cursor, etc.), **this framework should be in your AI agent's context**.
+
+### Use Cases
+
+- Meditation and relaxation training via neurofeedback
+- Focus and attention pattern recognition
+- Brain state awareness (relaxation, concentration)
+- Sleep stage analysis from EEG
+- Personal baseline brainwave learning
+- Neurofeedback games and interactive experiences
+- Consumer wellness applications using neural data
+
+### Not For
+
+- Clinical BCI systems (FDA-regulated)
+- Diagnostic tools for neurological conditions
+- Medical neurofeedback therapy
+- Clinical research applications
+- Brain-computer interfaces for accessibility/medical use
+
+---
+
+## Core Principles
+
+| Principle | Detail |
+|---|---|
+| **Personal baseline** | Systems must learn each user's brain patterns over time (30–90 days minimum) |
+| **Pattern recognition** | Identify trends, never make definitive mental state claims |
+| **Non-diagnostic** | No neurological or psychiatric diagnoses whatsoever |
+| **Consumer wellness** | Focus on meditation, focus training, relaxation, self-awareness |
+| **Privacy paramount** | Neural data requires the strictest privacy controls and explicit consent |
+| **No mind reading** | Brain signals are patterns, not thoughts or feelings |
+
+---
+
+## Critical BCI Boundaries
+
+### Absolute Prohibitions
+
+- ❌ **No mental state diagnosis** - Never claim to diagnose ADD, ADHD, depression, anxiety, etc.
+- ❌ **No emotion interpretation** - Cannot definitively state emotional states from brain signals
+- ❌ **No cognitive ability claims** - Avoid statements about intelligence, learning disabilities, or cognitive disorders
+- ❌ **No neurological diagnoses** - Never suggest epilepsy, dementia, brain injuries, or other conditions
+- ❌ **No treatment claims** - Cannot position neurofeedback as treatment for medical conditions
+- ❌ **No thought reading** - Brain signals are patterns, not mind reading
+- ❌ **Privacy critical** - Neural data is highly sensitive, requires explicit informed consent
+
+### Allowed BCI Applications
+
+✅ **Focus pattern recognition** - "Your focus patterns suggest..."  
+✅ **Meditation guidance** - "Brain activity indicates relaxation..."  
+✅ **Sleep stage estimation** - "EEG suggests you're in light sleep..."  
+✅ **Attention training** - "Practice maintaining focus when you see..."  
+✅ **Neurofeedback for relaxation** - "When alpha waves increase, try..."  
+✅ **Personal baseline learning** - "Your typical brain patterns show..."  
+
+---
+
+## Documentation Map
+
+### **[AI Agent Guide](/ai-agent-guide)** ⭐ Start Here for AI-Assisted Development
+Comprehensive instructions for AI coding assistants. Includes code patterns, decision trees, validation checklists, and BCI-specific pitfalls.
+
+### Core System
+How BCI data systems should read, learn, and make decisions.
+
+- [**Signals**](/core/signals) — What BCI sensors provide (and what they cannot tell us)
+- [**Baseline**](/core/baseline) — How systems learn "normal" brain patterns for each person
+- [**Deviation Engine**](/core/deviation-engine) — When and why recommendation systems activate
+
+### Agents
+What BCI-based recommendation systems can suggest.
+
+- [**Focus Agent**](/agents/focus-agent) — Allowed focus/attention guidance
+- [**Neurofeedback Agent**](/agents/neurofeedback-agent) — Meditation and relaxation neurofeedback
+
+### Constraints
+What systems must never do — the constitutional boundaries.
+
+- [**Hard Rules**](/constraints/hard-rules) — Absolute system limits (product constitution)
+- [**Language Rules**](/constraints/language-rules) — Tone, wording, and phrasing controls
+
+### Positioning & Boundaries
+- [**Product Identity**](/positioning) — What BCI data products are and are not
+- [**What We Don't Do**](/what-we-dont-do) — Explicit domain boundaries and scope limits
+
+---
+
+## Quick Start for AI Coding Assistants
+
+If you're an AI coding assistant (GitHub Copilot, Claude, ChatGPT, Cursor, etc.) working on a BCI data project:
+
+1. **Read** [AI Agent Guide](/ai-agent-guide) — Critical patterns and requirements
+2. **Check** [Hard Rules](/constraints/hard-rules) — before implementing any user-facing feature
+3. **Validate** [Language Rules](/constraints/language-rules) — before generating any text users will see
+4. **Consult** [What We Don't Do](/what-we-dont-do) — when uncertain about feature scope
+
+**Golden rule:** If uncertain whether a feature is allowed, the answer is **NO** until confirmed safe.
+
+---
+
+## Installation
+
+```bash
+npm install --save-dev @yelabb/constitution-bci
+```
+
+The post-install script automatically configures AI safety rules for your development environment.
+
+See [Getting Started](/getting-started) for complete setup instructions.
+
+---
+
+## Related Packages
+
+- [`@yelabb/constitution-core`](https://npmjs.com/package/@yelabb/constitution-core) - Core safety infrastructure (auto-installed)
+- [`@yelabb/constitution-wearables`](https://npmjs.com/package/@yelabb/constitution-wearables) - Smartwatch/fitness tracker data
+- [`@yelabb/constitution-therapy`](https://npmjs.com/package/@yelabb/constitution-therapy) - Therapy and mental health data
+
+---
+
+## License
+
+MIT

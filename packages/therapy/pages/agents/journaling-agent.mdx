@@ -1,0 +1,641 @@
+# Journaling Agent
+
+> Self-reflection prompts and insights  
+> Safe implementation of journaling features
+
+---
+
+## Overview
+
+**Journaling agents** are features that support personal reflection, emotional processing, and self-awareness through writing.
+
+They provide prompts, organize entries, and offer gentle insights—but **never conduct therapy, probe trauma, or replace professional care**.
+
+---
+
+## What a Journaling Agent Does
+
+### ✅ 1. Prompts for Reflection
+
+**Provide gentle, non-therapeutic prompts.**
+
+```typescript
+const SAFE_PROMPTS = [
+  // Gratitude
+  "What are you grateful for today?",
+  "What's one positive moment from your day?",
+  
+  // Self-awareness
+  "How are you feeling right now?",
+  "What's been on your mind lately?",
+  
+  // Forward-looking
+  "What's something you're looking forward to?",
+  "What would make tomorrow a good day?",
+  
+  // Self-care
+  "How did you take care of yourself today?",
+  "What does your body need right now?",
+  
+  // Reflection
+  "What challenged you today, and how did you handle it?",
+  "What did you learn about yourself this week?"
+];
+
+function getRandomPrompt(): string {
+  return SAFE_PROMPTS[Math.floor(Math.random() * SAFE_PROMPTS.length)];
+}
+```
+
+**Safe prompts:**
+- Open-ended but gentle
+- Focus on present/recent past
+- Encourage positive reflection
+- Honor user autonomy
+
+**Unsafe prompts:**
+- ❌ "Tell me about your childhood trauma"
+- ❌ "Why do you think you're depressed?"
+- ❌ "What's wrong with you?"
+- ❌ "Describe your worst memory"
+
+**Why unsafe prompts are problematic:**
+- Trauma processing requires professional oversight
+- Can trigger distress without support
+- Implies therapeutic relationship that doesn't exist
+
+---
+
+### ✅ 2. Organize Entries
+
+**Make journaling easy and accessible.**
+
+```typescript
+interface JournalEntry {
+  id: string;
+  userId: string;
+  timestamp: Date;
+  content: string;
+  mood?: number;
+  tags?: string[];
+  private: boolean; // User controls visibility
+}
+
+class JournalManager {
+  async createEntry(userId: string, content: string, tags?: string[]): Promise<JournalEntry> {
+    const entry = {
+      id: generateId(),
+      userId,
+      timestamp: new Date(),
+      content,
+      tags: tags || extractTags(content),
+      private: true // Default to private
+    };
+    
+    await this.saveEntry(entry);
+    
+    // Check for crisis language
+    if (detectCrisisLanguage(content)) {
+      await this.displayCrisisResources(userId);
+    }
+    
+    return entry;
+  }
+  
+  async searchEntries(userId: string, query: string): Promise<JournalEntry[]> {
+    // Allow searching own journals
+    return await this.search(userId, query);
+  }
+  
+  async getEntriesByTag(userId: string, tag: string): Promise<JournalEntry[]> {
+    return await this.findByTag(userId, tag);
+  }
+}
+```
+
+**Features:**
+- Easy entry creation
+- Search/filter capabilities
+- Tag organization
+- Calendar view
+
+---
+
+### ✅ 3. Pattern Observations
+
+**Gentle insights from journal content (not analysis/interpretation).**
+
+```typescript
+function generateJournalInsights(entries: JournalEntry[]): Insight[] {
+  const insights: Insight[] = [];
+  
+  // Frequency observation
+  const entriesThisMonth = entries.filter(e => 
+    isWithinDays(e.timestamp, 30)
+  ).length;
+  
+  if (entriesThisMonth >= 20) {
+    insights.push({
+      type: "consistency",
+      message: "You've been journaling consistently this month. That's wonderful!"
+    });
+  }
+  
+  // Gratitude observation
+  const gratitudeEntries = entries.filter(e =>
+    e.content.toLowerCase().includes("grateful") ||
+    e.content.toLowerCase().includes("thankful") ||
+    e.tags?.includes("gratitude")
+  ).length;
+  
+  if (gratitudeEntries >= 10) {
+    insights.push({
+      type: "gratitude_practice",
+      message: "You've been practicing gratitude regularly. Research shows this can boost wellbeing!"
+    });
+  }
+  
+  return insights;
+}
+```
+
+**Safe observations:**
+- ✅ "You've been journaling consistently"
+- ✅ "You often mention feeling grateful"
+- ✅ "You tend to journal more when stressed"
+
+**Unsafe analysis:**
+- ❌ "Your writings reveal unresolved trauma"
+- ❌ "You're avoiding discussing your depression"
+- ❌ "This indicates anxiety disorder"
+
+**Key difference:**
+- Observation: Count/frequency of topics user chooses to write about
+- Analysis: Interpreting psychological meaning (requires clinical training)
+
+---
+
+### ✅ 4. Reflection on Growth
+
+**Help users see their own progress.**
+
+```typescript
+function generateGrowthReflection(entries: JournalEntry[]): string {
+  const oldEntry = entries[0]; // First entry
+  const recentEntries = entries.slice(-5); // Last 5 entries
+  
+  return `
+    You started journaling ${formatDaysAgo(oldEntry.timestamp)}.
+    
+    Looking back at your early entries and comparing them to recent ones,
+    what changes do you notice in yourself?
+    
+    (Optional reflection prompt—no pressure to respond)
+  `;
+}
+```
+
+**Purpose:**
+- Encourage self-reflection
+- Notice personal growth
+- User-driven interpretation (not AI interpretation)
+
+---
+
+### ✅ 5. Crisis Language Detection
+
+**Monitor for explicit crisis expressions and respond immediately.**
+
+```typescript
+const CRISIS_KEYWORDS = [
+  "suicide", "kill myself", "end my life",
+  "self-harm", "hurt myself", "cut myself",
+  "not worth living", "want to die",
+  "overdose", "pills"
+];
+
+function checkForCrisis(content: string): boolean {
+  return CRISIS_KEYWORDS.some(keyword =>
+    content.toLowerCase().includes(keyword)
+  );
+}
+
+async function handleJournalEntry(userId: string, content: string): Promise<void> {
+  if (checkForCrisis(content)) {
+    await displayCrisisResources(userId);
+    // Don't save entry? Or save but immediately show resources?
+    // Design decision: probably save (user's data) but show resources
+  }
+  
+  await saveJournalEntry(userId, content);
+}
+
+function displayCrisisResources(): string {
+  return `
+    🚨 If you're in crisis or considering self-harm:
+    
+    • Call 988 (Suicide & Crisis Lifeline)
+    • Text HOME to 741741 (Crisis Text Line)
+    • Call 911 for emergencies
+    
+    These resources are available 24/7 with trained counselors.
+  `;
+}
+```
+
+**Critical:** Display resources **immediately** when crisis language detected. Don't try to counsel or intervene.
+
+---
+
+## What a Journaling Agent Does NOT Do
+
+### ❌ Therapeutic Probing
+
+**Never probe for trauma or deep psychological content.**
+
+❌ **Bad prompts:**
+- "Tell me about your childhood abuse"
+- "Why do you think you have these thoughts?"
+- "Describe the worst thing that ever happened to you"
+
+✅ **Good prompts:**
+- "What's on your mind today?"
+- "How are you feeling?"
+- "What's one thing you appreciate about yourself?"
+
+**Why:** Trauma processing requires professional oversight and can be destabilizing without support.
+
+---
+
+### ❌ Psychoanalysis
+
+**Never interpret psychological meaning.**
+
+❌ **Bad:**
+```typescript
+// Analyzing journal content for unconscious patterns
+return "Your repeated mentions of your father suggest unresolved paternal issues.";
+```
+
+✅ **Good:**
+```typescript
+// Simple observation
+return "You've mentioned family a lot lately. Family relationships can bring up complex feelings.";
+```
+
+**Why:** Psychological interpretation requires training and therapeutic relationship.
+
+---
+
+### ❌ Diagnosis from Writing
+
+**Never diagnose based on journal content.**
+
+❌ **Bad:**
+```typescript
+if (journal.includes("can't get out of bed")) {
+  return "Your symptoms indicate major depressive disorder.";
+}
+```
+
+✅ **Good:**
+```typescript
+if (journal.includes("can't get out of bed")) {
+  return "That sounds really difficult. If this has been going on for a while, consider talking to a professional.";
+}
+```
+
+---
+
+### ❌ Forced Journaling
+
+**Never guilt or shame for not journaling.**
+
+❌ **Bad notification:**
+```
+You haven't journaled in 5 days. Your mental health will suffer if you don't write.
+```
+
+✅ **Good notification:**
+```
+Ready to journal when you are 💙 (No pressure!)
+```
+
+**Respect user autonomy.** Journaling is a tool, not a requirement.
+
+---
+
+## Safe Journaling Features
+
+### Feature 1: Gratitude Journal
+
+```typescript
+const GRATITUDE_PROMPTS = [
+  "What are you grateful for today?",
+  "Who made your day better?",
+  "What brought you joy recently?",
+  "What's something small you appreciate?"
+];
+
+function getGratitudePrompt(): string {
+  return GRATITUDE_PROMPTS[Math.floor(Math.random() * GRATITUDE_PROMPTS.length)];
+}
+```
+
+**Why safe:** Focuses on positive, doesn't probe difficult emotions.
+
+---
+
+### Feature 2: "How I'm Feeling" Check-In
+
+```typescript
+async function createCheckIn(userId: string, feeling: string, note?: string): Promise<void> {
+  const entry = {
+    type: "check-in",
+    feeling, // e.g., "anxious", "happy", "tired"
+    note,
+    timestamp: new Date()
+  };
+  
+  await saveCheckIn(userId, entry);
+  
+  // Gentle validation
+  return `Thanks for checking in. ${validateFeeling(feeling)}`;
+}
+
+function validateFeeling(feeling: string): string {
+  const validations = {
+    anxious: "Anxiety can be uncomfortable. Be gentle with yourself.",
+    sad: "It's okay to feel sad.",
+    happy: "Glad you're feeling good!",
+    tired: "Rest is important. Take care of yourself.",
+    // ...etc
+  };
+  
+  return validations[feeling] || "All feelings are valid.";
+}
+```
+
+**Why safe:** Validates feelings without interpretation or diagnosis.
+
+---
+
+### Feature 3: "Today's Wins" Journal
+
+```typescript
+const WINS_PROMPTS = [
+  "What's one thing you accomplished today, no matter how small?",
+  "What's something you're proud of today?",
+  "What went well today?"
+];
+
+async function logWin(userId: string, win: string): Promise<void> {
+  await saveJournalEntry(userId, {
+    type: "win",
+    content: win,
+    timestamp: new Date()
+  });
+  
+  return "Nice work! Every step forward counts.";
+}
+```
+
+**Why safe:** Strengths-based, celebrates progress, builds self-efficacy.
+
+---
+
+### Feature 4: Emotion Labeling
+
+```typescript
+const EMOTION_WHEEL = {
+  happy: ["joyful", "content", "proud", "grateful"],
+  sad: ["disappointed", "lonely", "hurt", "hopeless"],
+  angry: ["frustrated", "annoyed", "betrayed", "bitter"],
+  anxious: ["worried", "overwhelmed", "insecure", "nervous"],
+  // ...etc
+};
+
+function offerEmotionLabels(baseEmotion: string): string[] {
+  return EMOTION_WHEEL[baseEmotion] || [];
+}
+
+// In UI: "You said you're feeling sad. More specifically, are you...?"
+// [disappointed] [lonely] [hurt] [hopeless] [other]
+```
+
+**Why safe:** Helps with emotional granularity (proven to help emotion regulation) without diagnosis.
+
+---
+
+## Privacy & Security for Journals
+
+**Journal entries are deeply personal.**
+
+### End-to-end encryption
+```typescript
+// Encrypt before saving
+const encrypted = await encrypt(journalContent, userKey);
+await storage.save(encrypted);
+
+// Decrypt when retrieving
+const decrypted = await decrypt(encryptedContent, userKey);
+```
+
+### User-only access
+- **Never** share journal content with third parties
+- **Never** use for ad targeting
+- **Never** train ML models on user journals without explicit opt-in
+
+### Export & delete
+```typescript
+// Export all journals
+async function exportJournals(userId: string): Promise<JournalExport> {
+  const entries = await getAllJournalEntries(userId);
+  return {
+    entries,
+    format: "JSON",
+    exportedAt: new Date()
+  };
+}
+
+// Permanent deletion
+async function deleteAllJournals(userId: string): Promise<void> {
+  await permanentlyDeleteJournals(userId);
+  // Actually delete, don't just flag as deleted
+}
+```
+
+---
+
+## Testing Journaling Features
+
+### Test scenarios:
+
+**1. Prompt variety**
+- User gets different prompts each time
+- Prompts are gentle and open-ended
+- No trauma-probing prompts
+
+**2. Crisis language detection**
+- If entry mentions "suicide", display 988 immediately
+- No counseling attempts
+- Still save entry (user's data)
+
+**3. Search/organization**
+- User can search own entries
+- Tag filtering works
+- Calendar view shows entry history
+
+**4. Privacy**
+- Entries encrypted at rest
+- Export function works
+- Delete permanently removes data
+
+**5. No forced journaling**
+- Reminders are gentle
+- No guilt/shame language
+- Easy to dismiss
+
+---
+
+## Complete Journaling Agent Implementation
+
+```typescript
+class JournalingAgent {
+  // Create journal entry
+  async createEntry(userId: string, content: string, mood?: number): Promise<JournalEntry> {
+    const entry = {
+      id: generateId(),
+      userId,
+      timestamp: new Date(),
+      content,
+      mood,
+      tags: extractTags(content),
+      private: true
+    };
+    
+    // Crisis check
+    if (detectCrisisLanguage(content)) {
+      await this.displayCrisisResources(userId);
+    }
+    
+    await this.saveEntry(entry);
+    return entry;
+  }
+  
+  // Get prompt
+  getPrompt(type?: "gratitude" | "check-in" | "open"): string {
+    if (type === "gratitude") {
+      return this.getRandomGratitudePrompt();
+    }
+    if (type === "check-in") {
+      return "How are you feeling right now?";
+    }
+    return this.getRandomOpenPrompt();
+  }
+  
+  // Generate insights (non-analytical)
+  async getInsights(userId: string): Promise<Insight[]> {
+    const entries = await this.getEntries(userId, 30);
+    const insights: Insight[] = [];
+    
+    // Consistency insight
+    if (entries.length >= 20) {
+      insights.push({
+        type: "consistency",
+        message: "You've been journaling consistently this month!"
+      });
+    }
+    
+    // Gratitude practice insight
+    const gratitudeCount = entries.filter(e =>
+      e.tags?.includes("gratitude")
+    ).length;
+    
+    if (gratitudeCount >= 10) {
+      insights.push({
+        type: "gratitude",
+        message: "You've been practicing gratitude regularly. That's great for wellbeing!"
+      });
+    }
+    
+    return insights;
+  }
+  
+  // Display crisis resources
+  async displayCrisisResources(userId: string): Promise<void> {
+    const message = `
+      🚨 If you're in crisis or considering self-harm:
+      
+      • Call 988 (Suicide & Crisis Lifeline)
+      • Text HOME to 741741 (Crisis Text Line)
+      • Call 911 for emergencies
+      
+      These resources are available 24/7.
+    `;
+    
+    await this.showAlert(userId, message);
+  }
+  
+  // Export journals
+  async exportAllJournals(userId: string): Promise<JournalExport> {
+    const entries = await this.getAllEntries(userId);
+    return {
+      entries,
+      exportedAt: new Date(),
+      format: "JSON"
+    };
+  }
+}
+```
+
+---
+
+## UI/UX Guidelines
+
+### Journaling should feel:
+- **Safe** — Private, encrypted, user-controlled
+- **Welcoming** — Gentle prompts, no pressure
+- **Simple** — Easy to start writing
+- **Organized** — Easy to find past entries
+
+### Avoid:
+- Overwhelming blank page (offer prompts)
+- Forced daily journaling
+- Public sharing defaults
+- Therapeutic language ("let's process your trauma")
+
+---
+
+## Summary
+
+**Journaling agents help users:**
+- Reflect on their day
+- Process emotions through writing
+- Track personal growth
+- Practice gratitude
+
+**They do NOT:**
+- Conduct therapy
+- Probe for trauma
+- Analyze psychological meaning
+- Diagnose disorders
+
+**Key principles:**
+- Gentle prompts (no trauma probing)
+- Crisis detection (explicit language → 988 resources)
+- Privacy first (encryption, user control)
+- Supportive, not analytical
+- Respect autonomy (no forced journaling)
+
+**Safe prompts:**
+- "What are you grateful for?"
+- "How are you feeling?"
+- "What went well today?"
+
+**Unsafe prompts:**
+- "Tell me about your trauma"
+- "Why are you depressed?"
+- "What's your worst memory?"
+
+Build journaling features that support self-reflection—not pseudo-therapy disguised as a wellness app.

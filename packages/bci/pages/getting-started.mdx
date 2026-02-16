@@ -1,0 +1,315 @@
+# Getting Started
+
+> How to integrate this AI constitution for BCI projects into your development workflow
+
+---
+
+## ⚡ Instant Setup (Recommended)
+
+**The fastest way to get started - 3 seconds:**
+
+```bash
+# Install as dev dependency
+npm install --save-dev @yelabb/constitution-bci
+```
+
+**That's it!** The post-install script automatically configures:
+- ✅ `.cursorrules` - Cursor AI safety rules for BCI data
+- ✅ `.vscode/settings.json` - GitHub Copilot instructions
+- ✅ `.mcp-config.json` - MCP server for Claude/ChatGPT
+- ✅ `package.json` - Adds `ai:context` script
+
+Your AI coding assistant is now safety-aware for BCI/neurotechnology data development.
+
+**Other domains:** See [constitution-wearables](https://npmjs.com/package/@yelabb/constitution-wearables), [constitution-therapy](https://npmjs.com/package/@yelabb/constitution-therapy), or [constitution-core](https://npmjs.com/package/@yelabb/constitution-core)
+
+### Verify Installation
+
+Check what was configured:
+
+```bash
+# Should see .cursorrules in your project root
+ls -la .cursorrules
+
+# Should see MCP config
+ls -la .mcp-config.json
+
+# Should see ai:context script in package.json
+npm run ai:context
+```
+
+### For MCP-Compatible AI (Claude Desktop, etc.)
+
+Start the MCP server to provide context to external AI assistants:
+
+```bash
+npm run ai:context
+```
+
+Or add to Claude Desktop config:
+
+**macOS:** `~/Library/Application Support/Claude/config.json`  
+**Windows:** `%APPDATA%\Claude\config.json`
+
+```json
+{
+  "mcpServers": {
+    "governor-hq-bci": {
+      "command": "node",
+      "args": ["./node_modules/@yelabb/constitution-bci/dist/mcp-server.js"]
+    }
+  }
+}
+```
+
+---
+
+## Manual Setup (Alternative)
+
+If you prefer manual configuration or can't use npm:
+
+### Step 1: Add to Your Project
+
+Clone or link this repository alongside your BCI data project:
+
+```bash
+# Option A: Git submodule
+cd your-project/
+git submodule add https://github.com/yelabb/the-governor-hq.git docs/governor-hq
+git submodule update --init --recursive
+
+# Option B: Clone separately
+cd ~/projects/
+git clone https://github.com/yelabb/the-governor-hq.git governor-hq-docs
+```
+
+### Step 2: Configure AI Assistant Context
+
+When using AI coding assistants, include this repository in your context. Different tools have different methods:
+
+#### GitHub Copilot / VS Code
+
+Add to your workspace or project configuration:
+
+```json
+// .vscode/settings.json
+{
+  "github.copilot.chat.codeGeneration.instructions": [
+    {
+      "file": "docs/governor-hq/packages/bci/README.md"
+    }
+  ]
+}
+```
+
+#### Cursor
+
+Add to project's `.cursorrules` file:
+
+```
+# BCI Data Safety Constitution
+Follow the Governor HQ Constitutional Framework for BCI data projects.
+Never generate code that:
+- Makes neurological or psychiatric diagnoses
+- Claims to read thoughts or emotions from brain signals
+- Recommends medical treatments or interventions
+- Uses brain data without explicit informed consent
+- Makes cognitive ability claims from EEG patterns
+
+Reference: ./docs/governor-hq/packages/bci/
+```
+
+#### Claude / ChatGPT
+
+In your conversation context, include:
+
+> "I'm working on a consumer BCI/neurotechnology product that processes brain data (EEG, neurofeedback, etc.). I need to follow the Governor HQ Constitutional Framework for BCI safety. Key constraints: no neurological diagnoses, no thought/emotion reading claims, no cognitive ability assessment, no medical treatment suggestions. Reference documentation at: [link to docs]"
+
+---
+
+## What Gets Installed
+
+### Configuration Files
+
+The package creates/updates these files in your project root:
+
+#### `.cursorrules`
+Safety instructions for Cursor AI assistant specific to BCI data projects.
+
+#### `.vscode/settings.json`
+GitHub Copilot instructions for BCI safety constraints.
+
+#### `.mcp-config.json`
+MCP server configuration for Claude Desktop and other MCP-compatible tools.
+
+### Scripts Added to package.json
+
+```json
+{
+  "scripts": {
+    "ai:context": "node ./node_modules/@yelabb/constitution-bci/dist/mcp-server.js"
+  }
+}
+```
+
+---
+
+## Using the Framework
+
+### During Development
+
+When implementing BCI features, ask your AI assistant:
+
+- "Does this comply with the BCI constitutional framework?"
+- "Check this notification text against BCI language rules"
+- "Validate this neurofeedback feature against hard rules"
+- "Is this brain pattern interpretation allowed?"
+
+### Code Review Checklist
+
+Before merging BCI-related code:
+
+- [ ] No neurological diagnoses (ADHD, epilepsy, dementia, etc.)
+- [ ] No cognitive ability claims (intelligence, learning disabilities)
+- [ ] No emotion/thought reading assertions
+- [ ] No medical treatment recommendations
+- [ ] User-facing text uses observational language, not diagnostic
+- [ ] Personal baseline established before generating insights
+- [ ] Privacy and consent explicitly handled
+- [ ] Brain data described as patterns, not mind reading
+
+---
+
+## BCI-Specific Development Workflow
+
+### Phase 1: Data Collection (0-30 days)
+
+**Silent learning period.** System observes brain patterns but provides no recommendations.
+
+```javascript
+if (user.bciBaselineStatus !== 'STABLE') {
+  return null; // No recommendations during baseline learning
+}
+```
+
+### Phase 2: Pattern Recognition (30-90 days)
+
+**Baseline established.** System can now notice meaningful deviations.
+
+```javascript
+const isSignificantDeviation = 
+  user.currentAlphaPower < user.personalBaseline.alphaPower * 0.8;
+
+if (isSignificantDeviation && user.bciBaselineStatus === 'STABLE') {
+  return generateNeurofeedbackSuggestion(user);
+}
+```
+
+### Phase 3: Personalized Guidance (90+ days)
+
+**Mature understanding.** System has rich context about individual patterns.
+
+---
+
+## Testing Your Integration
+
+### Quick Test
+
+```bash
+# Run the built-in tests
+npm test
+
+# Should validate:
+# - MCP server starts correctly
+# - Configuration files exist
+# - AI context is accessible
+```
+
+### Manual Validation
+
+1. **Ask your AI assistant:** "What are the BCI constitutional framework rules?"
+2. **Expected response:** Should reference hard rules, no diagnoses, pattern recognition only, etc.
+3. **If it doesn't know:** Check MCP server is running or configuration files are loaded
+
+---
+
+## Continuous Integration
+
+Add to your CI pipeline:
+
+```yaml
+# Example GitHub Actions workflow
+- name: Validate BCI Safety Compliance
+  run: |
+    npm run test
+    # Add custom linting for forbidden terms
+    ! grep -r "diagnose\|ADHD\|epilepsy\|read.*thoughts" src/
+```
+
+---
+
+## Troubleshooting
+
+### AI Assistant Doesn't Seem Aware of Rules
+
+1. **Check configuration files exist:**
+   ```bash
+   ls .cursorrules .mcp-config.json
+   ```
+
+2. **Restart your IDE/editor**
+
+3. **For MCP tools:** Verify the server is running
+   ```bash
+   npm run ai:context
+   ```
+
+### Rules Seem Too Restrictive
+
+That's intentional. BCI data is:
+- Highly sensitive (neural activity)
+- Easy to misinterpret (patterns ≠ thoughts)
+- Legally risky (medical claims)
+- Ethically complex (privacy, consent)
+
+If a feature feels blocked, ask: "Is this truly consumer wellness, or is it medical?"
+
+---
+
+## Examples of Safe BCI Features
+
+✅ **Focus training game**
+- Neurofeedback when user enters focused state
+- Personal baseline required
+- No cognitive ability claims
+
+✅ **Meditation assistant**
+- Detects relaxation patterns in alpha/theta waves
+- Guides user toward calm states
+- No mental health diagnosis
+
+✅ **Sleep stage tracker**
+- Estimates sleep stages from EEG
+- Shows personal sleep architecture
+- No sleep disorder diagnosis
+
+❌ **ADHD attention trainer** → Claims medical diagnosis  
+❌ **Lie detector** → Claims thought reading  
+❌ **IQ estimator** → Claims cognitive ability measurement  
+
+---
+
+## Next Steps
+
+1. Read the [AI Agent Guide](/ai-agent-guide) for detailed coding patterns
+2. Review [Hard Rules](/constraints/hard-rules) to understand absolute boundaries
+3. Check [What We Don't Do](/what-we-dont-do) for scope clarity
+4. Consult domain-specific agents: [Focus](/agents/focus-agent), [Neurofeedback](/agents/neurofeedback-agent)
+
+---
+
+## Support
+
+- 📖 [Full Documentation](https://the-governor-hq.vercel.app)
+- 🐙 [GitHub Repository](https://github.com/yelabb/the-governor-hq)
+- 💬 [Issues & Questions](https://github.com/yelabb/the-governor-hq/issues)

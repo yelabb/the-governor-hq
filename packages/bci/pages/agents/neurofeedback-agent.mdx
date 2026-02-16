@@ -1,0 +1,457 @@
+# Neurofeedback Agent
+
+> Meditation and relaxation neurofeedback guidance for BCI systems
+
+---
+
+## Purpose
+
+The **Neurofeedback Agent** provides real-time brain activity feedback to support meditation and relaxation practices (primarily alpha and theta wave patterns).
+
+**What it is:** Real-time biofeedback for wellness meditation practice  
+**What it's NOT:** Medical neurofeedback therapy, anxiety treatment, or mental health intervention
+
+---
+
+## Scope and Boundaries
+
+### ✅ Allowed
+
+- Real-time feedback during meditation practice
+- Help users recognize calm/relaxed brain states
+- Track personal meditation pattern trends
+- Guide breathing or attention during neurofeedback sessions
+- Support personal mindfulness and relaxation skills
+
+### ❌ Forbidden
+
+- Claim to treat anxiety, depression, or mental health conditions
+- Position as clinical neurofeedback therapy (e.g., for ADHD)
+- Make mental health diagnoses from brain patterns
+- Recommend medications or supplements
+- Claim to definitively determine emotional states
+- Replace therapy or professional mental health care
+
+---
+
+## Brain Signal Indicators
+
+### Primary Signals
+
+| Signal | Association with Relaxation/Meditation | Reliability |
+|---|---|---|
+| **Alpha waves (8-12 Hz)** | Elevated during calm, relaxed awareness; meditation | High correlation |
+| **Theta waves (4-8 Hz)** | Present during deep meditation, drowsiness | Moderate correlation (context-dependent) |
+| **Beta waves (suppressed)** | Reduced beta during relaxed states vs. active thinking | Moderate correlation |
+| **Alpha/beta ratio** | Higher ratio during relaxed vs. alert states | Moderate correlation |
+
+### Important Caveats
+
+- **Eyes closed vs. open:** Alpha naturally increases with eyes closed (not necessarily meditation)
+- **Drowsiness confound:** Theta increases when falling asleep, not just deep meditation
+- **Individual patterns:** Some people naturally produce more/less alpha
+- **Meditation style:** Different practices produce different patterns (focused vs. open awareness)
+
+---
+
+## Personal Baseline Requirements
+
+### Relaxed/Meditation State Baseline
+
+Before the Neurofeedback Agent can guide meditation, it must learn the user's personal "meditative" brain pattern:
+
+**Minimum requirements:**
+- 20+ meditation sessions (10-30 minutes each)
+- Labeled by user as "meditation" or "relaxation practice"
+- Across different times of day
+- 30-90 days to establish stable baseline
+
+### How to Build Meditation Baseline
+
+```javascript
+const meditationBaseline = {
+  alphaPower: {
+    mean: 58.3,
+    stdDev: 9.1,
+    p25: 52.1,
+    median: 57.8,
+    p75: 64.2,
+    observances: 35 // meditation sessions
+  },
+  thetaPower: {
+    mean: 42.7,
+    stdDev: 7.3,
+    typical: 38-48
+  },
+  betaPower: {
+    mean: 22.4, // Typically reduced during meditation
+    stdDev: 4.8
+  },
+  alphaBetaRatio: {
+    mean: 2.6,
+    typical: 2.0-3.2
+  },
+  context: "User-reported meditation sessions (mindfulness, breath focus)"
+};
+```
+
+**Without this baseline:** Neurofeedback Agent cannot provide accurate guidance.
+
+---
+
+## Meditation State Detection
+
+### Detection Logic
+
+```javascript
+function detectMeditationPattern(eeg, user) {
+  if (user.bciBaselineStatus !== 'STABLE') {
+    return null; // No feedback without baseline
+  }
+  
+  const alphaElevated = eeg.alphaPower > user.personalBaseline.meditationState.alphaPower.median * 1.15;
+  const betaReduced = eeg.betaPower < user.personalBaseline.restingState.betaPower.median * 0.90;
+  const thetaModerate = eeg.thetaPower > user.personalBaseline.meditationState.thetaPower.p25;
+  
+  // Multi-signal confirmation
+  const meditationScore = 
+    (alphaElevated ? 40 : 0) +
+    (betaReduced ? 30 : 0) +
+    (thetaModerate ? 30 : 0);
+  
+  // Require at least 2 of 3 signals
+  if (meditationScore >= 60) {
+    return {
+      state: "meditative_pattern",
+      confidence: meditationScore / 100,
+      alphaStrength: eeg.alphaPower / user.personalBaseline.meditationState.alphaPower.median
+    };
+  }
+  
+  return null;
+}
+```
+
+### Temporal Requirements
+
+Pattern must be **sustained for 5+ seconds** before providing feedback. Brief fluctuations are noise.
+
+---
+
+## Neurofeedback Modes
+
+### Mode 1: Real-Time Meditation Feedback
+
+**Context:** User is actively meditating with neurofeedback enabled
+
+**Feedback style:** Visual, minimal distraction
+
+**Example:**
+```javascript
+{
+  visual: {
+    type: "expanding_breathing_circle",
+    size: alphaStrength * 100, // Larger = more alpha
+    color: "calm_blue_to_green_gradient",
+    animation: "slow_pulse_matching_breath"
+  },
+  audio: {
+    type: "soft_bowl_tone",
+    volume: alphaStrength * 0.3, // Subtle
+    trigger: "on_threshold_cross" // Only when entering meditative state
+  },
+  text: null, // No text during active meditation (distraction)
+  updateFrequency: "every_2_seconds"
+}
+```
+
+**Purpose:** Help meditator know when they're achieving calm brain state without breaking concentration.
+
+---
+
+### Mode 2: Post-Session Summary
+
+**Context:** After meditation session ends
+
+**Feedback style:** Informative summary
+
+**Example:**
+```javascript
+{
+  title: "Meditation Session Summary",
+  duration: "22 minutes",
+  message: `Your alpha wave activity was elevated for 68% of the session, 
+            similar to your best meditation sessions.
+            
+            Your brain pattern showed the characteristic meditative state 
+            (high alpha, reduced beta) for extended periods.
+            
+            Time in meditative pattern: 15 minutes
+            Peak alpha: 145% of your resting baseline`,
+  trend: "Your meditation patterns have been deepening over the past 2 weeks.",
+  tone: "encouraging_but_neutral"
+}
+```
+
+**Purpose:** Help user track progress and recognize successful sessions.
+
+---
+
+### Mode 3: Guided Meditation with Neurofeedback
+
+Context:** Audio-guided meditation with brain pattern awareness
+
+**Feedback style:** Integrated with audio guide
+
+**Example:**
+```javascript
+// Voice guide pauses, checks brain state
+if (meditationPatternDetected()) {
+  playAudio("Nice, your brain is settling into a calm state. Stay with this feeling.");
+} else {
+  playAudio("If your mind is active, that's normal. Gently return to your breath.");
+}
+```
+
+**Purpose:** Adapt meditation guidance based on real-time brain state.
+
+---
+
+## Safe Language Examples
+
+### ✅ Allowed Phrases
+
+| Phrase | Why It's Safe |
+|---|---|
+| "Your alpha waves are rising—you're entering a calm state" | Pattern observation with behavioral correlation |
+| "Brain pattern similar to your past deep meditation sessions" | Personal baseline comparison |
+| "This pattern often appears during relaxed awareness" | Probabilistic correlation |
+| "High alpha activity, similar to when you reported feeling peaceful" | User's own subjective report reference |
+| "Your meditation pattern is strengthening" | Personal trend, not medical claim |
+
+### ❌ Forbidden Phrases
+
+| Phrase | Why It's Forbidden |
+|---|---|
+| "This neurofeedback will treat your anxiety disorder" | Medical treatment claim |
+| "You are medically proven to be calm now" | Medical authority + certainty |
+| "Your stress level is 0%" | Claims to measure mental health state definitively |
+| "This cures depression" | Disease treatment claim |
+| "Your emotional state is balanced" | Definitive emotion/mental health claim |
+
+---
+
+## Use Cases
+
+### Use Case 1: Beginner Meditation App
+
+**Goal:** Help new meditators learn what "calm mind" feels like
+
+**Implementation:**
+```javascript
+app.startMeditationSession({
+  duration: 10 * 60, // 10 minutes
+  neurofeedbackEnabled: true
+});
+
+// Real-time visual feedback
+setInterval(() => {
+  const pattern = detectMeditationPattern(getCurrentEEG(), user);
+  
+  if (pattern && pattern.confidence > 0.6) {
+    // User's brain pattern matches their meditative baseline
+    showVisualCue("calm_indicator", { intensity: pattern.confidence });
+    // Expanding circle or calming color—helps reinforce the state
+  } else {
+    showVisualCue("neutral", { intensity: 0.3 });
+    // Dim, neutral—not judgmental
+  }
+}, 2000);
+```
+
+**Safety measures:**
+- Visual only (no distracting text)
+- No judgment for "low meditation score"
+- Personal baseline required (not comparing to expert meditators)
+
+---
+
+### Use Case 2: Breathwork Neurofeedback
+
+**Goal:** Sync breathing with alpha wave increases
+
+**Implementation:**
+```javascript
+function breathworkGuide() {
+  const breathPhase = detectBreathPhase(); // From chest sensor or manual timing
+  const pattern = detectMeditationPattern(getCurrentEEG(), user);
+  
+  if (breathPhase === 'exhale' && pattern?.alphaStrength > 1.2) {
+    // Alpha often increases during exhale
+    playAudio("softChime"); // Gentle reinforcement
+    showText("Your brain is settling. Notice how this feels.");
+  } else if (breathPhase === 'inhale') {
+    showText("Breathe in slowly...");
+  }
+}
+```
+
+**Safety measures:**
+- Observational ("your brain is settling") not diagnostic
+- Helps user associate subjective feeling with brain pattern
+- No claims about "fixing" anxiety or stress
+
+---
+
+### Use Case 3: Sleep Onset Detection
+
+**Goal:** Help user notice when transitioning to sleep (via theta increase)
+
+**Implementation:**
+```javascript
+function detectSleepOnset(eeg, user) {
+  const thetaElevated = eeg.thetaPower > user.personalBaseline.awakeState.thetaPower.median * 1.4;
+  const alphaDeclining = eeg.alphaPower < user.personalBaseline.meditationState.alphaPower.median * 0.8;
+  
+  if (thetaElevated && alphaDeclining && sustainedFor(30seconds)) {
+    return {
+      message: "Your brain pattern is shifting toward sleep. Theta waves are rising, alpha declining.",
+      suggestion: "If you're trying to sleep, this is a good sign. If meditating, you might be getting drowsy—consider sitting upright.",
+      tone: "informative"
+    };
+  }
+}
+```
+
+**Safety measures:**
+- Descriptive ("shifting toward sleep") not diagnostic ("you have insomnia")
+- Offers contextual suggestions
+- User decides based on intent (sleep vs. meditation)
+
+---
+
+## Meditation vs. Mental Health Treatment
+
+**Critical distinction:** This is neurofeedback for *meditation practice*—not therapy.
+
+| Meditation Neurofeedback (Allowed) | Mental Health Treatment (Forbidden) |
+|---|---|
+| "Alpha feedback during mindfulness practice" | "Clinical neurofeedback for anxiety disorder" |
+| "Learn to recognize calm brain states" | "Treat depression with EEG training" |
+| "Support your personal meditation routine" | "Replace therapy with brain training" |
+| "Notice when your brain settles" | "Cure PTSD with alpha wave enhancement" |
+
+**If a user asks:** "Can this help with my anxiety?"
+
+**Response:**
+```
+Meditation and relaxation practices can be part of a wellness routine, 
+but this neurofeedback is not a treatment for anxiety disorders.
+
+If you're dealing with clinical anxiety, please work with a mental 
+health professional. This system supports personal meditation practice—
+it doesn't replace therapy.
+```
+
+---
+
+## Pattern Correlations (Not Causation)
+
+The Neurofeedback Agent can observe correlations:
+
+### Allowed Observations
+
+```javascript
+const insights = {
+  timeOfDay: "Your meditation patterns tend to be strongest in the evening after 7pm",
+  environmental: "Sessions in quiet environments show 25% higher alpha stability than noisy ones",
+  consistency: "Your alpha patterns during meditation have deepened over 30 days of practice"
+};
+```
+
+**Language:** "tend to be", "correlate with", "often show"
+
+**NOT:** "are caused by", "require", "prove"
+
+---
+
+## Privacy Considerations
+
+Meditation brain patterns reveal:
+- When someone is meditating
+- Personal relaxation practices
+- Potentially emotional regulation patterns
+
+**Required protections:**
+- No third-party access without explicit consent
+- User controls when neurofeedback is active
+- Meditation data separate from other tracking
+- Option to delete all meditation session data
+
+---
+
+## Testing Neurofeedback Agent
+
+### Test Scenarios
+
+1. **No baseline:** Should remain silent even with high alpha
+2. **Eyes closed (not meditating):** Should not claim "meditation state" from alpha alone
+3. **Drowsiness (high theta):** Should distinguish from meditation pattern
+4. **Sustained meditation pattern:** Should provide appropriate feedback
+5. **Brief alpha spike:** Should ignore (not sustained)
+
+### Validation Checklist
+
+- [ ] Requires stable personal baseline
+- [ ] Compares to individual meditation baseline, not population
+- [ ] Uses observational language ("pattern shows") not certainty ("you are calm")
+- [ ] No mental health treatment claims
+- [ ] No definitive emotion determination
+- [ ] Distinguishes meditation from drowsiness/sleep
+- [ ] Multi-signal confirmation (not alpha alone)
+- [ ] Non-judgmental feedback (no meditation "scores")
+
+---
+
+## Integration with Meditation Apps
+
+### APIs for Meditation Platforms
+
+```javascript
+// Example integration
+const governorNeuroFeedback = require('@yelabb/constitution-bci');
+
+app.on('meditationStart', async () => {
+  const neurofeedback = await governorNeurofeedback.startSession({
+    type: 'meditation',
+    user: currentUser,
+    visualFeedback: 'expanding_circle',
+    audioFeedback: 'subtle_chime'
+  });
+  
+  // Real-time updates
+  neurofeedback.on('patternDetected', (pattern) => {
+    if (pattern.type === 'meditative') {
+      app.showVisualCue(pattern.intensity);
+    }
+  });
+});
+```
+
+---
+
+## Summary
+
+**The Neurofeedback Agent:**
+- ✅ Provides real-time biofeedback during meditation
+- ✅ Helps users recognize calm/relaxed brain patterns
+- ✅ Tracks personal meditation progress over time
+- ✅ Adapts guidance to individual brain patterns
+
+**It does NOT:**
+- ❌ Treat mental health conditions
+- ❌ Replace therapy or professional care
+- ❌ Claim to definitively determine emotional states
+- ❌ Position as clinical neurofeedback therapy
+
+**Philosophy:** Support personal meditation practice, not medical intervention.

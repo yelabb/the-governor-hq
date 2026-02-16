@@ -1,0 +1,527 @@
+# Baseline
+
+> Learning personal emotional patterns over time
+
+---
+
+## Overview
+
+Unlike wearables that measure objective physiology (heart rate, HRV), therapy data systems track **subjective emotional experience**.
+
+**Baseline** in therapy data means learning what "normal" emotional patterns look like **for this individual**, so deviations can be noticed.
+
+---
+
+## The Challenge of Emotional Baselines
+
+### Wearables baseline: straightforward
+
+```typescript
+// Objective measurements
+const restingHeartRate = 62 bpm;
+const typicalHRV = 55 ms;
+
+// Deviations are measurable
+if (currentHR > baseline + 20) {
+  // Something changed
+}
+```
+
+**Easy because:**
+- Objective numbers
+- Individual physiology is relatively stable
+- Clear metrics
+
+---
+
+### Therapy baseline: complex
+
+```typescript
+// Subjective self-reports
+const typicalMood = ??? // What's "normal" for this person?
+const usualMoodRange = ??? // How much fluctuation is typical?
+
+// Deviations are subjective
+if (currentMood < typicalMood - ???) {
+  // Is this concerning, or just a bad day?
+}
+```
+
+**Hard because:**
+- Subjective scaling (your "3" ≠ my "3")
+- Emotional fluctuation is normal
+- Context-dependent (bad week ≠ disorder)
+- Individual differences enormous
+
+---
+
+## How to Learn Emotional Baseline
+
+### 1. Initial Baseline Period
+
+**Collect data before making conclusions.**
+
+❌ **Don't:**
+```typescript
+// First day of mood tracking
+if (mood === 2) {
+  alert("Persistent low mood detected!"); // Can't know baseline yet
+}
+```
+
+✅ **Do:**
+```typescript
+// Wait for baseline period
+const BASELINE_PERIOD_DAYS = 14;
+
+if (totalMoodEntries < BASELINE_PERIOD_DAYS) {
+  return "Still learning your patterns. Keep tracking!";
+}
+
+const baseline = calculateBaseline(moodEntries);
+```
+
+**Recommended baseline period: 14-30 days**
+
+Why:
+- Captures weekly cycles (weekday vs. weekend)
+- Smooths out daily noise
+- Establishes reasonable "normal range"
+
+---
+
+### 2. Calculate Personal "Normal Range"
+
+**Find the typical mood range for this person.**
+
+```typescript
+function calculateBaseline(entries: MoodEntry[]): Baseline {
+  const moods = entries.map(e => e.mood);
+  
+  return {
+    average: mean(moods),           // e.g., 3.2
+    median: median(moods),           // e.g., 3.0
+    stdDev: standardDeviation(moods), // e.g., 0.8
+    range: {
+      low: percentile(moods, 25),   // e.g., 2.5
+      high: percentile(moods, 75)   // e.g., 4.0
+    }
+  };
+}
+```
+
+**Insights from baseline:**
+- **Average mood:** What's typical?
+- **Standard deviation:** How much does mood normally fluctuate?
+- **Range (25th-75th percentile):** "Normal" variation zone
+
+**Use case:**
+```typescript
+const baseline = calculateBaseline(last30Days);
+
+if (currentMood < baseline.range.low) {
+  // Below typical range — might be worth noting
+} else if (currentMood > baseline.range.high) {
+  // Above typical range — positive deviation
+}
+```
+
+---
+
+### 3. Account for Weekly/Monthly Cycles
+
+**Some patterns are predictable.**
+
+```typescript
+// Weekly patterns
+const mondayAvg = 2.5;
+const saturdayAvg = 4.0;
+
+// Don't flag Saturday's 4.0 as unusual — it's typical for weekends
+```
+
+**Common cycles:**
+- Weekday vs. weekend differences
+- Monthly hormonal cycles (menstruation affects mood)
+- Seasonal patterns (some people have lower mood in winter)
+
+**Approach:**
+```typescript
+function calculateWeekdayBaselines(entries: MoodEntry[]): WeeklyBaseline {
+  const byDay = groupBy(entries, e => e.date.getDay());
+  
+  return {
+    monday: mean(byDay[1]),
+    tuesday: mean(byDay[2]),
+    wednesday: mean(byDay[3]),
+    // ...etc
+  };
+}
+
+// Compare today to typical [day of week]
+const todayBaseline = weeklyBaseline[currentDayOfWeek];
+if (currentMood < todayBaseline - 1) {
+  // Unusual for a Monday
+}
+```
+
+---
+
+### 4. Update Baseline Over Time
+
+**People change. Baseline should adapt.**
+
+❌ **Don't:**
+```typescript
+// Lock baseline to first 30 days forever
+const baseline = calculateBaseline(entries.slice(0, 30));
+```
+
+✅ **Do:**
+```typescript
+// Rolling baseline using recent data
+const baseline = calculateBaseline(last60Days);
+
+// OR weighted: recent data counts more
+const baseline = calculateWeightedBaseline(allEntries, recentWeight=0.7);
+```
+
+**Why:**
+- Life circumstances change
+- Successful treatment shifts baseline upward
+- Chronic conditions may shift baseline downward
+- Seasonal changes
+
+**Update frequency: monthly or quarterly**
+
+---
+
+## What Baseline DOES
+
+### ✅ Notices Personal Deviations
+
+**Detect when someone is outside their typical range.**
+
+```typescript
+const baseline = getUserBaseline(userId);
+
+if (currentMoodAvg < baseline.average - 2 * baseline.stdDev) {
+  return `
+    You've been feeling lower than usual lately.
+    Consider talking to someone about how you're feeling.
+  `;
+}
+```
+
+**Use for:**
+- Personal insights ("You've been lower than usual")
+- Encouraging help-seeking
+- Identifying possible need for professional support
+
+---
+
+### ✅ Recognizes Positive Changes
+
+**Notice when things are improving.**
+
+```typescript
+const recentAvg = mean(last7Days);
+const baselineAvg = baseline.average;
+
+if (recentAvg > baselineAvg + 0.5) {
+  return "Your mood has been better than usual this week. What's been helping?";
+}
+```
+
+**Use for:**
+- Celebrating progress
+- Identifying what's working
+- Positive reinforcement
+
+---
+
+### ✅ Informs Professional Conversations
+
+**Give therapists useful data.**
+
+```typescript
+// In therapy session
+Therapist: "How have you been?"
+User: "I don't know, about the same?"
+
+// App data shows:
+User's baseline: 3.2/5
+Last 2 weeks: 2.1/5
+
+// More informed conversation
+User: "Actually, looking at my app, I've been about 1 point lower than usual lately."
+Therapist: "That's helpful to know. What's been different?"
+```
+
+**Use for:**
+- Concrete data vs. vague recollection
+- Treatment progress tracking
+- Noticing patterns to discuss
+
+---
+
+## What Baseline DOES NOT Do
+
+### ❌ Diagnose Disorders
+
+**Deviation from baseline ≠ mental illness.**
+
+❌ **Don't:**
+```typescript
+if (currentMood < baseline - 2) {
+  return "You have depression.";
+}
+```
+
+✅ **Do:**
+```typescript
+if (currentMood < baseline - 2) {
+  return "You've been feeling lower than usual. Consider talking to a professional.";
+}
+```
+
+**Why:**
+- Many reasons for mood shifts (stress, sleep, physical health, etc.)
+- Clinical diagnosis requires comprehensive assessment
+- Baseline deviations are observations, not diagnoses
+
+---
+
+### ❌ Predict Crisis
+
+**Low mood ≠ suicide risk.**
+
+❌ **Don't:**
+```typescript
+if (currentMood < baseline - 3) {
+  alert("CRISIS: User at high suicide risk");
+}
+```
+
+✅ **Do:**
+```typescript
+// Crisis detection based on explicit language only
+if (journalContains("suicide", "kill myself", "end my life")) {
+  displayCrisisResources(); // 988, Crisis Text Line, 911
+}
+```
+
+**Why:**
+- Suicide is not predictable from mood data
+- Low mood is common and usually not crisis
+- False alarms create panic; false negatives create false security
+
+**Only trigger crisis response:** Explicit crisis language from user.
+
+---
+
+### ❌ Replace Clinical Judgment
+
+**App baseline ≠ professional assessment.**
+
+❌ **Don't:**
+```typescript
+return "Your baseline indicates you need medication.";
+```
+
+✅ **Do:**
+```typescript
+return "Your baseline shows persistent lower mood. This could be worth discussing with a doctor or therapist.";
+```
+
+**Why:**
+- Treatment decisions require professional expertise
+- Baseline is one data point among many
+- Context matters (major life stressors, physical health, etc.)
+
+---
+
+## Baseline Variations
+
+### High Baseline, Low Fluctuation
+
+**Example:**
+- Average mood: 4.2/5
+- Standard deviation: 0.3
+
+**What it suggests:**
+- Generally positive emotional state
+- Relatively stable mood
+
+**Caution:** Even high-baseline people can have crises. Don't ignore concerning language just because baseline is high.
+
+---
+
+### Low Baseline, Low Fluctuation
+
+**Example:**
+- Average mood: 2.1/5
+- Standard deviation: 0.4
+
+**What it suggests:**
+- Persistent lower mood
+- Relatively stable (but low)
+
+**Implication:** Consider suggesting professional evaluation for persistent low mood.
+
+```typescript
+if (baseline.average < 2.5 && baseline.stdDev < 0.5) {
+  return `
+    You've consistently reported lower mood over time.
+    Persistent low mood can benefit from professional support.
+    Consider talking to a mental health professional.
+  `;
+}
+```
+
+---
+
+### Moderate Baseline, High Fluctuation
+
+**Example:**
+- Average mood: 3.0/5
+- Standard deviation: 1.2
+
+**What it suggests:**
+- Wide mood swings
+- Emotional volatility
+
+**Implication:** High fluctuation alone doesn't mean disorder, but very extreme swings might be worth discussing with a professional.
+
+```typescript
+if (baseline.stdDev > 1.5) {
+  return `
+    Your mood varies quite a bit day to day.
+    If these swings feel difficult to manage, talking to a therapist might help.
+  `;
+}
+```
+
+**⚠️ Warning:** Don't diagnose bipolar disorder or other conditions based on mood variability.
+
+---
+
+## Implementation Example
+
+```typescript
+interface Baseline {
+  userId: string;
+  periodStart: Date;
+  periodEnd: Date;
+  
+  average: number;
+  median: number;
+  stdDev: number;
+  
+  range: {
+    low: number;   // 25th percentile
+    high: number;  // 75th percentile
+  };
+  
+  weeklyPattern?: {
+    monday: number;
+    tuesday: number;
+    // ...etc
+  };
+}
+
+class BaselineManager {
+  async calculateBaseline(userId: string): Promise<Baseline> {
+    // Get last 60 days of mood entries
+    const entries = await this.getMoodEntries(userId, 60);
+    
+    if (entries.length < 14) {
+      throw new Error("Insufficient data for baseline (need at least 14 days)");
+    }
+    
+    const moods = entries.map(e => e.mood);
+    
+    return {
+      userId,
+      periodStart: entries[0].date,
+      periodEnd: entries[entries.length - 1].date,
+      
+      average: mean(moods),
+      median: median(moods),
+      stdDev: standardDeviation(moods),
+      
+      range: {
+        low: percentile(moods, 25),
+        high: percentile(moods, 75)
+      },
+      
+      weeklyPattern: this.calculateWeeklyPattern(entries)
+    };
+  }
+  
+  async detectDeviation(userId: string): Promise<DeviationInsight | null> {
+    const baseline = await this.getBaseline(userId);
+    const recentEntries = await this.getMoodEntries(userId, 7);
+    
+    if (recentEntries.length < 5) return null; // Need enough recent data
+    
+    const recentAvg = mean(recentEntries.map(e => e.mood));
+    const deviation = recentAvg - baseline.average;
+    
+    // Significant negative deviation
+    if (deviation < -1.0) {
+      return {
+        type: "negative_deviation",
+        magnitude: Math.abs(deviation),
+        message: `
+          You've been feeling lower than usual (${recentAvg.toFixed(1)} vs. typical ${baseline.average.toFixed(1)}).
+          Consider reaching out to someone or practicing extra self-care.
+        `
+      };
+    }
+    
+    // Significant positive deviation
+    if (deviation > 1.0) {
+      return {
+        type: "positive_deviation",
+        magnitude: deviation,
+        message: `
+          Your mood has been higher than usual lately! 
+          What's been going well?
+        `
+      };
+    }
+    
+    return null; // Within normal range
+  }
+}
+```
+
+---
+
+## Summary
+
+**Emotional baseline:**
+- Individual "normal range" for mood and emotional patterns
+- Learned over time (14-30 days minimum)
+- Accounts for cycles (weekly, monthly, seasonal)
+- Updated over time as circumstances change
+
+**What it's for:**
+- Detecting personal deviations
+- Recognizing positive changes
+- Informing professional conversations
+- Self-awareness
+
+**What it's NOT for:**
+- Diagnosing disorders
+- Predicting crisis
+- Replacing clinical judgment
+
+**Key principles:**
+- Baseline is personal (your normal ≠ my normal)
+- Deviations are observations, not diagnoses
+- Context always matters
+- Baseline supports self-awareness and professional care
+
+Build baselines that help users understand themselves better—not pseudo-diagnostic tools masquerading as clinical assessment.

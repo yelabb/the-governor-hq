@@ -1,0 +1,543 @@
+# Deviation Engine
+
+> When to activate professional referrals and support systems
+
+---
+
+## Overview
+
+The **deviation engine** determines when emotional patterns deviate enough from personal baseline to warrant additional support or professional referral.
+
+Unlike wearables (where elevated heart rate might trigger a health alert), therapy systems deal with **subjective emotional data** and **must never diagnose or intervene in crises**.
+
+This document defines **when and how** to suggest help.
+
+---
+
+## Core Principle
+
+**The deviation engine is a referral system, not a diagnostic tool.**
+
+It observes patterns and says:
+- ✅ "This seems different from your usual. Consider talking to someone."
+- ❌ Not: "You have depression. You need treatment."
+
+---
+
+## What Triggers Deviation Detection?
+
+### 1. Persistent Low Mood
+
+**Pattern: Mood consistently below personal baseline for 2+ weeks**
+
+```typescript
+function detectPersistentLowMood(entries: MoodEntry[], baseline: Baseline): boolean {
+  const last14Days = entries.slice(-14);
+  
+  if (last14Days.length < 10) return false; // Need sufficient data
+  
+  const lowMoodDays = last14Days.filter(e => e.mood < baseline.range.low).length;
+  
+  // 70%+ of days below typical range
+  return lowMoodDays >= 10;
+}
+```
+
+**Rationale:**
+- 2 weeks is clinical threshold for depressive episodes
+- Consistent pattern (not just a bad day)
+- Personal baseline (not arbitrary cutoff)
+
+**Response:**
+```typescript
+return `
+  You've been feeling lower than usual for a couple of weeks.
+  Persistent low mood can be tough to navigate alone.
+  
+  Consider talking to a mental health professional:
+  • Find a therapist: psychologytoday.com/us/therapists
+  • Free/low-cost options: openpathcollective.org
+`;
+```
+
+---
+
+### 2. Significant Mood Drop
+
+**Pattern: Sudden drop from baseline (>1.5 points on 5-point scale)**
+
+```typescript
+function detectMoodDrop(recentAvg: number, baseline: Baseline): boolean {
+  return recentAvg < baseline.average - 1.5;
+}
+```
+
+**Rationale:**
+- Sharp change from normal
+- May indicate major life stressor
+- Worth checking in
+
+**Response:**
+```typescript
+return `
+  Your mood has dropped significantly from your usual range.
+  If something difficult is happening, you don't have to handle it alone.
+  
+  Consider reaching out to:
+  • A trusted friend or family member
+  • A mental health professional
+  • Crisis support (988) if you're in immediate distress
+`;
+```
+
+---
+
+### 3. High Mood Variability
+
+**Pattern: Extreme mood swings (very high standard deviation)**
+
+```typescript
+function detectHighVariability(entries: MoodEntry[]): boolean {
+  const moods = entries.map(e => e.mood);
+  const stdDev = standardDeviation(moods);
+  
+  // Very high fluctuation
+  return stdDev > 1.5;
+}
+```
+
+**Rationale:**
+- Large swings can be distressing
+- May benefit from professional support
+- NOT diagnosing bipolar disorder
+
+**Response:**
+```typescript
+return `
+  Your mood has been varying quite a bit lately.
+  If these ups and downs feel hard to manage, talking to a therapist might help.
+`;
+```
+
+⚠️ **Warning:** Do NOT say "This indicates bipolar disorder." Just note the pattern and suggest professional evaluation.
+
+---
+
+### 4. Increasing Symptom Severity
+
+**Pattern: User-reported symptoms increasing in frequency or intensity**
+
+```typescript
+function detectIncreasingSymptoms(logs: SymptomLog[]): boolean {
+  const recent = logs.slice(-14);
+  const previous = logs.slice(-28, -14);
+  
+  const recentSeverity = mean(recent.map(l => l.severityScore));
+  const previousSeverity = mean(previous.map(l => l.severityScore));
+  
+  // Severity increased by 30%+
+  return recentSeverity > previousSeverity * 1.3;
+}
+```
+
+**Rationale:**
+- Worsening patterns warrant attention
+- Early intervention helpful
+
+**Response:**
+```typescript
+return `
+  You've been experiencing more intense symptoms lately.
+  Consider checking in with a mental health professional to talk about what's been happening.
+`;
+```
+
+---
+
+### 5. Explicit Crisis Language
+
+**Pattern: User mentions suicide, self-harm, or crisis**
+
+```typescript
+const CRISIS_KEYWORDS = [
+  "suicide", "kill myself", "end my life",
+  "self-harm", "hurt myself", "cut myself",
+  "not worth living", "want to die"
+];
+
+function detectCrisisLanguage(text: string): boolean {
+  return CRISIS_KEYWORDS.some(keyword => 
+    text.toLowerCase().includes(keyword)
+  );
+}
+```
+
+**Rationale:**
+- Explicit expression of crisis
+- Requires immediate external referral (NOT app intervention)
+
+**Response:**
+```typescript
+return `
+  🚨 If you're in crisis or considering self-harm:
+  
+  • Call 988 (Suicide & Crisis Lifeline)
+  • Text HOME to 741741 (Crisis Text Line)
+  • Call 911 for emergencies
+  
+  These resources are available 24/7 with trained counselors.
+`;
+```
+
+**Critical:** This is **NOT** suicide prediction. This is responding to explicit crisis language.
+
+---
+
+## What Does NOT Trigger Deviation?
+
+### ❌ Single Bad Day
+
+**Don't overreact to normal fluctuation.**
+
+```typescript
+// ❌ BAD
+if (mood === 1) {
+  alert("Depression detected!"); // One bad day ≠ disorder
+}
+
+// ✅ GOOD
+if (mood === 1) {
+  return "Sorry you're having a tough day. Be gentle with yourself.";
+}
+```
+
+**Rationale:** Everyone has bad days. Patterns matter, not individual data points.
+
+---
+
+### ❌ Weekend/Holiday Dips
+
+**Account for expected patterns.**
+
+```typescript
+// ❌ BAD
+if (mood < baseline.average && dayOfWeek === "Sunday") {
+  alert("Concerning pattern"); // But Sundays are often lower
+}
+
+// ✅ GOOD
+const sundayBaseline = weeklyBaseline["Sunday"];
+if (mood < sundayBaseline - 1) {
+  // Now comparing to Sunday-specific baseline
+}
+```
+
+**Rationale:** Many people have lower mood on Sundays ("Sunday scaries"). Compare to day-specific baseline.
+
+---
+
+### ❌ Normal Stress Responses
+
+**Stress ≠ disorder.**
+
+```typescript
+// ❌ BAD
+if (userReports("stressed about work deadline")) {
+  return "You may have anxiety disorder."; // Normal stress response
+}
+
+// ✅ GOOD
+if (userReports("stressed about work deadline")) {
+  return "Deadlines can be stressful. How are you managing?";
+}
+```
+
+**Rationale:** Situational stress is normal. Only suggest help if persistent or overwhelming.
+
+---
+
+## Deviation Response Levels
+
+### Level 1: Gentle Check-In
+
+**Trigger:** Slight deviation or single concerning entry
+
+**Response:**
+```typescript
+return "How are you feeling today? Want to talk about it?";
+```
+
+**Use for:**
+- Slightly below normal mood
+- First instance of concerning pattern
+
+---
+
+### Level 2: Self-Care Suggestion
+
+**Trigger:** Moderate deviation, short duration
+
+**Response:**
+```typescript
+return `
+  You've been feeling a bit lower lately.
+  Remember to take care of yourself:
+  • Get enough sleep
+  • Connect with friends
+  • Do something you enjoy
+  
+  You've got this 💙
+`;
+```
+
+**Use for:**
+- Week of lower mood
+- Not yet meeting "persistent" threshold
+- User still engaging with self-care
+
+---
+
+### Level 3: Professional Referral Suggestion
+
+**Trigger:** Significant/persistent deviation
+
+**Response:**
+```typescript
+return `
+  You've been experiencing ${pattern} for ${duration}.
+  While difficult feelings are normal, persistent challenges can benefit from professional support.
+  
+  Consider talking to a mental health professional:
+  • Find a therapist: psychologytoday.com/us/therapists
+  • Free/low-cost options: openpathcollective.org
+  
+  You don't have to navigate this alone.
+`;
+```
+
+**Use for:**
+- Persistent low mood (2+ weeks)
+- Significant mood drop
+- Increasing symptom severity
+
+---
+
+### Level 4: Immediate Crisis Referral
+
+**Trigger:** Explicit crisis language
+
+**Response:**
+```typescript
+return `
+  🚨 If you're in crisis or considering self-harm:
+  
+  • Call 988 (Suicide & Crisis Lifeline)
+  • Text HOME to 741741 (Crisis Text Line)
+  • Call 911 for emergencies
+  
+  These resources are available 24/7.
+`;
+```
+
+**Use for:**
+- Any mention of suicide
+- Self-harm language
+- "I want to die" or similar
+
+**Never:** Assess severity, ask follow-ups, try to intervene yourself.
+
+---
+
+## Implementation Example
+
+```typescript
+class DeviationEngine {
+  async checkForDeviations(userId: string): Promise<SupportMessage | null> {
+    const baseline = await this.getBaseline(userId);
+    const recentEntries = await this.getMoodEntries(userId, 14);
+    
+    // Level 4: Crisis language check (highest priority)
+    const latestJournal = await this.getLatestJournal(userId);
+    if (latestJournal && detectCrisisLanguage(latestJournal.content)) {
+      return {
+        level: 4,
+        type: "crisis_referral",
+        message: this.getCrisisResources()
+      };
+    }
+    
+    // Level 3: Persistent low mood
+    if (detectPersistentLowMood(recentEntries, baseline)) {
+      return {
+        level: 3,
+        type: "professional_referral",
+        message: `
+          You've been feeling lower than usual for a couple of weeks.
+          Consider talking to a mental health professional:
+          • Find a therapist: psychologytoday.com/us/therapists
+          • Free/low-cost options: openpathcollective.org
+        `
+      };
+    }
+    
+    // Level 3: Significant mood drop
+    const recentAvg = mean(recentEntries.slice(-7).map(e => e.mood));
+    if (detectMoodDrop(recentAvg, baseline)) {
+      return {
+        level: 3,
+        type: "professional_referral",
+        message: `
+          Your mood has dropped significantly from your usual range.
+          Consider reaching out to a mental health professional or trusted friend.
+        `
+      };
+    }
+    
+    // Level 2: Moderate deviation
+    const last3Days = recentEntries.slice(-3);
+    const last3Avg = mean(last3Days.map(e => e.mood));
+    if (last3Avg < baseline.average - 0.8) {
+      return {
+        level: 2,
+        type: "self_care_suggestion",
+        message: `
+          You've been feeling a bit lower lately. Remember to take care of yourself:
+          • Get enough sleep
+          • Connect with supportive people
+          • Do activities you enjoy
+        `
+      };
+    }
+    
+    // Level 1: Gentle check-in
+    if (last3Avg < baseline.average - 0.5) {
+      return {
+        level: 1,
+        type: "check_in",
+        message: "How are you feeling today? Want to reflect on what's been on your mind?"
+      };
+    }
+    
+    return null; // Everything within normal range
+  }
+  
+  private getCrisisResources(): string {
+    return `
+      🚨 If you're in crisis or considering self-harm:
+      
+      • Call 988 (Suicide & Crisis Lifeline)
+      • Text HOME to 741741 (Crisis Text Line)
+      • Call 911 for emergencies
+      
+      These resources are available 24/7.
+    `;
+  }
+}
+```
+
+---
+
+## What the Deviation Engine Is NOT
+
+### ❌ Not a Diagnostic Tool
+
+**It does NOT:**
+- Diagnose depression, anxiety, or any disorder
+- Determine clinical severity
+- Replace professional assessment
+
+**It DOES:**
+- Observe patterns relative to personal baseline
+- Suggest when professional evaluation might help
+- Encourage self-care
+
+---
+
+### ❌ Not a Suicide Prediction Model
+
+**It does NOT:**
+- Predict future suicide risk
+- Assess severity of crisis
+- Score risk levels
+
+**It DOES:**
+- Respond to explicit crisis language with immediate resources
+- Display 988/Crisis Text Line prominently
+
+**Key difference:**
+- Prediction: "This pattern means future risk" (❌ impossible and dangerous)
+- Response: "User said 'I want to die' → show 988" (✅ appropriate)
+
+---
+
+### ❌ Not an Intervention System
+
+**It does NOT:**
+- Provide crisis counseling
+- Attempt to "keep user safe"
+- Deliver therapeutic techniques
+
+**It DOES:**
+- Refer to external professional resources
+- Encourage self-care practices (journaling, sleep, connection)
+- Validate feelings
+
+---
+
+## Testing the Deviation Engine
+
+### Test Cases
+
+**1. Persistent low mood**
+- Input: 14 consecutive days of mood ≤ 2 (baseline avg = 3.5)
+- Expected: Level 3 professional referral suggestion
+
+**2. Single bad day**
+- Input: One day mood = 1, previous 13 days = 3-4
+- Expected: Level 1 gentle check-in OR no action
+
+**3. Crisis language**
+- Input: Journal entry "I want to kill myself"
+- Expected: Level 4 immediate crisis resources (988, Crisis Text Line, 911)
+
+**4. Gradual improvement**
+- Input: Mood rising from 2.5 baseline to 3.5 over 2 weeks
+- Expected: Positive acknowledgment, no deviation alert
+
+**5. Expected Sunday dip**
+- Input: Sunday mood = 3.0 (usual for Sundays), baseline Mon-Sat = 4.0
+- Expected: No alert (within expected weekly pattern)
+
+---
+
+## Summary
+
+**The deviation engine:**
+- Monitors patterns relative to personal baseline
+- Suggests support at appropriate thresholds
+- Escalates to crisis resources for explicit crisis language
+
+**When it activates:**
+- Persistent low mood (2+ weeks below range)
+- Significant mood drop (>1.5 points)
+- High mood variability (hard to manage)
+- Increasing symptom severity
+- Explicit crisis language (immediate 988 referral)
+
+**Response levels:**
+1. Gentle check-in (slight deviation)
+2. Self-care suggestion (moderate deviation)
+3. Professional referral (significant/persistent deviation)
+4. Crisis resources (explicit crisis language)
+
+**What it is NOT:**
+- Diagnostic tool
+- Suicide prediction model
+- Intervention system
+
+**It is:**
+- Pattern observation system
+- Professional referral guide
+- Support encouragement tool
+
+Build deviation detection that helps users recognize when to seek help—not pseudo-clinical AI attempting to diagnose or intervene.

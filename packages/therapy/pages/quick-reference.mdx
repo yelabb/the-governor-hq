@@ -1,0 +1,183 @@
+# Quick Reference
+
+> One-page cheat sheet for developers and AI coding assistants working with therapy data
+
+---
+
+## The Five Absolute Therapy Rules
+
+| Rule | What It Means |
+|---|---|
+| 🚫 **No Mental Health Diagnoses** | Never diagnose depression, anxiety, PTSD, bipolar, or any psychiatric condition |
+| 🚫 **No Therapy Replacement** | Cannot substitute for licensed professional therapists or counselors |
+| 🚫 **No Crisis Intervention** | Not equipped for suicide prevention—always direct to 988/911 |
+| 🚫 **No Medications** | Never recommend psychiatric medications, dosages, or changes to prescriptions |
+| 🚫 **No Therapeutic Techniques** | Cannot prescribe CBT, DBT, exposure therapy, or clinical protocols |
+
+---
+
+## Safe vs. Unsafe Language
+
+### ❌ Forbidden Phrases
+
+| Don't Say | Why |
+|---|---|
+| "You are depressed" | Mental health diagnosis |
+| "This app can treat your anxiety" | Therapy replacement claim |
+| "You should stop taking your medication" | Medical advice |
+| "Try exposure therapy for your PTSD" | Clinical technique prescription |
+| "Your suicide risk is low" | Crisis assessment claim |
+
+### ✅ Allowed Phrases
+
+| Say Instead | Why |
+|---|---|
+| "Your mood has been lower than your baseline this week" | Pattern observation |
+| "This app supports self-reflection, not professional therapy" | Clear boundaries |
+| "If you're taking medication, consult your doctor before changes" | Appropriate referral |
+| "Journaling can support wellbeing—not a replacement for therapy" | Wellness framing |
+| "If you're in crisis, call 988 or 911" | Crisis resource direction |
+
+---
+
+##  Decision Flowchart
+
+### Can I Implement This Therapy Feature?
+
+```
+START: New therapy feature request
+│
+├─ Does it diagnose mental health conditions? ──YES──> ❌ STOP
+├─ Does it replace professional therapy? ──YES──> ❌ STOP
+├─ Does it assess crisis/suicide risk? ──YES──> ❌ STOP
+├─ Does it recommend medications? ──YES──> ❌ STOP
+├─ Does it prescribe therapeutic techniques? ──YES──> ❌ STOP
+├─ Are crisis resources (988, 911) prominently displayed? ──NO──> 🔄 ADD RESOURCES
+├─ Does it need personal baseline? ──YES──> ✓ Ensure baseline gate
+│
+└─ Proceed with ✅ SAFE implementation
+```
+
+---
+
+## Critical Code Patterns
+
+### Pattern 1: Baseline Gating
+
+```javascript
+// ✅ CORRECT
+function generateMoodInsight(user) {
+  if (user.therapyBaselineStatus !== 'STABLE') {
+    return null; // Silent during learning (30+ days)
+  }
+  
+  const moodDeviation = user.currentMood / user.personalBaseline.mood;
+  
+  if (moodDeviation < 0.8 && persists(7days)) {
+    return {
+      observation: "Your mood has been lower than your recent baseline.",
+      suggestion: "Consider reaching out to a mental health professional if this continues.",
+      crisisResources: "988 Suicide & Crisis Lifeline"
+    };
+  }
+}
+
+// ❌ WRONG  
+function generateMoodInsight(user) {
+  if (user.currentMood < 5) {
+    return "You are clinically depressed. Take medication.";
+  }
+}
+```
+
+### Pattern 2: Crisis Resource Display
+
+```javascript
+// ✅ CORRECT - Always prominently display
+const CRISIS_RESOURCES = {
+  us: {
+    suicide: "988 Suicide & Crisis Lifeline",
+    text: "Text HOME to 741741",
+    emergency: "911"
+  },
+  display: "always_visible_in_app"
+};
+
+// Show prominently when concerning patterns
+if (concerningPattern) {
+  return {
+    message: "If you're in crisis or need immediate support:",
+    resources: CRISIS_RESOURCES,
+    prominence: "large_clear_buttons"
+  };
+}
+
+// ❌ WRONG
+// Hidden in settings or buried in FAQ
+```
+
+---
+
+## Validation Checklist
+
+Before submitting therapy code:
+
+- [ ] No mental health diagnoses (depression, anxiety, PTSD, etc.)
+- [ ] No therapy replacement claims
+- [ ] No medication recommendations  
+- [ ] No crisis risk assessments
+- [ ] Crisis resources (988, 911) prominently displayed
+- [ ] "Not a replacement for therapy" disclaimer  
+- [ ] Personal baseline required before insights
+- [ ] Supportive, non-diagnostic language
+- [ ] Professional referral prompts when appropriate
+- [ ] Privacy protections for sensitive mental health data
+
+---
+
+## Therapy Domain Boundaries
+
+### ✅ Allowed (Consumer Wellness)
+
+- Mood tracking with personal baseline
+- Journaling prompts and self-reflection
+- Gratitude and positive psychology practices
+- Pattern observation ("mood lower this week")
+- Professional referral suggestions
+- Crisis resource display  
+
+### ❌ Forbidden (Clinical/Medical)
+
+- Mental health diagnosis
+- AI therapy chatbots
+- Suicide risk prediction
+- Medication management
+- Clinical technique prescription (CBT, DBT, etc.)
+- Replacement for licensed therapists
+
+---
+
+## Crisis Protocol
+
+**Always:**
+1. Display 988 prominently
+2. Never claim to assess crisis risk
+3. Never attempt intervention
+4. Direct to professionals: "Call 988 or 911"
+5. Include disclaimer: "This app is not equipped for crisis situations"
+
+**Never:**
+- Determine if someone is "safe" or "at risk"
+- Provide crisis counseling
+- Try to "talk someone down"
+- Hide/delay access to emergency resources
+
+---
+
+## Resources
+
+- [AI Agent Guide](/ai-agent-guide) - Detailed patterns
+- [Hard Rules](/constraints/hard-rules) - Absolute boundaries
+- [What We Don't Do](/what-we-dont-do) - Scope limits
+- [Mood Agent](/agents/mood-agent) - Mood tracking guidance
+- [Journaling Agent](/agents/journaling-agent) - Reflection prompts
