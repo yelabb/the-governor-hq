@@ -1,6 +1,6 @@
 {
   "name": "@yelabb/constitution-core",
-  "version": "2.0.0",
+  "version": "3.0.0-beta",
   "description": "Core AI Safety Infrastructure - Shared rules and utilities for all Governor HQ constitutions",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
