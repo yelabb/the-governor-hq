@@ -137,7 +137,7 @@
 └──────────────────────────────────────────────────────────────────┘
 
   NPM:     https://www.npmjs.com/package/@governor-hq/constitution
-  Docs:    https://governor-hq.elabbassi.com
+  Docs:    https://the-governor-hq.vercel.app
   GitHub:  https://github.com/yelabb/the-governor-hq
   License: MIT
 

@@ -12,7 +12,7 @@
 
 **A safety layer for AI agents working with wearable health data. Prescriptive, executable constraints that prevent medical claims and ensure ethical boundaries.**
 
-[Quick Start](#-instant-setup-3-commands) • [Documentation](https://governor-hq.elabbassi.com) • [Examples](EXAMPLE.md) • [Report Issue](https://github.com/yelabb/the-governor-hq/issues)
+[Quick Start](#-instant-setup-3-commands) • [Documentation](https://the-governor-hq.vercel.app) • [Examples](EXAMPLE.md) • [Report Issue](https://github.com/yelabb/the-governor-hq/issues)
 
 </div>
 
@@ -412,7 +412,7 @@ All code was tested and validated by human developers.
 
 ## 🔗 Links
 
-- 📖 **Documentation:** [https://governor-hq.elabbassi.com](https://governor-hq.elabbassi.com)
+- 📖 **Documentation:** [https://the-governor-hq.vercel.app](https://the-governor-hq.vercel.app)
 - 📦 **NPM Package:** [@the-governor-hq/constitution](https://www.npmjs.com/package/@the-governor-hq/constitution)
 - 💬 **Discussions:** [GitHub Discussions](https://github.com/yelabb/the-governor-hq/discussions)
 - 🐛 **Issues:** [Issue Tracker](https://github.com/yelabb/the-governor-hq/issues)

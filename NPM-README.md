@@ -99,7 +99,7 @@ const deviation = user.current / user.personalBaseline;
 
 ## Documentation
 
-Full documentation available at: [https://governor-hq.elabbassi.com](https://governor-hq.elabbassi.com)
+Full documentation available at: [https://the-governor-hq.vercel.app](https://the-governor-hq.vercel.app)
 
 - **[Quick Reference](pages/quick-reference.mdx)** - One-page cheat sheet
 - **[AI Agent Guide](pages/ai-agent-guide.mdx)** - Complete implementation guide
@@ -198,7 +198,7 @@ Contributions welcome! See [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ## Support
 
-- 📖 [Full Documentation](https://governor-hq.elabbassi.com)
+- 📖 [Full Documentation](https://the-governor-hq.vercel.app)
 - 💬 [GitHub Discussions](https://github.com/yelabb/the-governor-hq/discussions)
 - 🐛 [Issue Tracker](https://github.com/yelabb/the-governor-hq/issues)
 
