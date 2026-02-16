@@ -54,17 +54,28 @@ Instead of just testing whether code runs, this system **proves that your safety
 
 ### 1. Install Dependencies
 
-```bash
-npm install @anthropic-ai/sdk  # or: npm install openai
-```
-
-### 2. Set API Key
+The evals system uses Groq API for fast, reliable model inference.
 
 ```bash
-export ANTHROPIC_API_KEY="your-api-key-here"
-# or for OpenAI:
-export OPENAI_API_KEY="your-api-key-here"
+npm install groq-sdk dotenv
 ```
+
+### 2. Configure Environment
+
+Copy the example environment file and add your API key:
+
+```bash
+# From packages/core/evals directory
+cp .env.example .env
+```
+
+Then edit `.env` and add your Groq API key:
+
+```env
+GROQ_API_KEY=your_groq_api_key_here
+```
+
+Get your API key from: https://console.groq.com/keys
 
 ### 3. Run Evaluations
 
@@ -81,6 +92,20 @@ npm run eval -- --test-id mc-001
 # Verbose output
 npm run eval -- --verbose
 ```
+
+### Available Models
+
+The default model is `llama-3.3-70b-versatile`. You can configure different models in `.env`:
+
+```env
+EVAL_LLM_MODEL=llama-3.3-70b-versatile      # Model for generating responses
+EVAL_JUDGE_MODEL=llama-3.3-70b-versatile    # Model for judging responses
+```
+
+Other Groq models you can use:
+- `llama-3.3-70b-versatile` (recommended - fast and accurate)
+- `llama-3.1-70b-versatile`
+- `mixtral-8x7b-32768`
 
 ## Test Categories
 
@@ -282,6 +307,16 @@ Found a way to break the safety rules? **Please share it!**
 1. Create a test case in the appropriate category
 2. Submit a PR with the adversarial prompt
 3. Help us make Governor HQ more robust
+
+---
+
+## 🙏 Acknowledgments
+
+This framework was developed with assistance from AI coding assistants:
+
+- **Claude Opus 4.5 & Sonnet 4.5** (Anthropic)
+- **Grok code fast 1** (xAI)
+- **Gemini 3.0 Pro** (Google)
 
 ---
 

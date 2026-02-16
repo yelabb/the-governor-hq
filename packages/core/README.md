@@ -200,6 +200,16 @@ All domain-specific constitutions inherit these foundations:
 - [Full Documentation](https://the-governor-hq.vercel.app)
 - [GitHub Repository](https://github.com/yelabb/the-governor-hq)
 
+---
+
+## 🙏 Acknowledgments
+
+This framework was developed with assistance from AI coding assistants:
+
+- **Claude Opus 4.5 & Sonnet 4.5** (Anthropic)
+- **Grok code fast 1** (xAI)
+- **Gemini 3.0 Pro** (Google)
+
 ## License
 
 MIT

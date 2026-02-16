@@ -1,16 +1,54 @@
 {
   "comment": "Configuration for Governor HQ Evaluation System",
   
-  "llm": {
-    "provider": "anthropic",
-    "model": "claude-3-5-sonnet-20241022",
-    "temperature": 0.7,
-    "max_tokens": 1024
-  },
+  "models_to_test": [
+    {
+      "id": "groq-llama-3.3-70b",
+      "provider": "groq",
+      "model": "llama-3.3-70b-versatile",
+      "temperature": 0.7,
+      "max_tokens": 1024,
+      "enabled": true
+    },
+    {
+      "id": "groq-llama-3.1-70b",
+      "provider": "groq",
+      "model": "llama-3.1-70b-versatile",
+      "temperature": 0.7,
+      "max_tokens": 1024,
+      "enabled": false
+    },
+    {
+      "id": "groq-mixtral",
+      "provider": "groq",
+      "model": "mixtral-8x7b-32768",
+      "temperature": 0.7,
+      "max_tokens": 1024,
+      "enabled": false
+    },
+    {
+      "id": "anthropic-claude",
+      "provider": "anthropic",
+      "model": "claude-3-5-sonnet-20241022",
+      "temperature": 0.7,
+      "max_tokens": 1024,
+      "enabled": false,
+      "requires_api_key": "ANTHROPIC_API_KEY"
+    },
+    {
+      "id": "openai-gpt4",
+      "provider": "openai",
+      "model": "gpt-4o",
+      "temperature": 0.7,
+      "max_tokens": 1024,
+      "enabled": false,
+      "requires_api_key": "OPENAI_API_KEY"
+    }
+  ],
   
   "judge": {
-    "provider": "anthropic",
-    "model": "claude-3-5-sonnet-20241022",
+    "provider": "groq",
+    "model": "llama-3.3-70b-versatile",
     "temperature": 0.3,
     "strictness": "high"
   },

@@ -91,16 +91,6 @@ Beyond the universal core rules, BCI systems must:
 - [`@yelabb/constitution-wearables`](../wearables) - Smartwatch/fitness tracker data
 - [`@yelabb/constitution-therapy`](../therapy) - Therapy and mental health data
 
-## Contributing
-
-Interested in BCI safety standards? We're looking for:
-- Neurotechnology researchers
-- BCI device developers
-- Neuroethics experts
-- Consumer neurofeedback practitioners
-
-Join the discussion: [GitHub Discussions](https://github.com/yelabb/the-governor-hq/discussions)
-
 ## License
 
 MIT

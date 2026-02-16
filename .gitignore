@@ -4,5 +4,9 @@ out/
 .DS_Store
 *.tsbuildinfo
 
+# Environment variables
+.env
+.env.local
+
 # Synced package documentation
 pages/packages/

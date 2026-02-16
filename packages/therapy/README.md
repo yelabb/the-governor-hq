@@ -103,19 +103,20 @@ All therapy-adjacent systems must:
 - [`@yelabb/constitution-wearables`](../wearables) - Smartwatch/fitness tracker data
 - [`@yelabb/constitution-bci`](../bci) - Brain-computer interface data
 
-## Contributing
-
-Interested in mental health tech safety standards? We're looking for:
-- Licensed therapists and counselors
-- Clinical psychologists
-- Mental health tech developers
-- Ethics researchers
-
-Join the discussion: [GitHub Discussions](https://github.com/yelabb/the-governor-hq/discussions)
-
 ## Important Note
 
 This framework is designed for **consumer wellness applications**, not clinical mental health software. Clinical systems require regulatory compliance (HIPAA, FDA) beyond this framework's scope.
+
+---
+
+## 🙏 Acknowledgments
+
+This framework was developed with assistance from AI coding assistants:
+
+- **Claude Opus 4.5 & Sonnet 4.5** (Anthropic)
+- **Grok code fast 1** (xAI)
+- **Gemini 3.0 Pro** (Google)
+
 
 ## License
 
