@@ -4,6 +4,18 @@
   "description": "Core AI Safety Infrastructure - Shared rules and utilities for all Governor HQ constitutions",
   "main": "index.js",
   "types": "index.d.ts",
+  "bin": {
+    "governor-validate": "./bin/governor-validate.js"
+  },
+  "scripts": {
+    "test": "node bin/governor-validate.js --help"
+  },
+  "files": [
+    "index.js",
+    "index.d.ts",
+    "bin/",
+    "README.md"
+  ],
   "keywords": [
     "ai-safety",
     "health-data",

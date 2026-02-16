@@ -4,10 +4,21 @@
   "description": "AI Safety Constitution for Therapy and Mental Health Data Projects",
   "main": "mcp-server.js",
   "types": "index.d.ts",
+  "bin": {
+    "governor-install-therapy": "./install.js"
+  },
   "scripts": {
+    "test": "node mcp-server.test.js",
     "ai:context": "node mcp-server.js",
     "postinstall": "node install.js"
   },
+  "files": [
+    "mcp-server.js",
+    "install.js",
+    "index.d.ts",
+    "mcp-server.test.js",
+    "README.md"
+  ],
   "keywords": [
     "ai-safety",
     "therapy",
