@@ -1,6 +1,6 @@
 {
   "name": "@yelabb/governor-hq-monorepo",
-  "version": "3.0.1-beta",
+  "version": "3.0.2-beta",
   "description": "AI Safety Constitutions for Health Data Projects - Monorepo with domain-specific packages",
   "private": true,
   "workspaces": [
