@@ -10,7 +10,7 @@
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://github.com/yelabb/the-governor-hq/pulls)
 [![MCP Compatible](https://img.shields.io/badge/MCP-Compatible-purple?style=flat-square)](https://modelcontextprotocol.io)
 
-**Safety layers for AI agents working with health data. Prescriptive, executable constraints that prevent medical claims and ensure ethical boundaries across multiple domains.**
+**AI behavior guidance layer working with health data. Prescriptive, executable constraints that prevent medical claims and ensure ethical boundaries across multiple domains.**
 
 [Quick Start](#-quick-start) • [Documentation](https://the-governor-hq.vercel.app) • [Examples](EXAMPLE.md) • [Report Issue](https://github.com/yelabb/the-governor-hq/issues)
 ## 🚧 Status: In Development
