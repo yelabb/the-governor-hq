@@ -13,7 +13,7 @@
 **Safety layers for AI agents working with health data. Prescriptive, executable constraints that prevent medical claims and ensure ethical boundaries across multiple domains.**
 
 [Quick Start](#-quick-start) • [Documentation](https://the-governor-hq.vercel.app) • [Examples](EXAMPLE.md) • [Report Issue](https://github.com/yelabb/the-governor-hq/issues)
-
+## 🚧 Status: In Development
 </div>
 
 ---

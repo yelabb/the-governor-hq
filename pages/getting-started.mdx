@@ -4,13 +4,35 @@
 
 ---
 
+## 📦 Monorepo Structure
+
+**The Governor HQ** is now a **monorepo** with domain-specific packages. Choose the package that matches your project:
+
+- **`@yelabb/constitution-wearables`** - For wearables/smartwatch data projects
+- **`@yelabb/constitution-bci`** - For brain-computer interface projects  
+- **`@yelabb/constitution-therapy`** - For therapy/mental health data projects
+- **`@yelabb/constitution-core`** - Core utilities for custom implementations
+
+> **Migrating from old package?** If you previously used `@yelabb/constitution`, uninstall it and choose the domain-specific package above.
+
+---
+
 ## ⚡ Instant Setup (Recommended)
 
-**The fastest way to get started - 3 seconds:**
+**Install the constitution for your domain:**
 
 ```bash
-# Install as dev dependency
-npm install --save-dev @yelabb/constitution
+# For Wearables/Smartwatch Projects
+npm install --save-dev @yelabb/constitution-wearables
+
+# For Brain-Computer Interface (BCI) Projects
+npm install --save-dev @yelabb/constitution-bci
+
+# For Therapy/Mental Health Data Projects
+npm install --save-dev @yelabb/constitution-therapy
+
+# Core utilities only (for custom implementations)
+npm install --save-dev @yelabb/constitution-core
 ```
 
 **That's it!** The post-install script automatically configures:
@@ -19,7 +41,7 @@ npm install --save-dev @yelabb/constitution
 - ✅ `.mcp-config.json` - MCP server for Claude/ChatGPT
 - ✅ `package.json` - Adds `ai:context` script
 
-Your AI coding assistant is now safety-aware for wearable data development.
+Your AI coding assistant is now safety-aware for your specific health data domain.
 
 ### Verify Installation
 
@@ -49,13 +71,15 @@ Or add to Claude Desktop config (`~/Library/Application Support/Claude/config.js
 ```json
 {
   "mcpServers": {
-    "governor-hq": {
+    "governor-hq-wearables": {
       "command": "node",
-      "args": ["./node_modules/@governor-hq/constitution/mcp-server.js"]
+      "args": ["./node_modules/@yelabb/constitution-wearables/mcp-server.js"]
     }
   }
 }
 ```
+
+**Note:** Replace `constitution-wearables` with your installed package (`constitution-bci`, `constitution-therapy`, etc.)
 
 ---
 

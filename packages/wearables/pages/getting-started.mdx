@@ -10,7 +10,7 @@
 
 ```bash
 # Install as dev dependency
-npm install --save-dev @yelabb/constitution
+npm install --save-dev @yelabb/constitution-wearables
 ```
 
 **That's it!** The post-install script automatically configures:
@@ -20,6 +20,8 @@ npm install --save-dev @yelabb/constitution
 - ✅ `package.json` - Adds `ai:context` script
 
 Your AI coding assistant is now safety-aware for wearable data development.
+
+**Other domains:** See [constitution-bci](https://npmjs.com/package/@yelabb/constitution-bci), [constitution-therapy](https://npmjs.com/package/@yelabb/constitution-therapy), or [constitution-core](https://npmjs.com/package/@yelabb/constitution-core)
 
 ### Verify Installation
 
@@ -49,9 +51,9 @@ Or add to Claude Desktop config (`~/Library/Application Support/Claude/config.js
 ```json
 {
   "mcpServers": {
-    "governor-hq": {
+    "governor-hq-wearables": {
       "command": "node",
-      "args": ["./node_modules/@governor-hq/constitution/mcp-server.js"]
+      "args": ["./node_modules/@yelabb/constitution-wearables/mcp-server.js"]
     }
   }
 }
