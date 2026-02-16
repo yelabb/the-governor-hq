@@ -1,0 +1,92 @@
+# Signals
+
+> What data the system reads — and what it cannot tell us.
+
+---
+
+## Purpose
+
+This document defines the **exact data inputs** available to the system. Every signal listed here comes from consumer wearables. No signal in this list constitutes a medical measurement.
+
+A developer reading this page should know:
+1. What can be **read** from the hardware
+2. What can be **derived** with reasonable confidence
+3. What **must never be inferred** from this data
+
+---
+
+## Supported Signals
+
+| Signal | Source | Characteristics | Update Frequency |
+|---|---|---|---|
+| **Sleep Stages** | Wearable (accelerometer + PPG) | Estimated, not clinical polysomnography. Light/Deep/REM classification. | Nightly |
+| **HRV (Heart Rate Variability)** | Wearable (PPG) | Trend-based, noisy, influenced by hydration, alcohol, position. rMSSD or equivalent. | Nightly / Morning |
+| **Resting Heart Rate** | Wearable (PPG) | Delayed indicator. More stable than HRV. Lower is generally better *for the individual*. | Nightly |
+| **Sleep Consistency** | Derived (bed/wake times) | Pattern regularity across nights. Circadian alignment proxy. | Rolling window |
+
+---
+
+## Signal Characteristics
+
+### Trend-based, not absolute
+
+All signals are meaningful **relative to the individual's baseline**, not as standalone values. An HRV of 35ms means nothing without context. An HRV that dropped 30% from a person's 90-day average is meaningful.
+
+### Noisy
+
+Wearable sensors produce estimates, not clinical measurements. Single-night anomalies are expected and must not trigger alerts alone.
+
+### Delayed
+
+Most recovery signals reflect what happened **12–48 hours ago**, not the current moment. The system must account for this latency when interpreting data.
+
+### Influenced by confounders
+
+Alcohol, caffeine, travel, illness, menstrual cycle, and dozens of other factors affect every signal. The system cannot isolate causality.
+
+---
+
+## What Signals Cannot Tell Us
+
+This is as important as what they *can* tell us.
+
+| Impossible Inference | Why |
+|---|---|
+| **Diagnose a condition** | Consumer wearables are not medical devices. Signal accuracy is insufficient for diagnosis. |
+| **Determine causality** | A drop in HRV does not tell you *why* it dropped. Correlation ≠ causation. |
+| **Prescribe treatment** | No signal combination justifies medical intervention. |
+| **Replace a doctor** | Even perfect data cannot replace clinical judgment, history, and examination. |
+| **Predict disease** | Trends may correlate with health outcomes in research, but individual prediction is not validated. |
+
+---
+
+## Population Averages Are Not Decision Inputs
+
+The system **explicitly rejects** population averages as primary decision criteria.
+
+**Why:**
+- "Normal HRV" ranges vary by age, sex, fitness, genetics, and measurement method
+- Telling someone their HRV is "below average" creates anxiety without actionable insight
+- The only meaningful comparison is **you vs. your own baseline**
+
+**Rule:** Population data may be used for initial context during onboarding but must **never** drive agent recommendations or deviation detection.
+
+---
+
+## Developer Guidance
+
+### DO
+- Compare signals to the user's personal baseline
+- Require multi-signal confirmation before triggering agents
+- Treat single-night anomalies as noise
+- Display trends, not snapshots
+
+### DON'T
+- Show "normal ranges" based on population data
+- Use language like "your HRV is low" (low compared to what?)
+- Infer mood, stress level, or health status from a single metric
+- Present wearable data as medically accurate
+
+---
+
+> **Bottom line:** These signals are behavioral feedback tools, not diagnostic instruments. Build accordingly.

@@ -1,0 +1,141 @@
+# Recovery Agent
+
+> Allowed recovery guidance — predictable, safe, and bounded.
+
+---
+
+## Purpose
+
+The Recovery Agent is activated by the Deviation Engine when recovery-related signals deviate from the user's personal baseline. It provides **behavioral suggestions** within strictly defined boundaries.
+
+This agent does not diagnose, prescribe, or treat. It suggests adjustments.
+
+---
+
+## Trigger Conditions
+
+The Recovery Agent activates **only** when:
+
+1. The Deviation Engine flags a recovery-type deviation (see [Deviation Engine](/core/deviation-engine))
+2. The baseline is in `STABLE` or `MATURE` state
+3. Multi-signal confirmation exists (e.g., deep sleep ↓ + HRV ↓)
+4. No cooldown is active for this deviation type
+
+If any condition is not met, the agent **remains silent**.
+
+---
+
+## Allowed Recommendation Categories
+
+The Recovery Agent may suggest actions in **three categories only**:
+
+### 1. Timing Adjustments
+
+Suggestions related to **when** the user does things.
+
+| Allowed | Example |
+|---|---|
+| Earlier wind-down | "Consider starting your wind-down routine 30 minutes earlier tonight." |
+| Consistent wake time | "Keeping a consistent wake time — even on weekends — often supports recovery." |
+| Activity timing | "Light activity earlier in the day might support tonight's sleep quality." |
+
+### 2. Activity Substitution
+
+Suggestions to **swap intensity**, not prescribe specific exercises.
+
+| Allowed | Example |
+|---|---|
+| Intensity reduction | "A lighter session today might give your body more room to recover." |
+| Active recovery swap | "Consider swapping today's planned intensity for a walk or gentle movement." |
+| Rest day suggestion | "Your signals suggest today could be a good day to prioritize rest." |
+
+### 3. Rest & Downregulation
+
+Suggestions to **reduce stimulation** and support nervous system recovery.
+
+| Allowed | Example |
+|---|---|
+| Screen reduction | "Reducing screen time in the hour before bed often improves deep sleep." |
+| Breathing / relaxation | "A few minutes of slow breathing before bed might help tonight." |
+| Temperature | "A cooler sleep environment is often associated with better deep sleep." |
+
+---
+
+## Explicitly Forbidden Actions
+
+These are **hard boundaries**. No override. No exceptions.
+
+| Forbidden | Reason |
+|---|---|
+| ❌ Supplement recommendations | Not qualified. Legal risk. Not in scope. |
+| ❌ Specific protocols (e.g., "Wim Hof", "4-7-8 breathing") | Branded protocols imply endorsement and authority. |
+| ❌ Extreme suggestions (ice baths, fasting, sleep restriction) | Risk of harm. Outside behavioral adjustment scope. |
+| ❌ Dosage of anything | Melatonin, magnesium, caffeine amounts — all forbidden. |
+| ❌ Training plans | The system is not a coach. It does not program workouts. |
+| ❌ Medical advice | "See a doctor" is allowed as a safety valve. Specific medical guidance is not. |
+| ❌ Diagnoses or condition names | Never say "you might have insomnia / apnea / overtraining syndrome." |
+
+---
+
+## Example Notifications
+
+### ✅ Compliant Notification
+
+> **Recovery check-in**
+>
+> Your deep sleep and HRV have been lower than your usual pattern for the past 2 nights.
+>
+> A few things that often help:
+> - Consider a lighter activity day today
+> - Starting your wind-down 30 minutes earlier tonight might support recovery
+> - A cooler bedroom temperature is often associated with deeper sleep
+>
+> *These are suggestions based on your personal trends, not medical advice.*
+
+### ❌ Non-Compliant Notification
+
+> **Warning: Poor Recovery Detected**
+>
+> Your HRV is critically low at 38ms. This indicates high physiological stress and potential overtraining.
+>
+> You should:
+> - Take 3mg melatonin before bed
+> - Do the Wim Hof breathing protocol
+> - Skip all exercise for the next 3 days
+> - Consider seeing a sleep specialist — you may have sleep apnea
+>
+> Failure to recover could lead to injury or illness.
+
+**Why this fails:** Alarmist tone. Medical language ("critically low", "physiological stress", "overtraining"). Supplement dosage. Branded protocol. Diagnosis suggestion. Fear-based framing.
+
+---
+
+## Tone Requirements
+
+| Principle | Implementation |
+|---|---|
+| **Optional** | Always frame as suggestions, never commands |
+| **Calm** | No urgency language. No "warning" or "alert" headers. |
+| **Personal** | Reference the user's own patterns, not population norms |
+| **Brief** | 2–4 suggestions maximum. No walls of text. |
+| **Humble** | Acknowledge uncertainty. "Often helps" not "will fix." |
+
+---
+
+## Developer Guidance
+
+### DO
+- Validate every recommendation against the [Hard Rules](/constraints/hard-rules) before output
+- Include the non-medical disclaimer in every notification
+- Log which recommendation category each suggestion falls into
+- A/B test notification formats for clarity, not for engagement
+
+### DON'T
+- Optimize for notification opens or engagement metrics
+- Allow dynamic content generation without constraint checking
+- Stack more than 4 suggestions in a single notification
+- Use the word "alert" or "warning" in recovery notifications
+
+---
+
+> **Bottom line:** The Recovery Agent's power comes from restraint. Suggest less. Suggest softer. Earn trust through humility.

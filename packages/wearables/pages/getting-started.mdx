@@ -1,0 +1,629 @@
+# Getting Started
+
+> How to integrate this AI constitution into your development workflow
+
+---
+
+## ⚡ Instant Setup (Recommended)
+
+**The fastest way to get started - 3 seconds:**
+
+```bash
+# Install as dev dependency
+npm install --save-dev @yelabb/constitution
+```
+
+**That's it!** The post-install script automatically configures:
+- ✅ `.cursorrules` - Cursor AI safety rules
+- ✅ `.vscode/settings.json` - GitHub Copilot instructions
+- ✅ `.mcp-config.json` - MCP server for Claude/ChatGPT
+- ✅ `package.json` - Adds `ai:context` script
+
+Your AI coding assistant is now safety-aware for wearable data development.
+
+### Verify Installation
+
+Check what was configured:
+
+```bash
+# Should see .cursorrules in your project root
+ls -la .cursorrules
+
+# Should see MCP config
+ls -la .mcp-config.json
+
+# Should see ai:context script in package.json
+npm run ai:context
+```
+
+### For MCP-Compatible AI (Claude Desktop, etc.)
+
+Start the MCP server to provide context to external AI assistants:
+
+```bash
+npm run ai:context
+```
+
+Or add to Claude Desktop config (`~/Library/Application Support/Claude/config.json`):
+
+```json
+{
+  "mcpServers": {
+    "governor-hq": {
+      "command": "node",
+      "args": ["./node_modules/@governor-hq/constitution/mcp-server.js"]
+    }
+  }
+}
+```
+
+---
+
+## Manual Setup (Alternative)
+
+If you prefer manual configuration or can't use npm:
+
+### For Developers: Quick Setup
+
+### Step 1: Add to Your Project
+
+Clone or link this repository alongside your wearable data project:
+
+```bash
+# Option A: Git submodule
+cd your-project/
+git submodule add https://github.com/yelabb/the-governor-hq.git docs/governor-hq
+git submodule update --init --recursive
+
+# Option B: Clone separately
+cd ~/projects/
+git clone https://github.com/yelabb/the-governor-hq.git governor-hq-docs
+```
+
+### Step 2: Configure AI Assistant Context
+
+When using AI coding assistants, include this repository in your context. Different tools have different methods:
+
+#### GitHub Copilot / VS Code
+
+Add to your workspace or project configuration:
+
+```json
+// .vscode/settings.json
+{
+  "github.copilot.chat.codeGeneration.instructions": [
+    {
+      "file": "docs/governor-hq/README.md"
+    }
+  ]
+}
+```
+
+Or reference it in chat prompts:
+```
+@workspace This project processes wearable health data. Follow the 
+constitutional framework in /docs/governor-hq/. Check /constraints/hard-rules.mdx 
+before generating any health-related code.
+```
+
+#### ChatGPT / Claude
+
+Include this prompt at the start of your coding session:
+
+```
+I'm building a product that processes wearable biometric data. I have a 
+constitutional framework that defines safety boundaries for AI-generated code.
+
+Key documents you must follow:
+- Hard Rules: [paste or link to hard-rules.mdx]
+- Language Rules: [paste or link to language-rules.mdx]
+- Quick Reference: [paste or link to quick-reference.mdx]
+
+Before generating any code that:
+- Processes biometric data
+- Creates user-facing health content
+- Makes recommendations based on physiological data
+
+You MUST validate against these constraints. If unsure, ask me to confirm 
+it's within scope.
+```
+
+#### Cursor
+
+Add a `.cursorrules` file to your project root:
+
+```markdown
+# Wearable Data AI Safety Rules
+
+This project processes wearable health data. All code must comply with the 
+constitutional framework in /docs/governor-hq/.
+
+## Non-negotiable constraints:
+1. No medical claims, diagnoses, or treatment advice
+2. No supplements, vitamins, or dosages mentioned
+3. No disease names or medical conditions
+4. Personal baseline required before recommendations
+5. Optional language only ("consider", "might") - never commanding
+
+Before implementing features:
+- Check /docs/governor-hq/constraints/hard-rules.mdx
+- Validate text against /docs/governor-hq/constraints/language-rules.mdx
+- Confirm scope in /docs/governor-hq/what-we-dont-do.mdx
+
+When uncertain: default to NO, then confirm with documentation.
+```
+
+### Step 3: Project Documentation
+
+Add a reference in your main README:
+
+```markdown
+## AI Safety Framework
+
+This project follows the [Governor HQ Constitutional Framework](./docs/governor-hq/) 
+for safe AI-assisted development on wearable health data.
+
+All features must comply with documented constraints to prevent medical claims, 
+diagnostic language, and treatment advice.
+
+**For developers:** Review `/docs/governor-hq/README.md` before building health-related features.
+```
+
+---
+
+## Daily Development Workflow
+
+### Before Starting a Feature
+
+```
+1. ✓ Read the feature requirements
+2. ✓ Check: Is this in /what-we-dont-do.mdx?
+   └─ YES → ❌ Stop or redesign
+   └─ NO → Continue
+3. ✓ Will it generate user-facing health content?
+   └─ YES → Open /constraints/language-rules.mdx
+   └─ NO → Proceed with normal development
+4. ✓ Does it make recommendations?
+   └─ YES → Verify personal baseline requirement
+   └─ NO → Proceed
+```
+
+### While Implementing
+
+Keep [quick-reference.mdx](quick-reference.mdx) open in a browser tab or editor split. Reference the decision flowcharts:
+
+- "Can I implement this feature?"
+- "Can I display this text to users?"
+- "Can I suggest this action?"
+
+### Before Committing
+
+Run validation checks from [quick-reference.mdx](quick-reference.mdx#grep-commands-for-validation):
+
+```bash
+# Find forbidden terms
+grep -ri "diagnose\|treat\|cure\|prevent" src/
+grep -ri "should\|must" src/ | grep -i "you"
+grep -ri "supplement\|vitamin\|melatonin\|magnesium" src/
+
+# Expected: No matches in user-facing strings
+```
+
+### Code Review Checklist
+
+Add this to your PR template:
+
+```markdown
+## Wearable Data Safety Check
+
+- [ ] No medical claims or diagnostic language
+- [ ] No supplement mentions
+- [ ] No disease names
+- [ ] User-facing text uses optional framing ("consider", "might")
+- [ ] Recommendations are baseline-gated
+- [ ] Calm, non-alarmist tone
+- [ ] Disclaimer included where appropriate
+- [ ] Validated against /what-we-dont-do.mdx
+
+**For reviewers:** Any health-related content must be validated against 
+[constitutional framework](./docs/governor-hq/).
+```
+
+---
+
+## Integration Patterns
+
+### Pattern 1: Baseline Gate Middleware
+
+Create a helper function used across all recommendation systems:
+
+```typescript
+// src/utils/baseline-gate.ts
+import { User } from './types';
+
+export function requireStableBaseline(user: User): boolean {
+  return user.baselineStatus === 'STABLE';
+}
+
+export function getBaselineMessage(): string {
+  return "I'm learning your patterns. This takes a few weeks. " +
+         "I'll reach out when I notice something meaningful.";
+}
+
+// Usage in any recommendation function
+function generateRecoveryAdvice(user: User) {
+  if (!requireStableBaseline(user)) {
+    return null; // or return getBaselineMessage();
+  }
+  
+  // Safe to proceed with recommendations
+}
+```
+
+### Pattern 2: Language Validator
+
+```typescript
+// src/utils/language-validator.ts
+
+const FORBIDDEN_TERMS = [
+  // Medical claims
+  /\b(diagnose|diagnosis|treat|treatment|cure|prevent|prevention)\b/i,
+  
+  // Supplements
+  /\b(melatonin|magnesium|supplement|vitamin|CBD)\b/i,
+  
+  // Diseases
+  /\b(insomnia|anxiety|depression|apnea|disorder)\b/i,
+  
+  // Commands
+  /\byou (should|must|need to|have to)\b/i,
+  
+  // Alarmist
+  /\b(warning|danger|critical|severe)\b/i
+];
+
+export function validateUserFacingText(text: string): {
+  valid: boolean;
+  violations: string[];
+} {
+  const violations: string[] = [];
+  
+  for (const pattern of FORBIDDEN_TERMS) {
+    if (pattern.test(text)) {
+      violations.push(`Forbidden term detected: ${pattern.source}`);
+    }
+  }
+  
+  return {
+    valid: violations.length === 0,
+    violations
+  };
+}
+
+// Usage
+const notification = {
+  title: "Pattern Update",
+  body: "Your HRV has been lower than your recent average..."
+};
+
+const validation = validateUserFacingText(notification.body);
+if (!validation.valid) {
+  console.error('Language violation:', validation.violations);
+  throw new Error('User-facing text violates safety constraints');
+}
+```
+
+### Pattern 3: Safe Message Templates
+
+```typescript
+// src/templates/safe-messages.ts
+
+export const MessageTemplates = {
+  // Observation template
+  observation: (metric: string, comparison: string) => 
+    `Your ${metric} has been ${comparison} compared to your recent baseline.`,
+  
+  // Context template (probabilistic)
+  context: (pattern: string) => 
+    `This pattern ${pattern} is sometimes associated with more demanding periods.`,
+  
+  // Suggestion template (optional)
+  suggestion: (action: string) => 
+    `When you're ready, ${action} might help. One thing that often supports recovery is ${action}.`,
+  
+  // Disclaimer
+  disclaimer: () => 
+    `Based on your personal trends. Not medical advice.`,
+  
+  // Medical referral
+  medicalReferral: () => 
+    `If you're concerned about your health, we recommend speaking with a healthcare professional.`,
+};
+
+// Usage
+const message = [
+  MessageTemplates.observation('HRV', 'lower than usual'),
+  MessageTemplates.context('appearing during high activity'),
+  MessageTemplates.suggestion('an earlier wind-down'),
+  MessageTemplates.disclaimer()
+].join(' ');
+```
+
+### Pattern 4: Feature Flag for Safety Compliance
+
+```typescript
+// src/config/feature-flags.ts
+
+export const FeatureFlags = {
+  // Only enable features that pass constitutional review
+  RECOVERY_RECOMMENDATIONS: {
+    enabled: true,
+    requiresBaseline: true,
+    safetyReview: 'APPROVED',
+    reviewDate: '2026-02-01'
+  },
+  
+  SUPPLEMENT_SUGGESTIONS: {
+    enabled: false,  // PERMANENTLY DISABLED
+    requiresBaseline: false,
+    safetyReview: 'REJECTED',
+    reason: 'Violates hard rule: No supplements'
+  },
+  
+  SLEEP_PATTERN_INSIGHTS: {
+    enabled: true,
+    requiresBaseline: true,
+    safetyReview: 'APPROVED',
+    reviewDate: '2026-02-01'
+  }
+};
+```
+
+---
+
+## Testing Strategy
+
+### Unit Tests for Safety Constraints
+
+```typescript
+// tests/safety/language-validation.test.ts
+import { validateUserFacingText } from '../src/utils/language-validator';
+
+describe('Language Validation', () => {
+  test('rejects medical claims', () => {
+    const { valid } = validateUserFacingText(
+      'This diagnoses your sleep problem'
+    );
+    expect(valid).toBe(false);
+  });
+  
+  test('rejects supplement mentions', () => {
+    const { valid } = validateUserFacingText(
+      'Consider taking melatonin'
+    );
+    expect(valid).toBe(false);
+  });
+  
+  test('rejects commanding language', () => {
+    const { valid } = validateUserFacingText(
+      'You must rest today'
+    );
+    expect(valid).toBe(false);
+  });
+  
+  test('accepts safe observation', () => {
+    const { valid } = validateUserFacingText(
+      'Your HRV has been lower than your recent average'
+    );
+    expect(valid).toBe(true);
+  });
+  
+  test('accepts optional suggestion', () => {
+    const { valid } = validateUserFacingText(
+      'You might consider an earlier wind-down tonight'
+    );
+    expect(valid).toBe(true);
+  });
+});
+```
+
+### Integration Tests for Baseline Gating
+
+```typescript
+// tests/safety/baseline-gating.test.ts
+import { generateRecoveryAdvice } from '../src/agents/recovery';
+
+describe('Baseline Gating', () => {
+  test('returns null during learning phase', () => {
+    const user = {
+      id: 'user_123',
+      baselineStatus: 'LEARNING',
+      currentHRV: 45
+    };
+    
+    const advice = generateRecoveryAdvice(user);
+    expect(advice).toBeNull();
+  });
+  
+  test('generates advice only when baseline is stable', () => {
+    const user = {
+      id: 'user_123',
+      baselineStatus: 'STABLE',
+      personalBaseline: { hrv: 60 },
+      currentHRV: 45
+    };
+    
+    const advice = generateRecoveryAdvice(user);
+    expect(advice).not.toBeNull();
+  });
+});
+```
+
+### E2E Tests for Constitutional Compliance
+
+```typescript
+// tests/e2e/notification-safety.test.ts
+describe('Notification Safety E2E', () => {
+  test('all notifications pass language validation', async () => {
+    // Generate various scenarios
+    const notifications = await generateAllNotificationTypes();
+    
+    for (const notification of notifications) {
+      const validation = validateUserFacingText(notification.body);
+      
+      expect(validation.valid).toBe(true, 
+        `Notification failed validation: ${validation.violations.join(', ')}`
+      );
+    }
+  });
+});
+```
+
+---
+
+## CI/CD Integration
+
+### GitHub Actions Example
+
+```yaml
+# .github/workflows/safety-check.yml
+name: AI Safety Compliance
+
+on: [push, pull_request]
+
+jobs:
+  safety-check:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Check for forbidden medical terms
+        run: |
+          if grep -ri "diagnose\|treat\|cure" src/; then
+            echo "❌ Medical terms found in source code"
+            exit 1
+          fi
+          
+      - name: Check for supplement mentions
+        run: |
+          if grep -ri "melatonin\|magnesium\|supplement\|vitamin" src/; then
+            echo "❌ Supplement mentions found in source code"
+            exit 1
+          fi
+          
+      - name: Check for commanding language
+        run: |
+          if grep -r '"You should\|You must\|You need to' src/; then
+            echo "❌ Commanding language found in source code"
+            exit 1
+          fi
+          
+      - name: Run safety unit tests
+        run: npm test -- tests/safety/
+```
+
+---
+
+## Documentation Maintenance
+
+### When to Update This Constitution
+
+This documentation should be updated when:
+
+- **New biometric domains are added** (e.g., blood glucose, ECG data)
+- **Regulatory guidance changes** (e.g., new FDA guidance on wellness apps)
+- **New violations are discovered** (add to forbidden lists)
+- **Safe patterns emerge** (document as examples)
+
+### Version Control
+
+Track changes to safety constraints:
+
+```
+v1.0.0 - Initial framework (sleep & recovery focus)
+v1.1.0 - Added training load domain guidance
+v1.2.0 - Enhanced supplement prohibition examples
+v2.0.0 - Expanded to all wearable data domains
+```
+
+### Team Training
+
+Schedule quarterly reviews:
+- Review recent violations caught in PR review
+- Update patterns based on new scenarios
+- Share AI agent conversation examples (good and bad)
+- Calibrate team understanding of boundaries
+
+---
+
+## Troubleshooting
+
+### "My AI assistant keeps suggesting supplements"
+
+**Solution:** Update your AI context prompt to emphasize the zero-tolerance supplement rule:
+
+```
+CRITICAL: This project has ZERO TOLERANCE for supplement mentions. 
+Do not suggest, reference, or indirectly mention ANY supplements, 
+vitamins, minerals, or dosages. This includes "some people find X helpful."
+
+Check every response against /constraints/hard-rules.mdx before responding.
+```
+
+### "How do I know if my feature is in scope?"
+
+**Decision tree:**
+1. Is it in `/what-we-dont-do.mdx`? → Out of scope
+2. Does it make medical claims? → Out of scope
+3. Does it require personal baseline? → In scope, but gate on baseline
+4. Is it behavioral (not medical)? → Likely in scope
+5. Still uncertain? → Discuss with team, document decision
+
+### "The AI keeps using 'should' and 'must'"
+
+**Solution:** Add a post-processing step:
+
+```typescript
+function convertCommandsToSuggestions(text: string): string {
+  return text
+    .replace(/you should/gi, 'you might consider')
+    .replace(/you must/gi, 'when you\'re ready, you could')
+    .replace(/you need to/gi, 'it can sometimes help to');
+}
+```
+
+---
+
+## Support & Questions
+
+### For Developers
+
+If you're unsure whether something complies:
+1. Check the [Quick Reference](/pages/quick-reference.mdx)
+2. Search this documentation for similar examples
+3. Default to NO if uncertain
+4. Document your decision for future reference
+
+### For AI Assistants
+
+If a developer asks you to implement something and you're unsure:
+1. Clearly state the constraint you're uncertain about
+2. Reference the specific documentation section
+3. Propose a safer alternative
+4. Ask the developer to confirm the approach
+
+---
+
+## Success Metrics
+
+Track these to measure constitutional adherence:
+
+- **PR rejections for safety violations** (should decrease over time)
+- **User complaints about medical-sounding language** (should be zero)
+- **AI-generated code requiring manual safety edits** (should decrease)
+- **Time to implement new features** (should decrease as patterns are established)
+
+---
+
+> **Remember:** This constitutional framework protects users, the product, and the team. Time invested in setup pays dividends in safety, trust, and velocity.

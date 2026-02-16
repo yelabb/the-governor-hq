@@ -3,17 +3,16 @@
 
 # The Governor HQ Constitutional Framework
 
-### AI Safety Constitution for Wearable Data Projects
+### AI Safety Constitutions for Health & Biometric Data Projects
 
-[![npm version](https://img.shields.io/npm/v/@yelabb/constitution?color=blue&style=flat-square)](https://www.npmjs.com/package/@yelabb/constitution)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/yelabb/the-governor-hq?style=flat-square)](https://github.com/yelabb/the-governor-hq/stargazers)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://github.com/yelabb/the-governor-hq/pulls)
 [![MCP Compatible](https://img.shields.io/badge/MCP-Compatible-purple?style=flat-square)](https://modelcontextprotocol.io)
 
-**A safety layer for AI agents working with wearable health data. Prescriptive, executable constraints that prevent medical claims and ensure ethical boundaries.**
+**Safety layers for AI agents working with health data. Prescriptive, executable constraints that prevent medical claims and ensure ethical boundaries across multiple domains.**
 
-[Quick Start](#-instant-setup-3-commands) • [Documentation](https://the-governor-hq.vercel.app) • [Examples](EXAMPLE.md) • [Report Issue](https://github.com/yelabb/the-governor-hq/issues)
+[Quick Start](#-quick-start) • [Documentation](https://the-governor-hq.vercel.app) • [Examples](EXAMPLE.md) • [Report Issue](https://github.com/yelabb/the-governor-hq/issues)
 
 </div>
 
@@ -21,7 +20,7 @@
 
 ## 🎯 Overview
 
-This is an **AI Safety Constitution** — a set of hard constraints enforced when building products that process wearable health data. Born from The Governor (a personal recovery-aware AI coach), these principles now govern **all wearable data projects** to prevent AI systems from crossing safety boundaries.
+This is a **monorepo of AI Safety Constitutions** — domain-specific constraint frameworks for building products that process health and biometric data. Each package enforces hard safety boundaries to prevent AI systems from crossing ethical and legal lines.
 
 ### The Problem
 
@@ -33,12 +32,107 @@ AI coding assistants (Copilot, Claude, ChatGPT) can generate dangerous code when
 
 ### The Solution
 
-**This framework is prescriptive and executable** — not decorative. When added to your AI agent's context, it:
-- ✅ **Prevents medical claims** in generated code and text
-- ✅ **Enforces baseline requirements** before recommendations
-- ✅ **Controls language patterns** to avoid liability
-- ✅ **Defines clear scope boundaries** for health data systems
-- ✅ **Protects all stakeholders** — users, developers, and products
+**Domain-specific constitutional frameworks** that are prescriptive and executable — not decorative. When added to your AI agent's context, they:
+- ✅ **Prevent medical claims** in generated code and text
+- ✅ **Enforce baseline requirements** before recommendations
+- ✅ **Control language patterns** to avoid liability
+- ✅ **Define clear scope boundaries** for each data domain
+- ✅ **Protect all stakeholders** — users, developers, and products
+
+---
+
+## 📦 Packages
+
+Install only the domains you need:
+
+## 📦 Packages
+
+Install only the domains you need:
+
+### 🏃 Wearables & Fitness Trackers
+[![npm](https://img.shields.io/npm/v/@yelabb/constitution-wearables?label=%40yelabb%2Fconstitution-wearables)](https://www.npmjs.com/package/@yelabb/constitution-wearables)
+
+For smartwatch and fitness tracker data (Garmin, Apple Watch, Whoop, Oura, Fitbit):
+```bash
+npm install --save-dev @yelabb/constitution-wearables
+```
+
+**Covers:** Sleep, HRV, heart rate, activity, training load, recovery, readiness scores
+
+[📖 Wearables Docs](packages/wearables/README.md)
+
+---
+
+### 🧠 Brain-Computer Interfaces (BCI)
+[![npm](https://img.shields.io/npm/v/@yelabb/constitution-bci?label=%40yelabb%2Fconstitution-bci)](https://www.npmjs.com/package/@yelabb/constitution-bci) ![Status](https://img.shields.io/badge/status-in%20development-orange)
+
+For EEG, fNIRS, and neurofeedback data:
+```bash
+npm install --save-dev @yelabb/constitution-bci
+```
+
+**Covers:** Brain waves, focus detection, meditation states, neurofeedback, sleep stages
+
+[📖 BCI Docs](packages/bci/README.md)
+
+---
+
+### 💭 Therapy & Mental Health
+[![npm](https://img.shields.io/npm/v/@yelabb/constitution-therapy?label=%40yelabb%2Fconstitution-therapy)](https://www.npmjs.com/package/@yelabb/constitution-therapy) ![Status](https://img.shields.io/badge/status-in%20development-orange)
+
+For therapy and emotional wellbeing data:
+```bash
+npm install --save-dev @yelabb/constitution-therapy
+```
+
+**Covers:** Mood tracking, journaling, symptom logging, behavioral patterns
+
+[📖 Therapy Docs](packages/therapy/README.md)
+
+---
+
+### ⚙️ Core Infrastructure
+[![npm](https://img.shields.io/npm/v/@yelabb/constitution-core?label=%40yelabb%2Fconstitution-core)](https://www.npmjs.com/package/@yelabb/constitution-core)
+
+Shared safety rules and utilities (auto-installed with domain packages):
+```bash
+npm install --save-dev @yelabb/constitution-core
+```
+
+**Contains:** Universal safety rules, language constraints, validation utilities
+
+[📖 Core Docs](packages/core/README.md)
+
+---
+
+## ⚡ Quick Start
+
+**1. Install your domain package:**
+
+```bash
+# For wearables/fitness data
+npm install --save-dev @yelabb/constitution-wearables
+```
+
+**2. Your AI is now context-aware!**
+
+Auto-configuration creates:
+- ✅ `.cursorrules` — Safety rules for Cursor AI
+- ✅ `.vscode/settings.json` — Copilot instructions
+- ✅ `.mcp-config.json` — MCP server for Claude/ChatGPT
+- ✅ `package.json` — Adds `ai:context` and `test` scripts
+
+**3. Use MCP for external AI (Claude Desktop, etc.):**
+
+```bash
+npm run ai:context
+```
+
+**4. Verify safety constraints:**
+
+```bash
+npm test
+```
 
 ---
 
@@ -46,86 +140,38 @@ AI coding assistants (Copilot, Claude, ChatGPT) can generate dangerous code when
 
 - **🔌 Universal AI Compatibility** — Works with Cursor, GitHub Copilot, Claude Desktop, ChatGPT, any MCP-compatible assistant
 - **⚡ Zero Configuration** — Auto-configures on `npm install` in 3 seconds
-- **🧪 Fully Tested** — 17 automated tests verify MCP server integrity  
+- **🧪 Fully Tested** — Automated tests verify framework integrity  
 - **📚 Comprehensive Docs** — Decision trees, code patterns, validation checklists
 - **🛡️ Safety First** — Default-to-NO enforcement when uncertain
-- **🎯 Domain Agnostic** — Applies to sleep, fitness, stress, activity, nutrition, any wearable data
+- **🎯 Domain-Specific** — Tailored rules for wearables, BCI, therapy, and more
+- **🔗 Monorepo Architecture** — Install only what you need, share core infrastructure
 
 ---
 
-## ⚡ Instant Setup (3 Commands)
+## 🏗️ Monorepo Structure
 
-**Make your AI assistant safety-aware in seconds:**
-
-```bash
-# Install as dev dependency
-npm install --save-dev @yelabb/constitution
-
-# Auto-configures: ✓ Cursor ✓ VS Code ✓ Copilot ✓ MCP
-# Your AI is now context-aware instantly!
+```
+the-governor-hq/
+├── packages/
+│   ├── core/              # Shared safety infrastructure
+│   │   └── @yelabb/constitution-core
+│   ├── wearables/         # Smartwatch/fitness tracker constitution
+│   │   └── @yelabb/constitution-wearables
+│   ├── bci/               # Brain-computer interface constitution
+│   │   └── @yelabb/constitution-bci
+│   └── therapy/           # Therapy/mental health constitution
+│       └── @yelabb/constitution-therapy
+├── pages/                 # Documentation site (Nextra)
+└── README.md              # This file
 ```
 
-That's it! Your AI coding assistant now has the constitutional framework in context and will automatically apply safety constraints when generating health-related code.
+### Why Monorepo?
 
-### What Gets Configured
-
-The install automatically creates:
-- ✅ `.cursorrules` - Safety rules for Cursor AI
-- ✅ `.vscode/settings.json` - Copilot instructions
-- ✅ `.mcp-config.json` - MCP server for Claude/ChatGPT
-- ✅ `package.json` - Adds `ai:context` script
-
-### Using MCP (Claude Desktop, etc.)
-
-```bash
-# Start MCP server for external AI assistants
-npm run ai:context
-```
-
-### Manual Setup (without npm)
-
-```bash
-# Clone alongside your project
-git clone https://github.com/yelabb/the-governor-hq.git docs/constitution
-
-# Copy rules to your project
-cp docs/constitution/.cursorrules .
-```
-
----
-
-## 🚀 Quick Start
-
-### Installation
-
-```bash
-npm install --save-dev @yelabb/constitution
-```
-
-**That's it!** Auto-configuration creates:
-- `.cursorrules` — Safety rules for Cursor AI
-- `.vscode/settings.json` — Copilot instructions
-- `.mcp-config.json` — MCP server for Claude/ChatGPT
-- `package.json` — Adds `ai:context` and `test` scripts
-
-### Using MCP (Claude Desktop, External AI)
-
-```bash
-npm run ai:context
-```
-
-### Running Tests
-
-```bash
-npm test
-```
-
-### Manual Setup (No NPM)
-
-```bash
-git clone https://github.com/yelabb/the-governor-hq.git docs/constitution
-cp docs/constitution/.cursorrules .
-```
+- **Domain Isolation** - Each health data type has unique safety requirements
+- **Shared Core** - Universal safety rules inherited by all domains
+- **Scalable** - Easy to add new domains (nutrition, genomics, etc.)
+- **User Choice** - Install only relevant packages
+- **Maintainable** - Update core affects all domains
 
 ---
 
@@ -413,8 +459,14 @@ All code was tested and validated by human developers.
 
 ## 🔗 Links
 
+### Packages
+- 📦 **Wearables:** [@yelabb/constitution-wearables](https://www.npmjs.com/package/@yelabb/constitution-wearables)
+- 📦 **BCI:** [@yelabb/constitution-bci](https://www.npmjs.com/package/@yelabb/constitution-bci) (in development)
+- 📦 **Therapy:** [@yelabb/constitution-therapy](https://www.npmjs.com/package/@yelabb/constitution-therapy) (in development)
+- 📦 **Core:** [@yelabb/constitution-core](https://www.npmjs.com/package/@yelabb/constitution-core)
+
+### Resources
 - 📖 **Documentation:** [https://the-governor-hq.vercel.app](https://the-governor-hq.vercel.app)
-- 📦 **NPM Package:** [@yelabb/constitution](https://www.npmjs.com/package/@yelabb/constitution)
 - 💬 **Discussions:** [GitHub Discussions](https://github.com/yelabb/the-governor-hq/discussions)
 - 🐛 **Issues:** [Issue Tracker](https://github.com/yelabb/the-governor-hq/issues)
 - 🌐 **MCP Protocol:** [Model Context Protocol](https://modelcontextprotocol.io)

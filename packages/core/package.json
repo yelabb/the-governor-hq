@@ -1,0 +1,23 @@
+{
+  "name": "@yelabb/constitution-core",
+  "version": "1.0.0",
+  "description": "Core AI Safety Infrastructure - Shared rules and utilities for all Governor HQ constitutions",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "keywords": [
+    "ai-safety",
+    "health-data",
+    "constitutional-framework",
+    "safety-constraints"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yelabb/the-governor-hq",
+    "directory": "packages/core"
+  },
+  "author": "Governor HQ",
+  "license": "MIT",
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}

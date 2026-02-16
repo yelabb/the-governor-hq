@@ -1,0 +1,133 @@
+# Deviation Engine
+
+> When and why the system wakes up.
+
+---
+
+## Purpose
+
+The Deviation Engine is the gatekeeper between raw data and agent activation. Its job is to determine **when something has meaningfully changed** relative to the user's personal baseline — and to filter out noise, one-off events, and false positives.
+
+No agent fires without a justified deviation passing through this engine.
+
+---
+
+## What Qualifies as a Deviation
+
+A deviation is a **sustained, multi-signal shift** away from the user's personal baseline that exceeds noise thresholds.
+
+### Deviation Criteria
+
+| Criterion | Requirement |
+|---|---|
+| **Magnitude** | Signal value deviates by ≥ 1.5 standard deviations from the 30-day rolling baseline |
+| **Duration** | The shift persists for ≥ 2 consecutive measurement periods (e.g., 2 nights) |
+| **Confirmation** | At least 2 signals move in a correlated direction |
+| **Baseline maturity** | The baseline must be in `STABLE` or `MATURE` state |
+
+All four criteria must be met before a deviation is flagged.
+
+---
+
+## Deviation Examples
+
+### ✅ Valid Deviation: Deep Sleep Drop
+
+| Signal | Baseline (30-day avg) | Current (2-night avg) | Deviation |
+|---|---|---|---|
+| Deep sleep | 1h 45m | 55m | −47% |
+| HRV | 58ms | 41ms | −29% |
+| Resting HR | 56 bpm | 62 bpm | +10% |
+
+**Result:** Multi-signal confirmation. Persistent over 2 nights. Deviation Engine flags and routes to Recovery Agent.
+
+### ❌ Invalid Deviation: Single-Night HRV Dip
+
+| Signal | Baseline | Current (1 night) | Deviation |
+|---|---|---|---|
+| HRV | 58ms | 38ms | −34% |
+| Deep sleep | 1h 45m | 1h 30m | −14% (within noise) |
+| Resting HR | 56 bpm | 58 bpm | +3% (within noise) |
+
+**Result:** Only one signal deviates meaningfully. Duration = 1 night. **No deviation flagged.** This could be alcohol, a hot room, or sensor noise.
+
+### ❌ Invalid Deviation: Baseline Still Learning
+
+Even if all signals deviate, the engine **does not fire** if the baseline is in `LEARNING` or `EARLY` state. There is no baseline to deviate from.
+
+---
+
+## Multi-Signal Confirmation
+
+### Why?
+
+Single-metric decisions produce false positives. HRV alone is too noisy. Sleep stages alone are too variable. Requiring correlated movement across multiple signals dramatically reduces false alerts.
+
+### Confirmation Matrix
+
+| Primary Signal | Confirming Signal(s) | Interpretation |
+|---|---|---|
+| Deep sleep ↓ | HRV ↓ or Resting HR ↑ | Recovery load signal |
+| HRV ↓ | Resting HR ↑ or Sleep fragmentation ↑ | Stress/strain signal |
+| Sleep consistency ↓ | Deep sleep ↓ or HRV ↓ | Circadian disruption signal |
+
+A confirming signal must show a deviation in the **expected correlated direction**. If deep sleep drops but HRV improves, the signals are contradictory and the engine should **not** flag.
+
+---
+
+## Cooldown Logic
+
+### Problem
+
+Without cooldown, a multi-day deviation produces repeated alerts: "Your recovery is low" every morning. This is annoying, anxiety-inducing, and counterproductive.
+
+### Rules
+
+| Rule | Detail |
+|---|---|
+| **Initial alert** | First notification when deviation is confirmed |
+| **Cooldown period** | 72 hours minimum before a follow-up on the same deviation type |
+| **Escalation** | If deviation persists ≥ 7 days, a single follow-up is sent with adjusted language |
+| **Resolution** | When signals return to baseline range, a recovery confirmation is sent |
+| **Max frequency** | No more than 2 deviation notifications per week, regardless of signal count |
+
+### Cooldown state machine
+
+```
+NORMAL → DEVIATION_DETECTED → ALERT_SENT → COOLDOWN (72h)
+                                               ↓
+                                    STILL_DEVIATING? → ESCALATION (once)
+                                               ↓
+                                    RESOLVED → RECOVERY_CONFIRMATION → NORMAL
+```
+
+---
+
+## Edge Cases
+
+| Scenario | Engine Behavior |
+|---|---|
+| **Travel / timezone change** | Flag baseline as temporarily unreliable. Suppress alerts for 48h after detected timezone shift. |
+| **Illness reported by user** | Enter "illness mode" — collect data but suppress agent activation until user reports recovery. |
+| **Wearable removed for > 24h** | Gap in data. Do not interpolate. Resume baseline tracking when data resumes. |
+| **Multiple deviations simultaneously** | Prioritize by severity. Send at most 1 alert. Reference the most impactful deviation. |
+
+---
+
+## Developer Guidance
+
+### DO
+- Implement deviation detection as a standalone, testable module
+- Log all deviation evaluations (flagged and not-flagged) for debugging
+- Make threshold values configurable but defaulted to conservative settings
+- Include cooldown state in the user's profile model
+
+### DON'T
+- Fire agents on single-night, single-signal events
+- Skip cooldown logic ("just one more alert can't hurt" — it can)
+- Allow deviations during baseline learning phase
+- Hardcode thresholds without configuration options
+
+---
+
+> **Bottom line:** The Deviation Engine's job is to be skeptical. When in doubt, stay quiet. False silence is better than false alarm.

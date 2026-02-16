@@ -1,32 +1,26 @@
 {
-  "name": "@yelabb/constitution",
+  "name": "@yelabb/governor-hq-monorepo",
   "version": "1.0.0",
-  "description": "AI Safety Constitution for Wearable Data Projects - Instant context for AI coding assistants",
-  "main": "mcp-server.js",
-  "types": "index.d.ts",
-  "bin": {
-    "governor-install": "./install.js"
-  },
+  "description": "AI Safety Constitutions for Health Data Projects - Monorepo with domain-specific packages",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "test": "node mcp-server.test.js",
-    "ai:context": "node mcp-server.js",
-    "postinstall": "node install.js"
+    "test": "npm run test --workspaces",
+    "publish:all": "npm publish --workspaces --access public"
   },
   "keywords": [
     "ai-safety",
-    "wearable-data",
     "health-data",
-    "mcp",
-    "ai-context",
-    "copilot",
-    "cursor",
-    "claude",
-    "chatgpt",
     "constitutional-framework",
-    "biometric-data",
+    "monorepo",
+    "wearables",
+    "bci",
+    "therapy",
     "safety-constraints"
   ],
   "repository": {
@@ -35,14 +29,6 @@
   },
   "author": "Governor HQ",
   "license": "MIT",
-  "files": [
-    "pages/",
-    "mcp-server.js",
-    "mcp-config.json",
-    "install.js",
-    ".cursorrules",
-    "README.md"
-  ],
   "engines": {
     "node": ">=16.0.0"
   },

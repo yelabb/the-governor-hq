@@ -1,0 +1,39 @@
+{
+  "name": "@yelabb/constitution-therapy",
+  "version": "1.0.0",
+  "description": "AI Safety Constitution for Therapy and Mental Health Data Projects",
+  "main": "mcp-server.js",
+  "types": "index.d.ts",
+  "scripts": {
+    "ai:context": "node mcp-server.js",
+    "postinstall": "node install.js"
+  },
+  "keywords": [
+    "ai-safety",
+    "therapy",
+    "mental-health",
+    "psychology",
+    "counseling",
+    "wellbeing",
+    "mcp",
+    "ai-context",
+    "constitutional-framework",
+    "emotional-wellbeing"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yelabb/the-governor-hq",
+    "directory": "packages/therapy"
+  },
+  "author": "Governor HQ",
+  "license": "MIT",
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "dependencies": {
+    "@yelabb/constitution-core": "^1.0.0"
+  },
+  "peerDependencies": {
+    "@yelabb/constitution-core": "^1.0.0"
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "name": "@yelabb/constitution-bci",
+  "version": "1.0.0",
+  "description": "AI Safety Constitution for Brain-Computer Interface (BCI) Data Projects",
+  "main": "mcp-server.js",
+  "types": "index.d.ts",
+  "scripts": {
+    "ai:context": "node mcp-server.js",
+    "postinstall": "node install.js"
+  },
+  "keywords": [
+    "ai-safety",
+    "bci",
+    "brain-computer-interface",
+    "eeg",
+    "neurofeedback",
+    "neural-data",
+    "mcp",
+    "ai-context",
+    "constitutional-framework",
+    "neurotech",
+    "brain-data"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yelabb/the-governor-hq",
+    "directory": "packages/bci"
+  },
+  "author": "Governor HQ",
+  "license": "MIT",
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "dependencies": {
+    "@yelabb/constitution-core": "^1.0.0"
+  },
+  "peerDependencies": {
+    "@yelabb/constitution-core": "^1.0.0"
+  }
+}
