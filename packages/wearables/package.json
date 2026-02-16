@@ -53,10 +53,10 @@
     "node": ">=16.0.0"
   },
   "dependencies": {
-    "@yelabb/constitution-core": "^2.0.0"
+    "@yelabb/constitution-core": "^3.0.0"
   },
   "peerDependencies": {
-    "@yelabb/constitution-core": "^2.0.0"
+    "@yelabb/constitution-core": "^3.0.0"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
