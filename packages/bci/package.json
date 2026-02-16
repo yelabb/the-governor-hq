@@ -5,7 +5,7 @@
   "main": "dist/mcp-server.js",
   "types": "dist/index.d.ts",
   "bin": {
-    "governor-install-bci": "./dist/install.js"
+    "governor-install-bci": "dist/install.js"
   },
   "scripts": {
     "build": "tsc",

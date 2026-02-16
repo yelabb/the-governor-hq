@@ -5,7 +5,7 @@
   "main": "dist/mcp-server.js",
   "types": "dist/index.d.ts",
   "bin": {
-    "governor-install-therapy": "./dist/install.js"
+    "governor-install-therapy": "dist/install.js"
   },
   "scripts": {
     "build": "tsc",

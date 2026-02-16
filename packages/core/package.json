@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "bin": {
-    "governor-validate": "./bin/governor-validate.js"
+    "governor-validate": "bin/governor-validate.js"
   },
   "scripts": {
     "build": "tsc",
