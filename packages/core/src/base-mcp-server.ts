@@ -5,21 +5,64 @@
  * @abstract
  */
 
-const fs = require('fs');
-const path = require('path');
-const readline = require('readline');
+import * as fs from 'fs';
+import * as path from 'path';
+import * as readline from 'readline';
 
-class BaseGovernorMCPServer {
+export interface ServerConfig {
+  serverName: string;
+  uriScheme: string;
+  baseDir: string;
+  resources: Record<string, string>;
+  contextSummary: string;
+  version?: string;
+  resourceDescriptions?: Record<string, string>;
+}
+
+export interface MCPRequest {
+  id?: string | number;
+  method: string;
+  params?: Record<string, any>;
+}
+
+export interface MCPResponse {
+  id?: string | number | null;
+  result?: any;
+  error?: {
+    message: string;
+    code?: number;
+  };
+}
+
+export interface ResourceInfo {
+  uri: string;
+  name: string;
+  mimeType: string;
+  description: string;
+}
+
+export interface ResourceContent {
+  uri: string;
+  mimeType: string;
+  text: string;
+}
+
+export class BaseGovernorMCPServer {
+  protected config: ServerConfig;
+  protected resources: Record<string, string>;
+  protected contextSummary: string;
+  protected resourceDescriptions: Record<string, string>;
+
   /**
-   * @param {Object} config - Server configuration
-   * @param {string} config.serverName - Name of the MCP server (e.g., 'governor-hq-constitution-bci')
-   * @param {string} config.uriScheme - URI scheme for resources (e.g., 'governor-bci')
-   * @param {string} config.baseDir - Base directory for resolving resource paths (usually __dirname from subclass)
-   * @param {Object.<string, string>} config.resources - Map of resource name to file path
-   * @param {string} config.contextSummary - Domain-specific context summary
-   * @param {Object.<string, string>} [config.resourceDescriptions] - Optional custom resource descriptions
+   * @param config - Server configuration
+   * @param config.serverName - Name of the MCP server (e.g., 'governor-hq-constitution-bci')
+   * @param config.uriScheme - URI scheme for resources (e.g., 'governor-bci')
+   * @param config.baseDir - Base directory for resolving resource paths (usually __dirname from subclass)
+   * @param config.resources - Map of resource name to file path
+   * @param config.contextSummary - Domain-specific context summary
+   * @param config.resourceDescriptions - Optional custom resource descriptions
    */
-  constructor(config) {
+  constructor(config: ServerConfig) {
     if (!config.serverName) {
       throw new Error('serverName is required in config');
     }
@@ -44,10 +87,10 @@ class BaseGovernorMCPServer {
 
   /**
    * Read a resource file by name
-   * @param {string} name - Resource name
-   * @returns {string|null} File content or null if not found
+   * @param name - Resource name
+   * @returns File content or null if not found
    */
-  readResource(name) {
+  readResource(name: string): string | null {
     const resourcePath = this.resources[name];
     if (!resourcePath) {
       return null;
@@ -57,25 +100,26 @@ class BaseGovernorMCPServer {
     try {
       return fs.readFileSync(fullPath, 'utf-8');
     } catch (error) {
-      console.error(`Error reading resource ${name}:`, error.message);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      console.error(`Error reading resource ${name}:`, errorMessage);
       return null;
     }
   }
 
   /**
    * Get the context summary for this domain
-   * @returns {string} Context summary
+   * @returns Context summary
    */
-  getContextSummary() {
+  getContextSummary(): string {
     return this.contextSummary;
   }
 
   /**
    * Get default resource descriptions
    * Can be overridden in subclasses or via config
-   * @returns {Object.<string, string>}
+   * @returns Record of resource names to descriptions
    */
-  getDefaultResourceDescriptions() {
+  getDefaultResourceDescriptions(): Record<string, string> {
     return {
       'hard-rules': 'Absolute system limits that override everything',
       'language-rules': 'Required tone and wording controls',
@@ -89,19 +133,19 @@ class BaseGovernorMCPServer {
 
   /**
    * Get description for a specific resource
-   * @param {string} name - Resource name
-   * @returns {string} Description
+   * @param name - Resource name
+   * @returns Description
    */
-  getResourceDescription(name) {
+  getResourceDescription(name: string): string {
     return this.resourceDescriptions[name] || '';
   }
 
   /**
    * Handle an MCP request
-   * @param {Object} request - JSON-RPC request
-   * @returns {Object} JSON-RPC response
+   * @param request - JSON-RPC request
+   * @returns JSON-RPC response
    */
-  handleRequest(request) {
+  handleRequest(request: MCPRequest): any {
     const { method, params } = request;
 
     switch (method) {
@@ -121,7 +165,7 @@ class BaseGovernorMCPServer {
 
       case 'resources/list':
         return {
-          resources: Object.keys(this.resources).map((name) => ({
+          resources: Object.keys(this.resources).map((name): ResourceInfo => ({
             uri: `${this.config.uriScheme}://${name}`,
             name: name,
             mimeType: 'text/markdown',
@@ -140,7 +184,7 @@ class BaseGovernorMCPServer {
                   uri: params.uri,
                   mimeType: 'text/markdown',
                   text: content,
-                },
+                } as ResourceContent,
               ],
             };
           }
@@ -160,24 +204,26 @@ class BaseGovernorMCPServer {
   /**
    * Start the MCP server and listen for requests
    */
-  start() {
+  start(): void {
     const rl = readline.createInterface({
       input: process.stdin,
       output: process.stdout,
       terminal: false,
     });
 
-    rl.on('line', (line) => {
+    rl.on('line', (line: string) => {
+      let request: MCPRequest | undefined;
       try {
-        const request = JSON.parse(line);
+        request = JSON.parse(line) as MCPRequest;
         const response = this.handleRequest(request);
         console.log(JSON.stringify({ id: request.id, result: response }));
       } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : String(error);
         console.log(
           JSON.stringify({
             id: request?.id || null,
-            error: { message: error.message },
-          })
+            error: { message: errorMessage },
+          } as MCPResponse)
         );
       }
     });
@@ -192,5 +238,3 @@ class BaseGovernorMCPServer {
     );
   }
 }
-
-module.exports = BaseGovernorMCPServer;

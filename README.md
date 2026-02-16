@@ -184,7 +184,6 @@ npm run eval
 
 **[📖 Full Evaluation Documentation →](packages/core/evals/README.md)**
 
-This transforms Governor HQ from a technical tool into a **proven safety standard** with measurable compliance.
 
 ---
 

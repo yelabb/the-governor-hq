@@ -16,7 +16,6 @@ Instead of just testing whether code runs, this system **proves that your safety
 
 **The Solution:** Automated safety testing that simulates real-world attacks on your constraints.
 
-This transforms Governor HQ from a technical tool into a **proven safety standard** with measurable compliance.
 
 ## Architecture
 
