@@ -10,7 +10,7 @@
 │  ⚡ INSTANT SETUP                                                │
 └──────────────────────────────────────────────────────────────────┘
 
-  $ npm install --save-dev @governor-hq/constitution
+  $ npm install --save-dev @yelabb/constitution
 
   ✓ Done! Your AI is now safety-aware in 3 seconds.
   
@@ -108,7 +108,7 @@
 │  ⚙️  USING MCP (Claude Desktop)                                  │
 └──────────────────────────────────────────────────────────────────┘
 
-  1. Install framework: npm install --save-dev @governor-hq/constitution
+  1. Install framework: npm install --save-dev @yelabb/constitution
   
   2. Start MCP server: npm run ai:context
   

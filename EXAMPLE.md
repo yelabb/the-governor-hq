@@ -25,7 +25,7 @@ my-wearable-app/
 
 ```bash
 # 1. Install the framework
-npm install --save-dev @governor-hq/constitution
+npm install --save-dev @yelabb/constitution
 
 # 2. Start coding - AI is now context-aware!
 ```
@@ -290,7 +290,7 @@ export async function sendDailyInsight(userId: string) {
 
 ```bash
 # 1. Install framework
-npm install --save-dev @governor-hq/constitution
+npm install --save-dev @yelabb/constitution
 
 # 2. Restart AI assistant (Cursor, VS Code)
 

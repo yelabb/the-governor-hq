@@ -110,7 +110,7 @@ npm view @governor-hq/constitution
 mkdir test-install
 cd test-install
 npm init -y
-npm install --save-dev @governor-hq/constitution
+npm install --save-dev @yelabb/constitution
 
 # Verify files were created
 ls -la .cursorrules .mcp-config.json
@@ -147,7 +147,7 @@ Create a brand new project and follow the README:
 mkdir fresh-test
 cd fresh-test
 npm init -y
-npm install --save-dev @governor-hq/constitution
+npm install --save-dev @yelabb/constitution
 
 # Should auto-configure everything
 ls -la .cursorrules
