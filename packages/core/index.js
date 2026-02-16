@@ -5,7 +5,11 @@
  * Shared rules and utilities for all domain-specific constitutions
  */
 
+const BaseGovernorMCPServer = require('./base-mcp-server');
+
 module.exports = {
+  // MCP Server base class
+  BaseGovernorMCPServer,
   // Core safety rules that apply to all domains
   UNIVERSAL_RULES: {
     NO_MEDICAL_CLAIMS: 'Systems must never make medical diagnoses, claims, or treatment recommendations',
