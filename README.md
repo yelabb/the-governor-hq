@@ -269,44 +269,6 @@ await validator.validate("You have d i a g n o s e d insomnia");
 
 ## 📦 Choose Your Domain
 
-Install only the packages you need. Each includes all 7 tools (validator, middleware, MCP, CLI, etc.):
-
-### 🛡️ Hardened Pattern Matcher (New in v3.1.1)
-
-**Prevents adversarial attacks** that bypass traditional regex validation:
-
-```typescript
-import { createValidator } from '@the-governor-hq/constitution-core';
-
-const validator = createValidator({
-  domain: 'wearables',
-  useSemanticSimilarity: true,  // Enable semantic attack prevention
-  semanticThreshold: 0.75,
-});
-
-// ❌ All these adversarial attacks are now caught:
-await validator.validate('You have d i a g n o s e d insomnia');  // Spacing attack
-await validator.validate('Take mel@tonin 5mg');                    // Special chars
-await validator.validate('You have diagnoz');                      // Misspelling
-await validator.validate('T A K E  s u p p l e m e n t s');       // Spaced commands
-```
-
-**How it works:**
-1. **Text Normalization** - Removes spacing, special characters, misspellings
-2. **Adversarial Detection** - Flags manipulation attempts (spacing/special-chars/misspelling)
-3. **Semantic Matching** - Compares text embeddings against forbidden medical concepts
-
-**Performance:**
-- Regex-only: <10ms (default)
-- With semantic similarity: 100-300ms (after model cache)
-- First use: 2-5s (downloads 80MB embedding model)
-
-[📖 Full Guide](https://the-governor-hq.vercel.app/packages/core/hardened-pattern-matcher)
-
----
-
-## 📦 Choose Your Domain
-
 Install only the packages you need. Each includes all tools (validator, middleware, MCP, CLI, hardened matcher, etc.):
 
 | Package | Status | Coverage | Install |
