@@ -27,19 +27,19 @@ const FORBIDDEN_PATTERNS = [
     // Treatment language
     /\b(cure|cures|curing|cured|treat|treats|treating|treated|heal|heals|healing|prevent|prevents|tratamiento|traiter|behandlung|curare|tratar)\b/i,
     // Cyrillic treatment terms
-    /принимайте|лечения/iu,
+    /принимайте|лечения/i,
     // Supplements and medications
     /\b(take|taking|dosage|mg|milligram|supplement|vitamin|melatonin|magnesium|medication|prescription|toma|prenez|nehmen|prendi|tome)\b/i,
     // Medical scope violations
     /\b(medical condition|health condition|disorder|syndrome|symptom of|sign of|indicates)\b/i,
     // CJK treatment terms
-    /服用|治療/u,
+    /服用|治療/,
 ];
 /** Prescriptive/commanding language patterns */
 const PRESCRIPTIVE_PATTERNS = [
     /\b(must|should|need to|have to|required to|you need|you must|you should)\b/i,
-    /debes|debe|devez|müssen|devi|deve|должны/iu,
-    /必须|すべき/u,
+    /debes|debe|devez|müssen|devi|deve|должны/i,
+    /必须|すべき/,
 ];
 /** Authoritative medical terms */
 const MEDICAL_KEYWORDS = [
@@ -50,8 +50,8 @@ const MEDICAL_KEYWORDS = [
 /** Required suggestive language patterns (good patterns) */
 const SUGGESTIVE_PATTERNS = [
     /\b(consider|might|could|may want to|option|when ready|if you'd like)\b/i,
-    /considera|considere|envisager|pourriez|erwägen|potresti|рассмотрите\s+возможность/iu,
-    /考虑|検討/u,
+    /considera|considere|envisager|pourriez|erwägen|potresti|рассмотрите\s+возможность/i,
+    /考虑|検討/,
     /\b(healthcare professional|doctor|physician|medical provider)\b/i,
 ];
 /** Alarming/panic-inducing patterns */
