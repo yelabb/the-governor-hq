@@ -16,5 +16,16 @@
     "incremental": true
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.mdx"],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules",
+    "packages/core/src",
+    "packages/core/examples",
+    "packages/core/dist",
+    "packages/bci/src",
+    "packages/bci/dist",
+    "packages/wearables/src",
+    "packages/wearables/dist",
+    "packages/therapy/src",
+    "packages/therapy/dist"
+  ]
 }
