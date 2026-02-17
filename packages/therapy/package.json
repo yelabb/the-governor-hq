@@ -1,6 +1,6 @@
 {
   "name": "@the-governor-hq/constitution-therapy",
-  "version": "3.3.1",
+  "version": "3.3.2",
   "description": "AI Safety Constitution for Therapy and Mental Health Data Projects",
   "main": "dist/mcp-server.js",
   "types": "dist/index.d.ts",
@@ -46,10 +46,10 @@
     "node": ">=16.0.0"
   },
   "dependencies": {
-    "@the-governor-hq/constitution-core": "3.3.1"
+    "@the-governor-hq/constitution-core": "3.3.2"
   },
   "peerDependencies": {
-    "@the-governor-hq/constitution-core": "3.3.1"
+    "@the-governor-hq/constitution-core": "3.3.2"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
