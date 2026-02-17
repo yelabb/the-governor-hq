@@ -11,6 +11,7 @@ import type { ValidatorConfig, ValidationResult, Domain } from './types';
 export declare class RuntimeValidator {
     private config;
     private initializationPromise;
+    private llmClient;
     constructor(config?: ValidatorConfig);
     /**
      * Initialize semantic similarity vector database

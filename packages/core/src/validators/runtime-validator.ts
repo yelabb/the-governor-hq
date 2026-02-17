@@ -24,6 +24,7 @@ import {
   createViolationExplanation,
 } from './sanitizer';
 import { initializeVectorDatabase } from './semantic-similarity';
+import { createLLMClient, type LLMClient } from './llm-client';
 
 /**
  * Runtime validator for AI-generated content
@@ -31,6 +32,7 @@ import { initializeVectorDatabase } from './semantic-similarity';
 export class RuntimeValidator {
   private config: Required<ValidatorConfig>;
   private initializationPromise: Promise<void> | null = null;
+  private llmClient: LLMClient | null = null;
   
   constructor(config: ValidatorConfig = {}) {
     // Set defaults
@@ -39,6 +41,8 @@ export class RuntimeValidator {
       strictMode: config.strictMode ?? false,
       onViolation: config.onViolation || 'block',
       useLLMJudge: config.useLLMJudge ?? false,
+      llmProvider: config.llmProvider || 'groq',
+      llmModel: config.llmModel || '',
       useSemanticSimilarity: config.useSemanticSimilarity ?? false,
       semanticThreshold: config.semanticThreshold ?? 0.75,
       customRules: config.customRules || [],
@@ -50,6 +54,21 @@ export class RuntimeValidator {
     if (this.config.useLLMJudge && !this.config.apiKey) {
       console.warn('⚠️  LLM judge enabled but no API key provided. Falling back to pattern matching only.');
       this.config.useLLMJudge = false;
+    }
+    
+    // Initialize LLM client if judge is enabled
+    if (this.config.useLLMJudge && this.config.apiKey) {
+      try {
+        this.llmClient = createLLMClient({
+          provider: this.config.llmProvider,
+          apiKey: this.config.apiKey,
+          model: this.config.llmModel || undefined,
+        });
+      } catch (error) {
+        console.error('❌ Failed to initialize LLM client:', error);
+        console.warn('⚠️  Falling back to pattern matching only.');
+        this.config.useLLMJudge = false;
+      }
     }
     
     // Initialize vector database if semantic similarity is enabled
@@ -127,11 +146,26 @@ export class RuntimeValidator {
     let confidence = calculatePatternConfidence(patterns);
     let usedLLMJudge = false;
     
-    if (this.config.useLLMJudge && allViolations.length === 0 && this.config.strictMode) {
-      // LLM judge would go here - placeholder for now
-      // const llmResult = await this.runLLMJudge(text);
-      // confidence = llmResult.confidence;
-      usedLLMJudge = false; // Set to true when implemented
+    if (this.config.useLLMJudge && this.llmClient && allViolations.length === 0 && this.config.strictMode) {
+      try {
+        const llmResult = await this.llmClient.judge(text, this.config.domain);
+        usedLLMJudge = true;
+        confidence = llmResult.confidence;
+        
+        // If LLM judge says FAIL or BORDERLINE, add violations
+        if (llmResult.verdict === 'FAIL' || llmResult.verdict === 'BORDERLINE') {
+          for (const violation of llmResult.specificViolations) {
+            allViolations.push({
+              rule: 'llm-judge',
+              severity: llmResult.verdict === 'FAIL' ? 'critical' : 'medium',
+              message: violation,
+            });
+          }
+        }
+      } catch (error) {
+        console.error('❌ LLM judge failed:', error);
+        usedLLMJudge = false;
+      }
     }
     
     // Step 5: Determine safety

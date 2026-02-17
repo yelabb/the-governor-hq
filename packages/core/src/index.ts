@@ -23,7 +23,12 @@ export type {
   SemanticCheckResult,
   SemanticViolation,
   ForbiddenConcept,
+  LLMProvider,
 } from './validators/types';
+
+// LLM Client (for LLM judge)
+export { LLMClient, createLLMClient } from './validators/llm-client';
+export type { LLMClientConfig, LLMJudgeResponse } from './validators/llm-client';
 
 // Middleware
 export { governorValidator, validateField, validationErrorHandler } from './middleware/express';

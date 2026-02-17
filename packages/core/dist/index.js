@@ -6,7 +6,7 @@
  * Shared rules and utilities for all domain-specific constitutions
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PRODUCT_PRINCIPLES = exports.LANGUAGE_RULES = exports.UNIVERSAL_RULES = exports.BaseGovernorMCPServer = exports.FORBIDDEN_MEDICAL_CONCEPTS = exports.batchCheckSemantic = exports.initializeVectorDatabase = exports.checkSemanticSimilarity = exports.normalizeText = exports.cosineSimilarity = exports.generateEmbedding = exports.getDisclaimer = exports.attemptSanitization = exports.generateSafeAlternative = exports.detectAdversarialAttack = exports.runSemanticChecks = exports.runHardenedChecks = exports.checkAlarmingPatterns = exports.checkSuggestivePatterns = exports.checkMedicalKeywords = exports.checkPrescriptiveLanguage = exports.checkForbiddenPatterns = exports.runPatternChecks = exports.validateResponse = exports.withFieldValidation = exports.createGovernorValidator = exports.withGovernor = exports.validationErrorHandler = exports.validateField = exports.governorValidator = exports.validateText = exports.createValidator = exports.RuntimeValidator = void 0;
+exports.PRODUCT_PRINCIPLES = exports.LANGUAGE_RULES = exports.UNIVERSAL_RULES = exports.BaseGovernorMCPServer = exports.FORBIDDEN_MEDICAL_CONCEPTS = exports.batchCheckSemantic = exports.initializeVectorDatabase = exports.checkSemanticSimilarity = exports.normalizeText = exports.cosineSimilarity = exports.generateEmbedding = exports.getDisclaimer = exports.attemptSanitization = exports.generateSafeAlternative = exports.detectAdversarialAttack = exports.runSemanticChecks = exports.runHardenedChecks = exports.checkAlarmingPatterns = exports.checkSuggestivePatterns = exports.checkMedicalKeywords = exports.checkPrescriptiveLanguage = exports.checkForbiddenPatterns = exports.runPatternChecks = exports.validateResponse = exports.withFieldValidation = exports.createGovernorValidator = exports.withGovernor = exports.validationErrorHandler = exports.validateField = exports.governorValidator = exports.createLLMClient = exports.LLMClient = exports.validateText = exports.createValidator = exports.RuntimeValidator = void 0;
 exports.validateLanguage = validateLanguage;
 exports.validateScope = validateScope;
 const base_mcp_server_1 = require("./base-mcp-server");
@@ -16,6 +16,10 @@ var runtime_validator_1 = require("./validators/runtime-validator");
 Object.defineProperty(exports, "RuntimeValidator", { enumerable: true, get: function () { return runtime_validator_1.RuntimeValidator; } });
 Object.defineProperty(exports, "createValidator", { enumerable: true, get: function () { return runtime_validator_1.createValidator; } });
 Object.defineProperty(exports, "validateText", { enumerable: true, get: function () { return runtime_validator_1.validateText; } });
+// LLM Client (for LLM judge)
+var llm_client_1 = require("./validators/llm-client");
+Object.defineProperty(exports, "LLMClient", { enumerable: true, get: function () { return llm_client_1.LLMClient; } });
+Object.defineProperty(exports, "createLLMClient", { enumerable: true, get: function () { return llm_client_1.createLLMClient; } });
 // Middleware
 var express_1 = require("./middleware/express");
 Object.defineProperty(exports, "governorValidator", { enumerable: true, get: function () { return express_1.governorValidator; } });

@@ -5,6 +5,7 @@
 export type Domain = 'core' | 'wearables' | 'bci' | 'therapy';
 export type ViolationAction = 'block' | 'warn' | 'log' | 'sanitize';
 export type SeverityLevel = 'critical' | 'high' | 'medium' | 'low';
+export type LLMProvider = 'groq' | 'openai' | 'anthropic';
 export interface ValidatorConfig {
     /** Domain-specific rules to apply */
     domain?: Domain;
@@ -14,6 +15,10 @@ export interface ValidatorConfig {
     onViolation?: ViolationAction;
     /** Use LLM judge for validation (requires API key) */
     useLLMJudge?: boolean;
+    /** LLM provider for judge (groq, openai, or anthropic) */
+    llmProvider?: LLMProvider;
+    /** Model name to use (uses provider default if not specified) */
+    llmModel?: string;
     /** Use semantic similarity matching (slower but catches spelling/spacing attacks) */
     useSemanticSimilarity?: boolean;
     /** Semantic similarity threshold (0-1, default: 0.75) */
