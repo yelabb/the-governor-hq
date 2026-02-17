@@ -46,7 +46,7 @@ AI coding assistants (Copilot, Claude, ChatGPT) can generate dangerous code when
 Install only the domains you need:
 
 ### 🏃 Wearables & Fitness Trackers
-[![npm](https://img.shields.io/npm/v/@the-governor-hq/constitution-wearables?label=%40yelabb%2Fconstitution-wearables)](https://www.npmjs.com/package/@the-governor-hq/constitution-wearables)
+[![npm](https://img.shields.io/npm/v/@the-governor-hq/constitution-wearables?label=%40the-governor-hq%2Fconstitution-wearables)](https://www.npmjs.com/package/@the-governor-hq/constitution-wearables)
 
 For smartwatch and fitness tracker data (Garmin, Apple Watch, Whoop, Oura, Fitbit):
 ```bash
@@ -60,7 +60,7 @@ npm install --save-dev @the-governor-hq/constitution-wearables
 ---
 
 ### 🧠 Brain-Computer Interfaces (BCI)
-[![npm](https://img.shields.io/npm/v/@the-governor-hq/constitution-bci?label=%40yelabb%2Fconstitution-bci)](https://www.npmjs.com/package/@the-governor-hq/constitution-bci) ![Status](https://img.shields.io/badge/status-in%20development-orange)
+[![npm](https://img.shields.io/npm/v/@the-governor-hq/constitution-bci?label=%40the-governor-hq%2Fconstitution-bci)](https://www.npmjs.com/package/@the-governor-hq/constitution-bci) ![Status](https://img.shields.io/badge/status-in%20development-orange)
 
 For EEG, fNIRS, and neurofeedback data:
 ```bash
@@ -74,7 +74,7 @@ npm install --save-dev @the-governor-hq/constitution-bci
 ---
 
 ### 💭 Therapy & Mental Health
-[![npm](https://img.shields.io/npm/v/@the-governor-hq/constitution-therapy?label=%40yelabb%2Fconstitution-therapy)](https://www.npmjs.com/package/@the-governor-hq/constitution-therapy) ![Status](https://img.shields.io/badge/status-in%20development-orange)
+[![npm](https://img.shields.io/npm/v/@the-governor-hq/constitution-therapy?label=%40the-governor-hq%2Fconstitution-therapy)](https://www.npmjs.com/package/@the-governor-hq/constitution-therapy) ![Status](https://img.shields.io/badge/status-in%20development-orange)
 
 For therapy and emotional wellbeing data:
 ```bash
@@ -88,7 +88,7 @@ npm install --save-dev @the-governor-hq/constitution-therapy
 ---
 
 ### ⚙️ Core Infrastructure
-[![npm](https://img.shields.io/npm/v/@the-governor-hq/constitution-core?label=%40yelabb%2Fconstitution-core)](https://www.npmjs.com/package/@the-governor-hq/constitution-core)
+[![npm](https://img.shields.io/npm/v/@the-governor-hq/constitution-core?label=%40the-governor-hq%2Fconstitution-core)](https://www.npmjs.com/package/@the-governor-hq/constitution-core)
 
 Shared safety rules and utilities (auto-installed with domain packages):
 ```bash
