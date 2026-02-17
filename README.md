@@ -83,12 +83,12 @@ Post-generation safety gate that validates AI output before it reaches users:
 import { RuntimeValidator } from '@the-governor-hq/constitution-core';
 
 const validator = new RuntimeValidator({
-  action: 'sanitize', // 'block' | 'sanitize' | 'warn' | 'log'
-  enableLLMJudge: false,
+  onViolation: 'sanitize', // 'block' | 'sanitize' | 'warn' | 'log'
+  useLLMJudge: false,
   useSemanticSimilarity: true  // 🛡️ NEW: Prevents spacing/spelling attacks
 });
 
-const result = validator.validate(aiGeneratedText);
+const result = await validator.validate(aiGeneratedText);
 
 if (result.hasCriticalViolations) {
   // Blocked: "Take melatonin for better sleep"
