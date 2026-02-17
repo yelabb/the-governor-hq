@@ -2,7 +2,7 @@
 
 
 # Multi-layered safety system for AI-assisted development with wearable, BCI, and therapy data.  
-### Runtime validation • API middleware • MCP servers • CLI tools • Auto-configuration
+### Runtime validation • Hardened pattern matcher • API middleware • MCP servers • CLI tools
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/the-governor-hq/constitution?style=flat-square)](https://github.com/the-governor-hq/constitution/stargazers)
@@ -23,7 +23,7 @@ Building a health app with AI assistance? **You're in the right place.**
 
 The Governor HQ gives you **tools** that prevent AI from generating dangerous code when working with biometric data — medical claims, supplement recommendations, disease diagnoses, or treatment advice.
 
-
+> **🆕 v3.1.0 Released:** New **Hardened Pattern Matcher** with semantic similarity prevents adversarial attacks (spacing, special chars, misspellings) that bypass traditional regex. [Learn more](#️-hardened-pattern-matcher-new-in-v310)
 
 ---
 
@@ -84,22 +84,26 @@ import { RuntimeValidator } from '@the-governor-hq/constitution-core';
 
 const validator = new RuntimeValidator({
   action: 'sanitize', // 'block' | 'sanitize' | 'warn' | 'log'
-  enableLLMJudge: false
+  enableLLMJudge: false,
+  useSemanticSimilarity: true  // 🛡️ NEW: Prevents spacing/spelling attacks
 });
 
 const result = validator.validate(aiGeneratedText);
 
 if (result.hasCriticalViolations) {
   // Blocked: "Take melatonin for better sleep"
+  // Also blocked: "T a k e  m e l a t o n i n" (spacing attack)
+  // Also blocked: "Take mel@tonin" (special char attack)
   // Sanitized: "Consider adjusting your bedtime routine"
 }
 ```
 
 **Features:**
-- Fast pattern matching (<10ms)
-- Optional LLM judge for edge cases
-- Multiple violation actions
-- TypeScript support
+- ⚡ Fast pattern matching (<10ms)
+- 🛡️ **NEW: Hardened Pattern Matcher** - Semantic similarity prevents adversarial attacks
+- 🔍 Optional LLM judge for edge cases
+- 🎯 Multiple violation actions
+- 📊 TypeScript support with full type safety
 
 ### 2. 🛡️ API Middleware
 
@@ -235,18 +239,81 @@ function analyzeSleep(sleepData, userBaseline) {
 - ✅ No diagnosis or treatment
 - ✅ Explicit disclaimer
 
+### 🛡️ Hardened Validation Catches Adversarial Attacks (v3.1.0)
+
+```typescript
+// ❌ Traditional regex might miss these obfuscated attacks:
+"You have d i a g n o s e d insomnia"         // Spacing
+"Take mel@tonin 5mg"                          // Special chars
+"You have diagnoz"                            // Misspelling
+"T A K E  s u p p l e m e n t s"            // Spaced prescription
+
+// ✅ Hardened pattern matcher catches all of them:
+const validator = createValidator({
+  useSemanticSimilarity: true  // Enables semantic matching
+});
+
+await validator.validate("You have d i a g n o s e d insomnia");
+// → Blocked: Adversarial attack detected (spacing)
+// → Semantic match: medical-diagnosis (92% similarity)
+// → Safe alternative provided
+```
+
+**How it's caught:**
+1. Text normalization: `"d i a g n o s e d"` → `"diagnosed"`
+2. Adversarial detection: Flags spacing manipulation
+3. Semantic similarity: Compares against forbidden medical concepts
+4. **Result:** Violation blocked, safe alternative returned
+
 ---
 
 ## 📦 Choose Your Domain
 
 Install only the packages you need. Each includes all 7 tools (validator, middleware, MCP, CLI, etc.):
 
+### 🛡️ Hardened Pattern Matcher (New in v3.1.0)
+
+**Prevents adversarial attacks** that bypass traditional regex validation:
+
+```typescript
+import { createValidator } from '@the-governor-hq/constitution-core';
+
+const validator = createValidator({
+  domain: 'wearables',
+  useSemanticSimilarity: true,  // Enable semantic attack prevention
+  semanticThreshold: 0.75,
+});
+
+// ❌ All these adversarial attacks are now caught:
+await validator.validate('You have d i a g n o s e d insomnia');  // Spacing attack
+await validator.validate('Take mel@tonin 5mg');                    // Special chars
+await validator.validate('You have diagnoz');                      // Misspelling
+await validator.validate('T A K E  s u p p l e m e n t s');       // Spaced commands
+```
+
+**How it works:**
+1. **Text Normalization** - Removes spacing, special characters, misspellings
+2. **Adversarial Detection** - Flags manipulation attempts (spacing/special-chars/misspelling)
+3. **Semantic Matching** - Compares text embeddings against forbidden medical concepts
+
+**Performance:**
+- Regex-only: <10ms (default)
+- With semantic similarity: 100-300ms (after model cache)
+- First use: 2-5s (downloads 80MB embedding model)
+
+[📖 Full Guide](https://the-governor-hq.vercel.app/packages/core/hardened-pattern-matcher)
+
+---
+
+## 📦 Choose Your Domain
+
+Install only the packages you need. Each includes all tools (validator, middleware, MCP, CLI, hardened matcher, etc.):
+
 | Package | Status | Coverage | Install |
-|---------|--------|----------|---------|
-| **🏃 Wearables** | ✅ Production | Sleep, HRV, heart rate, training load, recovery | `npm i -D @the-governor-hq/constitution-wearables` |
+| **🏃 Wearables** | ✅ Production v3.1.0 | Sleep, HRV, heart rate, training load, recovery | `npm i -D @the-governor-hq/constitution-wearables` |
 | **🧠 BCI** | 🟡 In Development | EEG, fNIRS, neurofeedback, meditation states | `npm i -D @the-governor-hq/constitution-bci` |
 | **💭 Therapy** | 🟡 In Development | Mood tracking, journaling, behavioral patterns | `npm i -D @the-governor-hq/constitution-therapy` |
-| **⚙️ Core** | ✅ Production | Universal safety rules and utilities | Auto-installed with domains |
+| **⚙️ Core** | ✅ Production v3.1.0 | Universal safety rules + hardened matcher | Auto-installed with domains |
 
 **Supported Devices:** Garmin, Apple Watch, Whoop, Oura, Fitbit, Muse, OpenBCI, and more.
 
@@ -289,7 +356,8 @@ The Governor HQ uses a **defense-in-depth** approach with multiple safety layers
                               ↓
 ┌─────────────────────────────────────────────────────────────┐
 │  Layer 3: Runtime Validator (Post-generation)              │
-│  → Validates AI output before deployment (<10ms)            │
+│  → Regex patterns (<10ms) + Semantic similarity (100-300ms) │
+│  → Prevents adversarial attacks (spacing/misspellings)      │
 └─────────────────────────────────────────────────────────────┘
                               ↓
 ┌─────────────────────────────────────────────────────────────┐
@@ -322,6 +390,10 @@ npm test
 # ✓ RuntimeValidator validates 20+ violation patterns
 # ✓ Middleware blocks unsafe API responses  
 # ✓ Pattern matcher catches edge cases
+# ✓ Adversarial attack detection (23 tests) - NEW in v3.1.0
+#   → Spacing attacks: d i a g n o s e
+#   → Special chars: d!i@a#g$n%o^s&e  
+#   → Misspellings: diagnoz, tratment
 # ✓ All tests pass in <2 seconds
 ```
 
@@ -454,17 +526,19 @@ No. The framework guides AI assistants during code generation and validates outp
 <details>
 <summary><b>How fast is the Runtime Validator?</b></summary>
 
-Pattern matching validation: **<10ms**  
-Optional LLM judge (when enabled): **~500ms**
+**Regex-only mode (default):** <10ms  
+**With semantic similarity:** 100-300ms (after model cache)  
+**First semantic use:** 2-5s (one-time model download, ~80MB)  
+**Optional LLM judge:** ~500ms
 
-Fast enough for production APIs with negligible latency.
+Fast enough for production APIs. Use regex-only for real-time, semantic for batch/async processing.
 
 </details>
 
 <details>
 <summary><b>Can I use this in production?</b></summary>
 
-Yes. The `wearables` and `core` packages are production-ready (v3.0.5). The `bci` and `therapy` packages are in development but usable. All packages have comprehensive safety tests.
+Yes. The `wearables` and `core` packages are production-ready (v3.1.0). The `bci` and `therapy` packages are in development but usable. All packages have comprehensive safety tests including adversarial attack prevention.
 
 </details>
 
@@ -502,6 +576,34 @@ npx governor-validate src/**/*.ts
 # Check MCP server
 npm run ai:context
 ```
+
+</details>
+
+<details>
+<summary><b>What about adversarial attacks that bypass regex?</b></summary>
+
+**Version 3.1.0 includes the Hardened Pattern Matcher** that prevents common bypass techniques:
+
+**Attacks prevented:**
+- Spacing: `d i a g n o s e` → Caught ✅
+- Special chars: `d!i@a#g$n%o^s&e` → Caught ✅
+- Misspellings: `diagnoz`, `tratment` → Caught ✅
+- Combined: `T A K E mel@tonin` → Caught ✅
+
+**How it works:**
+1. Text normalization removes obfuscation
+2. Adversarial detection flags manipulation
+3. Semantic similarity compares embeddings against forbidden concepts
+
+**Enable it:**
+```typescript
+const validator = createValidator({
+  useSemanticSimilarity: true,  // Opt-in
+  semanticThreshold: 0.75
+});
+```
+
+Adds 100-300ms latency but prevents sophisticated attacks. See [Hardened Pattern Matcher Guide](https://the-governor-hq.vercel.app/packages/core/hardened-pattern-matcher).
 
 </details>
 
@@ -617,10 +719,10 @@ This framework was developed with assistance from Claude Opus 4.5, Claude Sonnet
 ## 🔗 Links & Resources
 
 **NPM Packages:**
-- [@the-governor-hq/constitution-wearables](https://www.npmjs.com/package/@the-governor-hq/constitution-wearables) — v3.0.5
+- [@the-governor-hq/constitution-wearables](https://www.npmjs.com/package/@the-governor-hq/constitution-wearables) — v3.1.0
 - [@the-governor-hq/constitution-bci](https://www.npmjs.com/package/@the-governor-hq/constitution-bci) — v3.0.5 (in development)
 - [@the-governor-hq/constitution-therapy](https://www.npmjs.com/package/@the-governor-hq/constitution-therapy) — v3.0.5 (in development)
-- [@the-governor-hq/constitution-core](https://www.npmjs.com/package/@the-governor-hq/constitution-core) — v3.0.5
+- [@the-governor-hq/constitution-core](https://www.npmjs.com/package/@the-governor-hq/constitution-core) — v3.1.0 ⭐ New: Hardened Pattern Matcher
 
 **Documentation:**
 - [Main Documentation Site](https://the-governor-hq.vercel.app)

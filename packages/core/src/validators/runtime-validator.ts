@@ -15,12 +15,15 @@ import {
   runPatternChecks,
   patternsToViolations,
   calculatePatternConfidence,
+  runHardenedChecks,
+  detectAdversarialAttack,
 } from './pattern-matcher';
 import {
   generateSafeAlternative,
   attemptSanitization,
   createViolationExplanation,
 } from './sanitizer';
+import { initializeVectorDatabase } from './semantic-similarity';
 
 /**
  * Runtime validator for AI-generated content
@@ -35,6 +38,8 @@ export class RuntimeValidator {
       strictMode: config.strictMode ?? false,
       onViolation: config.onViolation || 'block',
       useLLMJudge: config.useLLMJudge ?? false,
+      useSemanticSimilarity: config.useSemanticSimilarity ?? false,
+      semanticThreshold: config.semanticThreshold ?? 0.75,
       customRules: config.customRules || [],
       apiKey: config.apiKey || '',
       defaultSafeMessage: config.defaultSafeMessage || '',
@@ -44,6 +49,24 @@ export class RuntimeValidator {
     if (this.config.useLLMJudge && !this.config.apiKey) {
       console.warn('⚠️  LLM judge enabled but no API key provided. Falling back to pattern matching only.');
       this.config.useLLMJudge = false;
+    }
+    
+    // Initialize vector database if semantic similarity is enabled
+    if (this.config.useSemanticSimilarity) {
+      this.initSemanticDatabase();
+    }
+  }
+  
+  /**
+   * Initialize semantic similarity vector database
+   */
+  private async initSemanticDatabase(): Promise<void> {
+    try {
+      await initializeVectorDatabase();
+    } catch (error) {
+      console.error('❌ Failed to initialize semantic similarity database:', error);
+      console.warn('⚠️  Falling back to regex-only pattern matching.');
+      this.config.useSemanticSimilarity = false;
     }
   }
   
@@ -55,17 +78,46 @@ export class RuntimeValidator {
   async validate(text: string): Promise<ValidationResult> {
     const startTime = Date.now();
     
-    // Step 1: Fast pattern matching (always runs)
-    const patterns = runPatternChecks(text);
-    const patternViolations = patternsToViolations(patterns);
+    // Step 1: Check for adversarial attacks (spacing/spelling)
+    const adversarialViolations: Violation[] = [];
+    const adversarialCheck = detectAdversarialAttack(text);
+    if (adversarialCheck.manipulationDetected) {
+      console.warn(`⚠️  Adversarial attack detected: ${adversarialCheck.manipulationType}`);
+      // Flag this as a critical violation
+      adversarialViolations.push({
+        rule: 'adversarial-attack',
+        severity: 'critical',
+        message: `Adversarial manipulation detected: ${adversarialCheck.manipulationType}`,
+        matched: [adversarialCheck.manipulationType || 'unknown'],
+      });
+    }
     
-    // Step 2: Custom rules
+    // Step 2: Run pattern checks (fast regex + optional semantic)
+    let allViolations: Violation[] = [...adversarialViolations];
+    let usedSemanticSimilarity = false;
+    let semanticMaxSimilarity = 0;
+    
+    if (this.config.useSemanticSimilarity) {
+      // Use hardened checks (regex + semantic)
+      const hardenedResult = await runHardenedChecks(text, {
+        useSemanticSimilarity: true,
+        semanticThreshold: this.config.semanticThreshold,
+      });
+      allViolations = [...allViolations, ...hardenedResult.allViolations];
+      usedSemanticSimilarity = true;
+      semanticMaxSimilarity = hardenedResult.semantic?.maxSimilarity || 0;
+    } else {
+      // Use fast regex-only checks
+      const patterns = runPatternChecks(text);
+      allViolations = [...allViolations, ...patternsToViolations(patterns)];
+    }
+    
+    // Step 3: Custom rules
     const customViolations = this.checkCustomRules(text);
-    
-    // Step 3: Combine violations
-    const allViolations = [...patternViolations, ...customViolations];
+    allViolations = [...allViolations, ...customViolations];
     
     // Step 4: Optional LLM judge for edge cases (only if no clear violations)
+    const patterns = runPatternChecks(text);
     let confidence = calculatePatternConfidence(patterns);
     let usedLLMJudge = false;
     
@@ -101,6 +153,8 @@ export class RuntimeValidator {
         domain: this.config.domain,
         action: this.config.onViolation,
         usedLLMJudge,
+        usedSemanticSimilarity,
+        semanticMaxSimilarity,
       },
     };
   }

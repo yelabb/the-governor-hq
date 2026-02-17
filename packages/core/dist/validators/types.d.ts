@@ -14,6 +14,10 @@ export interface ValidatorConfig {
     onViolation?: ViolationAction;
     /** Use LLM judge for validation (requires API key) */
     useLLMJudge?: boolean;
+    /** Use semantic similarity matching (slower but catches spelling/spacing attacks) */
+    useSemanticSimilarity?: boolean;
+    /** Semantic similarity threshold (0-1, default: 0.75) */
+    semanticThreshold?: number;
     /** Custom validation rules */
     customRules?: ValidationRule[];
     /** API key for LLM judge (if useLLMJudge is true) */
@@ -56,6 +60,8 @@ export interface ValidationResult {
         domain: Domain;
         action: ViolationAction;
         usedLLMJudge: boolean;
+        usedSemanticSimilarity?: boolean;
+        semanticMaxSimilarity?: number;
     };
 }
 export interface PatternCheckResult {
@@ -70,5 +76,28 @@ export interface LLMJudgeResult {
     reasoning: string;
     specificViolations: string[];
     suggestions?: string;
+}
+/**
+ * Semantic Similarity Types
+ */
+export interface ForbiddenConcept {
+    concept: string;
+    category: 'diagnosis' | 'treatment' | 'medical-scope' | 'alarming' | 'prescriptive';
+    severity: SeverityLevel;
+    example: string;
+    embedding: number[];
+    similarity?: number;
+}
+export interface SemanticViolation {
+    concept: string;
+    category: string;
+    severity: SeverityLevel;
+    similarity: number;
+    example: string;
+}
+export interface SemanticCheckResult {
+    violations: SemanticViolation[];
+    maxSimilarity: number;
+    latencyMs: number;
 }
 //# sourceMappingURL=types.d.ts.map

@@ -7,11 +7,12 @@
 import { BaseGovernorMCPServer } from './base-mcp-server';
 import type { ServerConfig } from './base-mcp-server';
 export { RuntimeValidator, createValidator, validateText } from './validators/runtime-validator';
-export type { ValidatorConfig, ValidationResult, Violation, Domain, ViolationAction, SeverityLevel, ValidationRule, PatternCheckResult, LLMJudgeResult, } from './validators/types';
+export type { ValidatorConfig, ValidationResult, Violation, Domain, ViolationAction, SeverityLevel, ValidationRule, PatternCheckResult, LLMJudgeResult, SemanticCheckResult, SemanticViolation, ForbiddenConcept, } from './validators/types';
 export { governorValidator, validateField, validationErrorHandler } from './middleware/express';
 export { withGovernor, createGovernorValidator, withFieldValidation, validateResponse } from './middleware/nextjs';
-export { runPatternChecks, checkForbiddenPatterns, checkPrescriptiveLanguage, checkMedicalKeywords, checkSuggestivePatterns, checkAlarmingPatterns, } from './validators/pattern-matcher';
+export { runPatternChecks, checkForbiddenPatterns, checkPrescriptiveLanguage, checkMedicalKeywords, checkSuggestivePatterns, checkAlarmingPatterns, runHardenedChecks, runSemanticChecks, detectAdversarialAttack, } from './validators/pattern-matcher';
 export { generateSafeAlternative, attemptSanitization, getDisclaimer, } from './validators/sanitizer';
+export { generateEmbedding, cosineSimilarity, normalizeText, checkSemanticSimilarity, initializeVectorDatabase, batchCheckSemantic, FORBIDDEN_MEDICAL_CONCEPTS, } from './validators/semantic-similarity';
 export { BaseGovernorMCPServer };
 export type { ServerConfig };
 export interface LegacyValidationResult {

@@ -1,9 +1,11 @@
 /**
- * Pattern Matcher - Fast regex and keyword checks
- * Provides <10ms validation for most cases
+ * Pattern Matcher - Fast regex and keyword checks + Semantic Similarity
+ * Provides <10ms validation for regex, ~100-300ms for semantic checks
+ * Semantic similarity prevents spacing/spelling attacks
  */
 
-import type { PatternCheckResult, Violation } from './types';
+import type { PatternCheckResult, Violation, SemanticCheckResult } from './types';
+import { checkSemanticSimilarity, normalizeText } from './semantic-similarity';
 
 /** Forbidden patterns that indicate medical claims */
 const FORBIDDEN_PATTERNS = [
@@ -181,4 +183,105 @@ export function calculatePatternConfidence(patterns: PatternCheckResult): number
   if (patterns.required.length > 0) confidence += 0.1;
   
   return Math.max(0, Math.min(1, confidence));
+}
+
+/**
+ * Run semantic similarity checks (async)
+ * This catches adversarial attacks like spacing ("d i a g n o s e") 
+ * or misspellings ("diagnoz", "tratment")
+ */
+export async function runSemanticChecks(
+  text: string,
+  threshold: number = 0.75
+): Promise<SemanticCheckResult> {
+  return await checkSemanticSimilarity(text, threshold);
+}
+
+/**
+ * Convert semantic check results to violations
+ */
+export function semanticToViolations(semantic: SemanticCheckResult): Violation[] {
+  return semantic.violations.map(v => ({
+    rule: `semantic-${v.category}`,
+    severity: v.severity,
+    message: `Semantic match for forbidden concept "${v.concept}" (${Math.round(v.similarity * 100)}% similar to: "${v.example}")`,
+    matched: [v.concept],
+  }));
+}
+
+/**
+ * Hardened pattern checks: Combines regex + semantic similarity
+ * Returns both fast pattern matches and semantic matches
+ */
+export async function runHardenedChecks(
+  text: string,
+  options: {
+    useSemanticSimilarity?: boolean;
+    semanticThreshold?: number;
+  } = {}
+): Promise<{
+  patterns: PatternCheckResult;
+  semantic?: SemanticCheckResult;
+  allViolations: Violation[];
+}> {
+  // Always run fast regex checks first
+  const patterns = runPatternChecks(text);
+  const patternViolations = patternsToViolations(patterns);
+  
+  // Run semantic checks if enabled
+  let semantic: SemanticCheckResult | undefined;
+  let semanticViolations: Violation[] = [];
+  
+  if (options.useSemanticSimilarity) {
+    semantic = await runSemanticChecks(text, options.semanticThreshold || 0.75);
+    semanticViolations = semanticToViolations(semantic);
+  }
+  
+  // Combine all violations
+  const allViolations = [...patternViolations, ...semanticViolations];
+  
+  return {
+    patterns,
+    semantic,
+    allViolations,
+  };
+}
+
+/**
+ * Pre-process text to detect adversarial attacks
+ * Returns normalized text and whether manipulation was detected
+ */
+export function detectAdversarialAttack(text: string): {
+  normalized: string;
+  manipulationDetected: boolean;
+  manipulationType?: 'spacing' | 'special-chars' | 'misspelling';
+} {
+  const original = text;
+  const normalized = normalizeText(text);
+  
+  // Check if normalization changed the text significantly
+  const manipulationDetected = original.toLowerCase() !== normalized;
+  
+  let manipulationType: 'spacing' | 'special-chars' | 'misspelling' | undefined;
+  
+  if (manipulationDetected) {
+    // Detect spacing attack (e.g., "d i a g n o s e")
+    if (/\b\w(\s+\w){3,}\b/.test(original)) {
+      manipulationType = 'spacing';
+    }
+    // Detect special character insertion (e.g., "d!i@a#g$n%o^s&e")
+    else if (/[a-z][^a-z\s]{2,}[a-z]/i.test(original)) {
+      manipulationType = 'special-chars';
+    }
+    // Likely misspelling
+    else {
+      manipulationType = 'misspelling';
+    }
+  }
+  
+  return {
+    normalized,
+    manipulationDetected,
+    manipulationType,
+  };
 }

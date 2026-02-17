@@ -1,0 +1,350 @@
+# Hardened Pattern Matcher
+
+> Semantic Similarity + Adversarial Attack Detection
+
+---
+
+## Overview
+
+The **Hardened Pattern Matcher** extends the traditional regex-based validation with semantic similarity embeddings to prevent adversarial attacks that bypass simple pattern matching.
+
+### The Problem
+
+Traditional regex patterns can be easily bypassed with:
+
+- **Spacing attacks**: `d i a g n o s e` instead of `diagnose`
+- **Special character insertion**: `d!i@a#g$n%o^s&e` instead of `diagnose`
+- **Misspellings**: `diagnoz` or `tratment` instead of `diagnose` or `treatment`
+- **Leetspeak**: `d3pr3ss10n` instead of `depression`
+
+These attacks can slip past regex patterns while remaining semantically identical to forbidden medical advice.
+
+---
+
+## The Solution
+
+The hardened pattern matcher uses a **two-stage validation approach**:
+
+### Stage 1: Fast Regex Patterns (<10ms)
+Quick keyword and pattern matching to catch obvious violations.
+
+### Stage 2: Semantic Similarity (100-300ms)
+Uses embedding vectors to compare text against a database of forbidden medical concepts, catching obfuscated attacks.
+
+```typescript
+import { createValidator } from '@the-governor-hq/constitution-core';
+
+const validator = createValidator({
+  domain: 'wearables',
+  useSemanticSimilarity: true,  // Enable hardened checks
+  semanticThreshold: 0.75,       // Similarity threshold (0-1)
+});
+
+const result = await validator.validate('You have d i a g n o s e d insomnia');
+// ✗ Blocked - semantic similarity detected medical diagnosis despite spacing
+```
+
+---
+
+## How It Works
+
+### 1. Text Normalization
+
+Before checking patterns, text is normalized to remove obfuscation:
+
+```typescript
+import { normalizeText } from '@the-governor-hq/constitution-core';
+
+normalizeText('d!i@a#g$n%o^s&e');  // → 'diagnose'
+normalizeText('d i a g n o s e');   // → 'diagnose'
+normalizeText('diagnoz');           // → 'diagnose'
+```
+
+**Normalization steps:**
+- Remove special characters
+- Collapse spacing
+- Convert to lowercase
+- Fix common misspellings
+
+### 2. Adversarial Attack Detection
+
+Automatically detects when text has been manipulated:
+
+```typescript
+import { detectAdversarialAttack } from '@the-governor-hq/constitution-core';
+
+const result = detectAdversarialAttack('You have d i a g n o s e d insomnia');
+
+console.log(result);
+// {
+//   normalized: 'you have diagnosed insomnia',
+//   manipulationDetected: true,
+//   manipulationType: 'spacing'
+// }
+```
+
+**Attack types detected:**
+- `spacing` - Extra spaces between characters
+- `special-chars` - Special characters inserted
+- `misspelling` - Intentional misspellings
+
+### 3. Semantic Similarity Matching
+
+Compares text embeddings against a vector database of forbidden medical concepts:
+
+```typescript
+import { checkSemanticSimilarity } from '@the-governor-hq/constitution-core';
+
+const result = await checkSemanticSimilarity('Take 5mg mel@tonin');
+
+console.log(result);
+// {
+//   violations: [
+//     {
+//       concept: 'medication-dosage',
+//       category: 'treatment',
+//       severity: 'critical',
+//       similarity: 0.89,
+//       example: 'Take 5mg of supplement before bed'
+//     }
+//   ],
+//   maxSimilarity: 0.89,
+//   latencyMs: 156
+// }
+```
+
+---
+
+## Vector Database
+
+The system maintains a database of forbidden medical concept embeddings:
+
+### Forbidden Concepts
+
+| Category | Examples |
+|----------|----------|
+| **Medical Diagnosis** | "You have insomnia", "This indicates sleep apnea" |
+| **Treatment Prescription** | "Take melatonin for sleep", "5mg dosage recommended" |
+| **Medical Scope** | "Symptoms indicate a condition", "Clinical markers show problems" |
+| **Emergency/Alarming** | "Medical emergency", "Serious health danger" |
+| **Prescriptive Commands** | "You must see a doctor", "You need medication" |
+
+Each concept has a pre-computed embedding vector for fast similarity comparison.
+
+---
+
+## Configuration
+
+### Enable Semantic Similarity
+
+```typescript
+const validator = createValidator({
+  domain: 'wearables',
+  useSemanticSimilarity: true,
+  semanticThreshold: 0.75,  // 0.75 = 75% similarity required to flag
+});
+```
+
+### Threshold Guidelines
+
+- **0.90+**: Very strict - only exact matches
+- **0.75-0.89**: Recommended - catches paraphrases
+- **0.60-0.74**: Permissive - may have false positives
+- **<0.60**: Not recommended - too many false positives
+
+---
+
+## Performance
+
+### Latency Comparison
+
+| Validation Type | Latency | Use Case |
+|----------------|---------|----------|
+| Regex only | <10ms | Fast real-time checks |
+| + Semantic similarity (first use) | 2-5s | Model initialization |
+| + Semantic similarity (cached) | 100-300ms | Production use |
+
+### Optimization Tips
+
+1. **Initialize once at startup:**
+   ```typescript
+   import { initializeVectorDatabase } from '@the-governor-hq/constitution-core';
+   
+   // During app startup
+   await initializeVectorDatabase();
+   ```
+
+2. **Use regex as first pass:**
+   Regex patterns catch most violations quickly. Semantic similarity only runs when enabled.
+
+3. **Batch processing:**
+   ```typescript
+   import { batchCheckSemantic } from '@the-governor-hq/constitution-core';
+   
+   const results = await batchCheckSemantic([
+     'Text 1',
+     'Text 2',
+     'Text 3'
+   ]);
+   ```
+
+---
+
+## Real-World Attack Examples
+
+The hardened matcher catches these real-world obfuscation attempts:
+
+```typescript
+// ❌ All blocked by semantic similarity
+
+await validator.validate('You have d i a g n o s e d depression');
+// Spacing attack
+
+await validator.validate('Take mel@tonin 5mg before bed');
+// Special character + medical dosage
+
+await validator.validate('You have diagnoz of anxeity');
+// Misspellings
+
+await validator.validate('T A K E  s u p p l e m e n t s');
+// Spacing attack on prescription language
+
+await validator.validate('you have i-n-s-o-m-n-i-a');
+// Hyphen spacing attack
+```
+
+---
+
+## Testing
+
+### Test Adversarial Attacks
+
+```typescript
+import { detectAdversarialAttack, normalizeText } from '@the-governor-hq/constitution-core';
+
+describe('Adversarial Attack Tests', () => {
+  test('Detects spacing attacks', () => {
+    const result = detectAdversarialAttack('d i a g n o s e');
+    expect(result.manipulationDetected).toBe(true);
+    expect(result.manipulationType).toBe('spacing');
+  });
+  
+  test('Normalizes obfuscated text', () => {
+    const normalized = normalizeText('d!i@a#g$n%o^s&e');
+    expect(normalized).toBe('diagnose');
+  });
+});
+```
+
+### Test Semantic Similarity
+
+```typescript
+import { checkSemanticSimilarity } from '@the-governor-hq/constitution-core';
+
+describe('Semantic Similarity Tests', () => {
+  test('Catches obfuscated medical advice', async () => {
+    const result = await checkSemanticSimilarity('Take m e l a t o n i n');
+    expect(result.violations.length).toBeGreaterThan(0);
+  });
+});
+```
+
+### Run Tests
+
+```bash
+# Test adversarial detection
+node tests/adversarial-attacks.test.js
+
+# Test semantic similarity (requires model download)
+node tests/semantic-similarity.test.js
+```
+
+---
+
+## Migration Guide
+
+### From Regex-Only to Hardened
+
+**Before:**
+```typescript
+const validator = createValidator({ domain: 'wearables' });
+const result = validator.validateSync(text);  // Regex only
+```
+
+**After:**
+```typescript
+const validator = createValidator({
+  domain: 'wearables',
+  useSemanticSimilarity: true,  // Enable hardened checks
+});
+const result = await validator.validate(text);  // Note: async now
+```
+
+**Breaking changes:**
+- Semantic validation is **async** (returns Promise)
+- First initialization downloads embedding model (~80MB)
+- Slightly higher latency (100-300ms vs <10ms)
+
+---
+
+## Advanced Usage
+
+### Custom Forbidden Concepts
+
+Add your own forbidden concepts to the vector database:
+
+```typescript
+import { FORBIDDEN_MEDICAL_CONCEPTS, generateEmbedding } from '@the-governor-hq/constitution-core';
+
+// Add custom forbidden concept
+FORBIDDEN_MEDICAL_CONCEPTS.push({
+  concept: 'custom-violation',
+  category: 'diagnosis',
+  severity: 'critical',
+  example: 'Your specific forbidden phrase',
+  embedding: await generateEmbedding('Your specific forbidden phrase'),
+});
+```
+
+### Direct Similarity Calculation
+
+```typescript
+import { generateEmbedding, cosineSimilarity } from '@the-governor-hq/constitution-core';
+
+const emb1 = await generateEmbedding('You have insomnia');
+const emb2 = await generateEmbedding('You have sleep problems');
+
+const similarity = cosineSimilarity(emb1, emb2);
+console.log(similarity);  // e.g., 0.83
+```
+
+---
+
+## FAQ
+
+### Q: Does this slow down validation significantly?
+
+**A:** First initialization takes 2-5 seconds to download the model. After that, validation adds ~100-300ms overhead. Use regex-only mode for real-time use cases.
+
+### Q: Can users still bypass this?
+
+**A:** While harder, sophisticated attacks (e.g., complete paraphrasing) may still slip through. Semantic similarity is one layer of defense. Combine with:
+- LLM judge for ambiguous cases
+- User reporting mechanisms
+- Regular pattern updates
+
+### Q: How much storage does the model require?
+
+**A:** The embedding model is ~80MB. It's cached locally after first download.
+
+### Q: Can I use this offline?
+
+**A:** Yes, after the first download. The model runs locally via `@xenova/transformers` (ONNX runtime).
+
+---
+
+## Next Steps
+
+- [Runtime Validation](./runtime-validation.mdx) - See the full validation pipeline
+- [Validators](./validators.mdx) - Understand all validation layers
+- [Testing Guide](../TESTING.md) - Comprehensive testing strategies

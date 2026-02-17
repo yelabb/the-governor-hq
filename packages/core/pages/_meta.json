@@ -2,6 +2,7 @@
   "index": "Overview",
   "getting-started": "Getting Started",
   "validators": "Validators",
+  "hardened-pattern-matcher": "Hardened Pattern Matcher",
   "middleware": "Middleware",
   "cli-tools": "CLI Tools",
   "runtime-validation": "Runtime Validation",

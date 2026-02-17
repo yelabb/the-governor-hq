@@ -32,13 +32,15 @@ return result.output;
 ```
 
 **Features:**
-- ⚡ <10ms validation speed
+- ⚡ <10ms validation speed (regex mode)
+- 🛡️ **Hardened Pattern Matcher** with semantic similarity (prevents spacing/spelling attacks)
 - 🔍 Optional LLM judge for edge cases
 - 🎯 Multiple violation actions (block, sanitize, warn, log)
 - 📊 Built-in confidence scoring
 - 🔧 Custom rules support
 
 [📖 Full Validator Guide →](https://the-governor-hq.vercel.app/packages/core/runtime-validation)
+[🛡️ Hardened Pattern Matcher →](https://the-governor-hq.vercel.app/packages/core/hardened-pattern-matcher)
 
 ### 2. API Middleware
 **Automatic validation for Express and Next.js**
@@ -71,7 +73,39 @@ export default withGovernor(
 
 [📖 Middleware Guide →](https://the-governor-hq.vercel.app/packages/core/middleware)
 
-### 3. CLI Validator
+### 3. Hardened Pattern Matcher
+**Semantic similarity to prevent adversarial attacks**
+
+Traditional regex patterns can be bypassed with spacing (`d i a g n o s e`), special characters (`d!i@a#g$n%o^s&e`), or misspellings (`diagnoz`). The hardened pattern matcher uses **semantic similarity embeddings** to catch these attacks:
+
+```typescript
+import { createValidator } from '@the-governor-hq/constitution-core';
+
+const validator = createValidator({
+  domain: 'wearables',
+  useSemanticSimilarity: true,  // Enable hardened checks
+  semanticThreshold: 0.75,       // Similarity threshold
+});
+
+// ❌ All blocked by semantic similarity:
+await validator.validate('You have d i a g n o s e d insomnia');  // spacing attack
+await validator.validate('Take mel@tonin 5mg');                    // special chars
+await validator.validate('You have diagnoz');                      // misspelling
+```
+
+**How it works:**
+1. **Text normalization** removes obfuscation
+2. **Adversarial detection** flags manipulation attempts  
+3. **Semantic matching** compares text embeddings against forbidden medical concepts
+
+**Performance:**
+- First use: 2-5s (model download, ~80MB)
+- Subsequent: 100-300ms per validation
+- Regex-only: <10ms (default, use for real-time)
+
+[🛡️ Hardened Pattern Matcher Guide →](https://the-governor-hq.vercel.app/packages/core/hardened-pattern-matcher)
+
+### 4. CLI Validator
 **Command-line validation for CI/CD pipelines**
 
 ```bash
@@ -84,7 +118,7 @@ npx governor-validate "src/**/*.{ts,tsx}"
 # Exit code 1 if violations found (perfect for CI)
 ```
 
-### 4. MCP Server Base Class
+### 5. MCP Server Base Class
 **Foundation for domain-specific MCP servers**
 
 ```typescript
@@ -104,7 +138,7 @@ const server = new BaseGovernorMCPServer({
 server.start();
 ```
 
-### 5. Evaluation System
+### 6. Evaluation System
 **Red-teaming framework with 28+ adversarial test cases**
 
 ```bash
