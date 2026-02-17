@@ -117,7 +117,7 @@ Add to your workspace or project configuration:
 {
   "github.copilot.chat.codeGeneration.instructions": [
     {
-      "file": "docs/governor-hq/README.md"
+      "file": "README.md"
     }
   ]
 }
@@ -126,7 +126,7 @@ Add to your workspace or project configuration:
 Or reference it in chat prompts:
 ```
 @workspace This project processes wearable health data. Follow the 
-constitutional framework in /docs/governor-hq/. Check /constraints/hard-rules.mdx 
+constitutional framework. Check /pages/constraints/hard-rules.mdx 
 before generating any health-related code.
 ```
 
@@ -160,7 +160,7 @@ Add a `.cursorrules` file to your project root:
 # Wearable Data AI Safety Rules
 
 This project processes wearable health data. All code must comply with the 
-constitutional framework in /docs/governor-hq/.
+constitutional framework.
 
 ## Non-negotiable constraints:
 1. No medical claims, diagnoses, or treatment advice
@@ -170,9 +170,9 @@ constitutional framework in /docs/governor-hq/.
 5. Optional language only ("consider", "might") - never commanding
 
 Before implementing features:
-- Check /docs/governor-hq/constraints/hard-rules.mdx
-- Validate text against /docs/governor-hq/constraints/language-rules.mdx
-- Confirm scope in /docs/governor-hq/what-we-dont-do.mdx
+- Check /pages/constraints/hard-rules.mdx
+- Validate text against /pages/constraints/language-rules.mdx
+- Confirm scope in /pages/what-we-dont-do.mdx
 
 When uncertain: default to NO, then confirm with documentation.
 ```
@@ -184,13 +184,13 @@ Add a reference in your main README:
 ```markdown
 ## AI Safety Framework
 
-This project follows the [Governor HQ Constitutional Framework](./docs/governor-hq/) 
+This project follows the Governor HQ Constitutional Framework 
 for safe AI-assisted development on wearable health data.
 
 All features must comply with documented constraints to prevent medical claims, 
 diagnostic language, and treatment advice.
 
-**For developers:** Review `/docs/governor-hq/README.md` before building health-related features.
+**For developers:** Review the documentation before building health-related features.
 ```
 
 ---
@@ -247,10 +247,10 @@ Add this to your PR template:
 - [ ] Recommendations are baseline-gated
 - [ ] Calm, non-alarmist tone
 - [ ] Disclaimer included where appropriate
-- [ ] Validated against /what-we-dont-do.mdx
+- [ ] Validated against /pages/what-we-dont-do.mdx
 
 **For reviewers:** Any health-related content must be validated against 
-[constitutional framework](./docs/governor-hq/).
+the constitutional framework.
 ```
 
 ---

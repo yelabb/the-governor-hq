@@ -21,10 +21,10 @@ This project/workspace uses the Governor HQ Constitutional Framework for safe AI
 ## 📖 Documentation References
 
 **ALWAYS check before implementing health-related features:**
-- `/docs/governor-hq/pages/constraints/hard-rules.mdx` - Absolute boundaries
-- `/docs/governor-hq/pages/constraints/language-rules.mdx` - Validate text
-- `/docs/governor-hq/pages/quick-reference.mdx` - Quick validation
-- `/docs/governor-hq/pages/what-we-dont-do.mdx` - Scope boundaries
+- `/pages/constraints/hard-rules.mdx` - Absolute boundaries
+- `/pages/constraints/language-rules.mdx` - Validate text
+- `/pages/quick-reference.mdx` - Quick validation
+- `/pages/what-we-dont-do.mdx` - Scope boundaries
 
 ## 🚨 Validation Checklist
 
@@ -90,8 +90,8 @@ function generateRecommendation(user) {
 **DEFAULT TO NO** until confirmed safe.
 
 If unsure whether something is allowed:
-1. Check `/docs/governor-hq/pages/what-we-dont-do.mdx`
-2. Check `/docs/governor-hq/pages/constraints/hard-rules.mdx`
+1. Check `/pages/what-we-dont-do.mdx`
+2. Check `/pages/constraints/hard-rules.mdx`
 3. Still uncertain? Ask developer with explanation
 4. Propose safer alternative
 
@@ -105,4 +105,4 @@ Biometric feedback ≠ Clinical measurements
 
 ---
 
-For complete guidance, see: `/docs/governor-hq/pages/ai-agent-guide.mdx`
+For complete guidance, see: `/pages/ai-agent-guide.mdx`
