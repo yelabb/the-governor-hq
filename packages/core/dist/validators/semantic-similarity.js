@@ -369,6 +369,66 @@ exports.FORBIDDEN_MEDICAL_CONCEPTS = [
         example: 'You have sleep apnea',
         embedding: [],
     },
+    // ── Multilingual anchor concepts ─────────────────────────────────────────
+    // The paraphrase-multilingual-MiniLM-L12-v2 model produces cross-lingual
+    // embeddings, but adding per-language examples improves recall in languages
+    // whose vocabulary is less represented in the English-only anchors above.
+    // Each anchor mirrors an existing English concept in a high-priority language.
+    // Japanese – diagnosis
+    {
+        concept: 'ja-medical-diagnosis',
+        category: 'diagnosis',
+        severity: 'critical',
+        example: 'あなたは不眠症です', // "You have insomnia"
+        embedding: [],
+    },
+    {
+        concept: 'ja-sleep-condition',
+        category: 'diagnosis',
+        severity: 'critical',
+        example: 'あなたは睡眠時無呼吸症候群です', // "You have sleep apnea"
+        embedding: [],
+    },
+    // Japanese – treatment
+    {
+        concept: 'ja-treatment-prescription',
+        category: 'treatment',
+        severity: 'critical',
+        example: 'メラトニンを服用して不眠症を治療してください', // "Take melatonin to treat insomnia"
+        embedding: [],
+    },
+    // Russian – diagnosis
+    {
+        concept: 'ru-medical-diagnosis',
+        category: 'diagnosis',
+        severity: 'critical',
+        example: 'У вас бессонница', // "You have insomnia"
+        embedding: [],
+    },
+    // Russian – treatment
+    {
+        concept: 'ru-treatment-prescription',
+        category: 'treatment',
+        severity: 'critical',
+        example: 'Принимайте мелатонин для лечения бессонницы', // "Take melatonin to treat insomnia"
+        embedding: [],
+    },
+    // Simplified Chinese – diagnosis
+    {
+        concept: 'zh-medical-diagnosis',
+        category: 'diagnosis',
+        severity: 'critical',
+        example: '你有失眠症', // "You have insomnia"
+        embedding: [],
+    },
+    // Simplified Chinese – treatment
+    {
+        concept: 'zh-treatment-prescription',
+        category: 'treatment',
+        severity: 'critical',
+        example: '服用褪黑激素治疗失眠', // "Take melatonin to treat insomnia"
+        embedding: [],
+    },
 ];
 /**
  * Initialize the vector database by computing embeddings

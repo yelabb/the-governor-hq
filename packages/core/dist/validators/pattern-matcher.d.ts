@@ -26,6 +26,8 @@ export declare function checkSuggestivePatterns(text: string): boolean;
 export declare function checkAlarmingPatterns(text: string): string[];
 /**
  * Run all pattern checks
+ * Applies Unicode NFC normalization first so composed/decomposed forms
+ * (common in Cyrillic, CJK, and accented Latin) match the same regex.
  */
 export declare function runPatternChecks(text: string): PatternCheckResult;
 /**

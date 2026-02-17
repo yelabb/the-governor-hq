@@ -32,14 +32,19 @@ const FORBIDDEN_PATTERNS = [
     /\b(take|taking|dosage|mg|milligram|supplement|vitamin|melatonin|magnesium|medication|prescription|toma|prenez|nehmen|prendi|tome)\b/i,
     // Medical scope violations
     /\b(medical condition|health condition|disorder|syndrome|symptom of|sign of|indicates)\b/i,
-    // CJK treatment terms
-    /服用|治療/,
+    // CJK treatment/medication terms
+    // Simplified Chinese: 服用 (take medicine), 治疗 (treatment), 诊断 (diagnosis), 药物 (medication), 服药 (take medication)
+    // Traditional Chinese: 治療 (treatment), 診斷 (diagnosis), 藥物 (medication)
+    // Japanese kanji (shared with Chinese): 服用, 治療, 診断
+    // Japanese katakana brand/supplement terms: メラトニン (melatonin), サプリメント (supplement)
+    /服用|治疗|治療|诊断|診斷|診断|药物|藥物|服药|メラトニン|サプリメント/,
 ];
 /** Prescriptive/commanding language patterns */
 const PRESCRIPTIVE_PATTERNS = [
     /\b(must|should|need to|have to|required to|you need|you must|you should)\b/i,
     /debes|debe|devez|müssen|devi|deve|должны/i,
-    /必须|すべき/,
+    // Simplified Chinese: 必须 (must). Traditional Chinese: 必須 (must). Japanese: すべき (should), しなければ (must).
+    /必须|必須|すべき|しなければ/,
 ];
 /** Authoritative medical terms */
 const MEDICAL_KEYWORDS = [
@@ -51,7 +56,8 @@ const MEDICAL_KEYWORDS = [
 const SUGGESTIVE_PATTERNS = [
     /\b(consider|might|could|may want to|option|when ready|if you'd like)\b/i,
     /considera|considere|envisager|pourriez|erwägen|potresti|рассмотрите\s+возможность/i,
-    /考虑|検討/,
+    // Simplified Chinese: 考虑 (consider). Traditional Chinese: 考慮. Japanese: 検討 (consider), ご検討 (formal consider).
+    /考虑|考慮|検討|ご検討/,
     /\b(healthcare professional|doctor|physician|medical provider)\b/i,
 ];
 /** Alarming/panic-inducing patterns */
@@ -118,13 +124,19 @@ function checkAlarmingPatterns(text) {
 }
 /**
  * Run all pattern checks
+ * Applies Unicode NFC normalization first so composed/decomposed forms
+ * (common in Cyrillic, CJK, and accented Latin) match the same regex.
  */
 function runPatternChecks(text) {
+    // NFC normalization: ensures é (U+00E9) and e+combining-accent (U+0065 U+0301)
+    // are treated identically, and prevents composed vs decomposed CJK variants
+    // from bypassing pattern matching.
+    const normalized = text.normalize('NFC');
     return {
-        forbidden: checkForbiddenPatterns(text),
-        required: checkSuggestivePatterns(text) ? ['suggestive-language'] : [],
-        prescriptive: checkPrescriptiveLanguage(text),
-        medical: checkMedicalKeywords(text),
+        forbidden: checkForbiddenPatterns(normalized),
+        required: checkSuggestivePatterns(normalized) ? ['suggestive-language'] : [],
+        prescriptive: checkPrescriptiveLanguage(normalized),
+        medical: checkMedicalKeywords(normalized),
     };
 }
 /**
@@ -209,12 +221,26 @@ async function runHardenedChecks(text, options = {}) {
     if (options.useSemanticSimilarity) {
         semantic = await runSemanticChecks(text, options.semanticThreshold || 0.75);
         semanticViolations = semanticToViolations(semantic);
-        // Reduce false positives: if language is suggestive and has no explicit prescriptive pattern,
-        // ignore semantic-prescriptive hits while keeping diagnosis/treatment blocks intact.
+        // Reduce false positives for prescriptive-towards-consultation language:
+        // When the text contains explicit suggestive phrasing (e.g., 考虑, erwägen, "consider")
+        // AND no direct prescriptive command was found by regex (e.g., must, 必须, すべき),
+        // suppress only semantic-prescriptive hits — NOT semantic-diagnosis or semantic-treatment.
+        // This prevents "consider talking to your doctor" from being flagged,
+        // while still allowing diagnosis and treatment violations in any language to surface.
+        //
+        // Design note: semantic similarity is the primary detection mechanism for languages
+        // not fully covered by the regex patterns above. The filter below is intentionally
+        // narrow so that multilingual prescriptive violations (e.g., Russian должны,
+        // Chinese 必须, Japanese すべき) that ARE caught by regex still propagate to
+        // semantic violations as corroborating signals.
         const hasSuggestiveLanguage = checkSuggestivePatterns(text);
         const hasExplicitPrescriptive = patterns.prescriptive.length > 0;
         if (hasSuggestiveLanguage && !hasExplicitPrescriptive) {
-            semanticViolations = semanticViolations.filter(v => v.rule !== 'semantic-prescriptive');
+            semanticViolations = semanticViolations.filter(v => {
+                // Only suppress prescriptive-category semantic hits, never diagnosis or treatment
+                const isPrescriptiveOnly = v.rule === 'semantic-prescriptive';
+                return !isPrescriptiveOnly;
+            });
         }
     }
     // Combine all violations
