@@ -17,6 +17,7 @@ const semantic_similarity_1 = require("./semantic-similarity");
  */
 class RuntimeValidator {
     constructor(config = {}) {
+        this.initializationPromise = null;
         // Set defaults
         this.config = {
             domain: config.domain || 'core',
@@ -36,7 +37,7 @@ class RuntimeValidator {
         }
         // Initialize vector database if semantic similarity is enabled
         if (this.config.useSemanticSimilarity) {
-            this.initSemanticDatabase();
+            this.initializationPromise = this.initSemanticDatabase();
         }
     }
     /**
@@ -59,6 +60,10 @@ class RuntimeValidator {
      */
     async validate(text) {
         const startTime = Date.now();
+        // Await initialization if semantic similarity is enabled
+        if (this.initializationPromise) {
+            await this.initializationPromise;
+        }
         // Step 1: Check for adversarial attacks (spacing/spelling)
         const adversarialViolations = [];
         const adversarialCheck = (0, pattern_matcher_1.detectAdversarialAttack)(text);

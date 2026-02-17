@@ -124,6 +124,17 @@ export async function checkSemanticSimilarity(
 ): Promise<SemanticCheckResult> {
   const startTime = Date.now();
   
+  // Check if vector database is initialized
+  const isInitialized = FORBIDDEN_MEDICAL_CONCEPTS.every(c => c.embedding.length > 0);
+  if (!isInitialized) {
+    console.warn('⚠️  Semantic similarity database not initialized. Returning empty result.');
+    return {
+      violations: [],
+      maxSimilarity: 0,
+      latencyMs: Date.now() - startTime,
+    };
+  }
+  
   // Generate embedding for input text
   const textEmbedding = await generateEmbedding(text);
   

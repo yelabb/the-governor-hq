@@ -175,6 +175,18 @@ import { initializeVectorDatabase } from '@the-governor-hq/constitution-core';
 await initializeVectorDatabase();
 ```
 
+**Async initialization is automatic:**
+
+When creating a validator with `useSemanticSimilarity: true`, initialization starts in the background. The first `validate()` call will automatically wait for initialization to complete:
+
+```typescript
+// Initialization starts in background
+const validator = createValidator({ useSemanticSimilarity: true });
+
+// This waits for initialization if needed
+const result = await validator.validate(text);
+```
+
 **Use regex as first pass:**
 
 Regex patterns catch most violations quickly. Semantic similarity only runs when enabled.

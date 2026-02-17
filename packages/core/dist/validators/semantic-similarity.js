@@ -104,6 +104,16 @@ function normalizeText(text) {
  */
 async function checkSemanticSimilarity(text, threshold = 0.75) {
     const startTime = Date.now();
+    // Check if vector database is initialized
+    const isInitialized = exports.FORBIDDEN_MEDICAL_CONCEPTS.every(c => c.embedding.length > 0);
+    if (!isInitialized) {
+        console.warn('⚠️  Semantic similarity database not initialized. Returning empty result.');
+        return {
+            violations: [],
+            maxSimilarity: 0,
+            latencyMs: Date.now() - startTime,
+        };
+    }
     // Generate embedding for input text
     const textEmbedding = await generateEmbedding(text);
     // Check against all forbidden concepts

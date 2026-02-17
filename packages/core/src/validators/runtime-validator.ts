@@ -30,6 +30,7 @@ import { initializeVectorDatabase } from './semantic-similarity';
  */
 export class RuntimeValidator {
   private config: Required<ValidatorConfig>;
+  private initializationPromise: Promise<void> | null = null;
   
   constructor(config: ValidatorConfig = {}) {
     // Set defaults
@@ -53,7 +54,7 @@ export class RuntimeValidator {
     
     // Initialize vector database if semantic similarity is enabled
     if (this.config.useSemanticSimilarity) {
-      this.initSemanticDatabase();
+      this.initializationPromise = this.initSemanticDatabase();
     }
   }
   
@@ -77,6 +78,11 @@ export class RuntimeValidator {
    */
   async validate(text: string): Promise<ValidationResult> {
     const startTime = Date.now();
+    
+    // Await initialization if semantic similarity is enabled
+    if (this.initializationPromise) {
+      await this.initializationPromise;
+    }
     
     // Step 1: Check for adversarial attacks (spacing/spelling)
     const adversarialViolations: Violation[] = [];
