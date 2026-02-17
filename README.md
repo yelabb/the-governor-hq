@@ -286,8 +286,8 @@ Install only the packages you need. Each includes all tools (validator, middlewa
 | Package | Status | Coverage | Install |
 |---------|--------|----------|--------|
 | [**🏃 Wearables**](https://www.npmjs.com/package/@the-governor-hq/constitution-wearables) | ✅ Production v3.3.1 | Sleep, HRV, heart rate, training load, recovery | `npm i -D @the-governor-hq/constitution-wearables` |
-| [**🧠 BCI**](https://www.npmjs.com/package/@the-governor-hq/constitution-bci) | 🟡 In Development | EEG, fNIRS, neurofeedback, meditation states | `npm i -D @the-governor-hq/constitution-bci` |
-| [**💭 Therapy**](https://www.npmjs.com/package/@the-governor-hq/constitution-therapy) | 🟡 In Development | Mood tracking, journaling, behavioral patterns | `npm i -D @the-governor-hq/constitution-therapy` |
+| [**🧠 BCI**](https://www.npmjs.com/package/@the-governor-hq/constitution-bci) | ✅ Production v3.3.1 | EEG, fNIRS, neurofeedback, meditation states | `npm i -D @the-governor-hq/constitution-bci` |
+| [**💭 Therapy**](https://www.npmjs.com/package/@the-governor-hq/constitution-therapy) | ✅ Production v3.3.1 | Mood tracking, journaling, behavioral patterns | `npm i -D @the-governor-hq/constitution-therapy` |
 | [**⚙️ Core**](https://www.npmjs.com/package/@the-governor-hq/constitution-core) | ✅ Production v3.3.1 | Universal safety rules + hardened matcher | Auto-installed with domains |
 
 **Supported Devices:** Garmin, Apple Watch, Whoop, Oura, Fitbit, Muse, OpenBCI, and more.
@@ -515,7 +515,7 @@ Fast enough for production APIs. Use regex-only for real-time, semantic for batc
 <details>
 <summary><b>Can I use this in production?</b></summary>
 
-Yes. The `wearables` and `core` packages are production-ready (v3.1.1). The `bci` and `therapy` packages are in development but usable. All packages have comprehensive safety tests including adversarial attack prevention.
+Yes. All packages (`wearables`, `core`, `bci`, `therapy`) are production-ready at v3.3.1 with comprehensive safety tests including adversarial attack prevention.
 
 </details>
 
@@ -679,8 +679,6 @@ The Governor HQ is production-ready for runtime validation and middleware use, b
 
 ### 🚧 In Development
 - 🚧 **LLM Judge** (v3.2.0) — Recently added, supports Groq/OpenAI/Anthropic (needs more real-world testing)
-- 🚧 **BCI Package** — Core constraints defined, MCP server in testing
-- 🚧 **Therapy Package** — Core constraints defined, MCP server in testing
 - 🚧 **Evaluation Framework** — Red-teaming tests exist, needs broader coverage
 
 ### 🔍 Known Limitations
@@ -775,8 +773,8 @@ This framework was developed with assistance from Claude Opus 4.5, Claude Sonnet
 
 **NPM Packages:**
 - [@the-governor-hq/constitution-wearables](https://www.npmjs.com/package/@the-governor-hq/constitution-wearables) — v3.3.1
-- [@the-governor-hq/constitution-bci](https://www.npmjs.com/package/@the-governor-hq/constitution-bci) — v3.3.1 (in development)
-- [@the-governor-hq/constitution-therapy](https://www.npmjs.com/package/@the-governor-hq/constitution-therapy) — v3.3.1 (in development)
+- [@the-governor-hq/constitution-bci](https://www.npmjs.com/package/@the-governor-hq/constitution-bci) — v3.3.1
+- [@the-governor-hq/constitution-therapy](https://www.npmjs.com/package/@the-governor-hq/constitution-therapy) — v3.3.1
 - [@the-governor-hq/constitution-core](https://www.npmjs.com/package/@the-governor-hq/constitution-core) — v3.3.1 ⭐ Hardened Pattern Matcher + LLM Judge
 
 **Documentation:**

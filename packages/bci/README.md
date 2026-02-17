@@ -4,17 +4,13 @@
 
 AI behavior guidance layer working with consumer BCI/neurotechnology data (EEG, fNIRS, neurofeedback devices). Prescriptive, executable constraints that prevent neurological claims, mental state interpretation, and ensure ethical boundaries.
 
-## 🚧 Status: In Development
-
-This package is under active development. Core infrastructure is being defined.
-
-## Quick Start (Coming Soon)
+## Quick Start
 
 ```bash
 npm install --save-dev @the-governor-hq/constitution-bci
 ```
 
-## What It Will Cover
+## What It Covers
 
 ### BCI Data Types
 - **EEG (Electroencephalography)** - Brain wave patterns

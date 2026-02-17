@@ -4,17 +4,13 @@
 
 AI behavior guidance layer working with therapy, mental health, and emotional wellbeing data. Prescriptive, executable constraints that prevent psychological diagnoses, therapeutic claims, and ensure ethical boundaries.
 
-## 🚧 Status: In Development
-
-This package is under active development. Core infrastructure is being defined.
-
-## Quick Start (Coming Soon)
+## Quick Start
 
 ```bash
 npm install --save-dev @the-governor-hq/constitution-therapy
 ```
 
-## What It Will Cover
+## What It Covers
 
 ### Therapy Data Types
 - **Mood tracking** - Daily emotional check-ins
