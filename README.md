@@ -32,10 +32,21 @@ The Governor HQ gives you **tools** that prevent AI from generating dangerous co
 
 **1. Install your domain package:**
 
+Pick the domain that matches your project:
+
+| Domain | Package | Install |
+|--------|---------|--------|
+| **🏃 Wearables** — HRV, sleep, heart rate, recovery | [`constitution-wearables`](https://www.npmjs.com/package/@the-governor-hq/constitution-wearables) | `npm i -D @the-governor-hq/constitution-wearables` |
+| **🧠 BCI** — EEG, fNIRS, neurofeedback, meditation | [`constitution-bci`](https://www.npmjs.com/package/@the-governor-hq/constitution-bci) | `npm i -D @the-governor-hq/constitution-bci` |
+| **💭 Therapy** — Mood tracking, journaling, behavioral patterns | [`constitution-therapy`](https://www.npmjs.com/package/@the-governor-hq/constitution-therapy) | `npm i -D @the-governor-hq/constitution-therapy` |
+| **⚙️ Core** — Universal safety rules (auto-installed with domains) | [`constitution-core`](https://www.npmjs.com/package/@the-governor-hq/constitution-core) | `npm i -D @the-governor-hq/constitution-core` |
+
 ```bash
-# For wearables/fitness data
+# Example: wearables/fitness data
 npm install --save-dev @the-governor-hq/constitution-wearables
 ```
+
+> **Need a domain we don't cover yet?** See [Creating a New Domain Package](#-creating-a-new-domain-package) below.
 
 **2. Auto-configuration happens instantly:**
 
@@ -273,12 +284,15 @@ await validator.validate("You have d i a g n o s e d insomnia");
 Install only the packages you need. Each includes all tools (validator, middleware, MCP, CLI, hardened matcher, etc.):
 
 | Package | Status | Coverage | Install |
-| **🏃 Wearables** | ✅ Production v3.1.1 | Sleep, HRV, heart rate, training load, recovery | `npm i -D @the-governor-hq/constitution-wearables` |
-| **🧠 BCI** | 🟡 In Development | EEG, fNIRS, neurofeedback, meditation states | `npm i -D @the-governor-hq/constitution-bci` |
-| **💭 Therapy** | 🟡 In Development | Mood tracking, journaling, behavioral patterns | `npm i -D @the-governor-hq/constitution-therapy` |
-| **⚙️ Core** | ✅ Production v3.1.1 | Universal safety rules + hardened matcher | Auto-installed with domains |
+|---------|--------|----------|--------|
+| [**🏃 Wearables**](https://www.npmjs.com/package/@the-governor-hq/constitution-wearables) | ✅ Production v3.3.1 | Sleep, HRV, heart rate, training load, recovery | `npm i -D @the-governor-hq/constitution-wearables` |
+| [**🧠 BCI**](https://www.npmjs.com/package/@the-governor-hq/constitution-bci) | 🟡 In Development | EEG, fNIRS, neurofeedback, meditation states | `npm i -D @the-governor-hq/constitution-bci` |
+| [**💭 Therapy**](https://www.npmjs.com/package/@the-governor-hq/constitution-therapy) | 🟡 In Development | Mood tracking, journaling, behavioral patterns | `npm i -D @the-governor-hq/constitution-therapy` |
+| [**⚙️ Core**](https://www.npmjs.com/package/@the-governor-hq/constitution-core) | ✅ Production v3.3.1 | Universal safety rules + hardened matcher | Auto-installed with domains |
 
 **Supported Devices:** Garmin, Apple Watch, Whoop, Oura, Fitbit, Muse, OpenBCI, and more.
+
+> **Want to add a new domain?** See [Creating a New Domain Package](#-creating-a-new-domain-package) or the full [Monorepo Guide](MONOREPO.md).
 
 [📖 Full Package Documentation](https://the-governor-hq.vercel.app/packages)
 
@@ -760,10 +774,10 @@ This framework was developed with assistance from Claude Opus 4.5, Claude Sonnet
 ## 🔗 Links & Resources
 
 **NPM Packages:**
-- [@the-governor-hq/constitution-wearables](https://www.npmjs.com/package/@the-governor-hq/constitution-wearables) — v3.1.1
-- [@the-governor-hq/constitution-bci](https://www.npmjs.com/package/@the-governor-hq/constitution-bci) — v3.1.1 (in development)
-- [@the-governor-hq/constitution-therapy](https://www.npmjs.com/package/@the-governor-hq/constitution-therapy) — v3.1.1 (in development)
-- [@the-governor-hq/constitution-core](https://www.npmjs.com/package/@the-governor-hq/constitution-core) — v3.1.1 ⭐ New: Hardened Pattern Matcher
+- [@the-governor-hq/constitution-wearables](https://www.npmjs.com/package/@the-governor-hq/constitution-wearables) — v3.3.1
+- [@the-governor-hq/constitution-bci](https://www.npmjs.com/package/@the-governor-hq/constitution-bci) — v3.3.1 (in development)
+- [@the-governor-hq/constitution-therapy](https://www.npmjs.com/package/@the-governor-hq/constitution-therapy) — v3.3.1 (in development)
+- [@the-governor-hq/constitution-core](https://www.npmjs.com/package/@the-governor-hq/constitution-core) — v3.3.1 ⭐ Hardened Pattern Matcher + LLM Judge
 
 **Documentation:**
 - [Main Documentation Site](https://the-governor-hq.vercel.app)
@@ -774,6 +788,72 @@ This framework was developed with assistance from Claude Opus 4.5, Claude Sonnet
 **Related:**
 - [Model Context Protocol (MCP)](https://modelcontextprotocol.io) — Official specification
 - [Nextra Documentation](https://nextra.site/) — Documentation framework
+
+---
+
+## 🧩 Creating a New Domain Package
+
+Want to add safety constraints for a new health data domain (e.g., nutrition, genomics, lab results)? Here's how:
+
+### Quick Steps
+
+```bash
+# 1. Create the package directory
+mkdir -p packages/your-domain
+cd packages/your-domain
+```
+
+### 2. Set up the required files
+
+| File | Purpose | Template |
+|------|---------|----------|
+| `package.json` | Package config, depends on `constitution-core` | [wearables/package.json](packages/wearables/package.json) |
+| `src/index.ts` | Domain-specific safety rules & exports | [bci/src/index.ts](packages/bci/src/index.ts) |
+| `src/install.ts` | Auto-config script (runs on `npm install`) | [wearables/src/install.ts](packages/wearables/src/install.ts) |
+| `src/mcp-server.ts` | MCP server exposing domain docs as resources | [wearables/src/mcp-server.ts](packages/wearables/src/mcp-server.ts) |
+| `tsconfig.json` | TypeScript config | [bci/tsconfig.json](packages/bci/tsconfig.json) |
+| `README.md` | Data types, safety rules, allowed/forbidden usage | [bci/README.md](packages/bci/README.md) |
+| `pages/` | Domain-specific documentation (MDX) | [bci/pages/](packages/bci/pages/) |
+
+### 3. Key `package.json` fields
+
+```json
+{
+  "name": "@the-governor-hq/constitution-your-domain",
+  "version": "3.3.1",
+  "dependencies": {
+    "@the-governor-hq/constitution-core": "3.3.1"
+  }
+}
+```
+
+> Use **exact** version numbers (no `^`) for the core dependency.
+
+### 4. Integrate and publish
+
+```bash
+# Build & test
+cd packages/your-domain && npm run build
+npm test
+
+# Bump ALL package versions together
+node scripts/version-lockstep.js minor
+
+# Build & publish everything
+npm run build && npm run publish:all
+
+# Tag the release
+git tag vX.Y.Z && git push --follow-tags
+```
+
+### Design Principles
+
+- **Domain isolation** — Each domain has unique data types and safety constraints
+- **Core inheritance** — All domains inherit universal safety rules from `constitution-core`
+- **User choice** — Users install only the domains they need
+- **Documentation first** — Every domain must explain its safety model
+
+For the complete step-by-step guide, see [MONOREPO.md — Adding a New Domain Package](MONOREPO.md#adding-a-new-domain-package).
 
 ---
 
