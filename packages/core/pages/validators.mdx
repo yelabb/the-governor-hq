@@ -19,7 +19,7 @@ Constitution Core provides runtime validators that check AI-generated content ag
 Primary validation uses regex patterns and keyword matching (under 10ms):
 
 ```typescript
-import { createValidator } from '@yelabb/constitution-core';
+import { createValidator } from '@the-governor-hq/constitution-core';
 
 const validator = createValidator({ domain: 'wearables' });
 
@@ -262,7 +262,7 @@ return result.output; // Safe to show
 Add domain-specific rules:
 
 ```typescript
-import { createValidator, type ValidationRule } from '@yelabb/constitution-core';
+import { createValidator, type ValidationRule } from '@the-governor-hq/constitution-core';
 
 const customRules: ValidationRule[] = [
   {
@@ -345,7 +345,7 @@ const result = await validator.validate(unsafeOutput);
 Test validators with edge cases:
 
 ```typescript
-import { createValidator } from '@yelabb/constitution-core';
+import { createValidator } from '@the-governor-hq/constitution-core';
 
 describe('Wearables Validator', () => {
   const validator = createValidator({ domain: 'wearables' });

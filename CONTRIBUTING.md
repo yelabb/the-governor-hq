@@ -45,7 +45,7 @@ The **5 hard rules** are absolute and cannot be modified:
 ## 📋 Before Contributing
 
 ### 1. Check Existing Issues
-- Search [open issues](https://github.com/yelabb/the-governor-hq/issues) to avoid duplicates
+- Search [open issues](https://github.com/the-governor-hq/constitution/issues) to avoid duplicates
 - Comment on issues you'd like to work on
 - Wait for maintainer approval before starting work
 
@@ -258,8 +258,8 @@ Contributors will be:
 
 ## ❓ Questions?
 
-- 💬 [GitHub Discussions](https://github.com/yelabb/the-governor-hq/discussions)
-- 🐛 [Issue Tracker](https://github.com/yelabb/the-governor-hq/issues)
+- 💬 [GitHub Discussions](https://github.com/the-governor-hq/constitution/discussions)
+- 🐛 [Issue Tracker](https://github.com/the-governor-hq/constitution/issues)
 
 ---
 

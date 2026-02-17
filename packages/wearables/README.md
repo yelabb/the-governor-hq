@@ -1,4 +1,4 @@
-# @yelabb/constitution-wearables
+# @the-governor-hq/constitution-wearables
 
 **AI Safety Constitution for Wearable/Smartwatch Data Projects**
 
@@ -7,7 +7,7 @@ AI behavior guidance layer working with consumer wearable health data (Garmin, A
 ## Quick Start
 
 ```bash
-npm install --save-dev @yelabb/constitution-wearables
+npm install --save-dev @the-governor-hq/constitution-wearables
 ```
 
 **That's it!** Auto-configuration creates:
@@ -56,14 +56,14 @@ npm run ai:context
 ## Documentation
 
 - 📖 [Full Documentation](https://the-governor-hq.vercel.app)
-- 🐙 [GitHub Repository](https://github.com/yelabb/the-governor-hq)
-- 💬 [Discussions](https://github.com/yelabb/the-governor-hq/discussions)
+- 🐙 [GitHub Repository](https://github.com/the-governor-hq/constitution)
+- 💬 [Discussions](https://github.com/the-governor-hq/constitution/discussions)
 
 ## Related Packages
 
-- [`@yelabb/constitution-core`](../core) - Core safety infrastructure (auto-installed)
-- [`@yelabb/constitution-bci`](../bci) - Brain-computer interface data
-- [`@yelabb/constitution-therapy`](../therapy) - Therapy and mental health data
+- [`@the-governor-hq/constitution-core`](../core) - Core safety infrastructure (auto-installed)
+- [`@the-governor-hq/constitution-bci`](../bci) - Brain-computer interface data
+- [`@the-governor-hq/constitution-therapy`](../therapy) - Therapy and mental health data
 
 ## License
 

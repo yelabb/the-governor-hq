@@ -10,7 +10,7 @@
 
 ```bash
 # Install as dev dependency
-npm install --save-dev @yelabb/constitution-wearables
+npm install --save-dev @the-governor-hq/constitution-wearables
 ```
 
 **That's it!** The post-install script automatically configures:
@@ -21,7 +21,7 @@ npm install --save-dev @yelabb/constitution-wearables
 
 Your AI coding assistant is now safety-aware for wearable data development.
 
-**Other domains:** See [constitution-bci](https://npmjs.com/package/@yelabb/constitution-bci), [constitution-therapy](https://npmjs.com/package/@yelabb/constitution-therapy), or [constitution-core](https://npmjs.com/package/@yelabb/constitution-core)
+**Other domains:** See [constitution-bci](https://npmjs.com/package/@the-governor-hq/constitution-bci), [constitution-therapy](https://npmjs.com/package/@the-governor-hq/constitution-therapy), or [constitution-core](https://npmjs.com/package/@the-governor-hq/constitution-core)
 
 ### Verify Installation
 
@@ -53,7 +53,7 @@ Or add to Claude Desktop config (`~/Library/Application Support/Claude/config.js
   "mcpServers": {
     "governor-hq-wearables": {
       "command": "node",
-      "args": ["./node_modules/@yelabb/constitution-wearables/mcp-server.js"]
+      "args": ["./node_modules/@the-governor-hq/constitution-wearables/mcp-server.js"]
     }
   }
 }
@@ -74,12 +74,12 @@ Clone or link this repository alongside your wearable data project:
 ```bash
 # Option A: Git submodule
 cd your-project/
-git submodule add https://github.com/yelabb/the-governor-hq.git docs/governor-hq
+git submodule add https://github.com/the-governor-hq/constitution.git docs/governor-hq
 git submodule update --init --recursive
 
 # Option B: Clone separately
 cd ~/projects/
-git clone https://github.com/yelabb/the-governor-hq.git governor-hq-docs
+git clone https://github.com/the-governor-hq/constitution.git governor-hq-docs
 ```
 
 ### Step 2: Configure AI Assistant Context

@@ -199,8 +199,8 @@ Contributions welcome! See [CONTRIBUTING.md](CONTRIBUTING.md)
 ## Support
 
 - 📖 [Full Documentation](https://the-governor-hq.vercel.app)
-- 💬 [GitHub Discussions](https://github.com/yelabb/the-governor-hq/discussions)
-- 🐛 [Issue Tracker](https://github.com/yelabb/the-governor-hq/issues)
+- 💬 [GitHub Discussions](https://github.com/the-governor-hq/constitution/discussions)
+- 🐛 [Issue Tracker](https://github.com/the-governor-hq/constitution/issues)
 
 ---
 

@@ -1,5 +1,5 @@
 {
-  "name": "@yelabb/constitution-therapy",
+  "name": "@the-governor-hq/constitution-therapy",
   "version": "3.0.5",
   "description": "AI Safety Constitution for Therapy and Mental Health Data Projects",
   "main": "dist/mcp-server.js",
@@ -36,7 +36,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/yelabb/the-governor-hq",
+    "url": "https://github.com/the-governor-hq/constitution",
     "directory": "packages/therapy"
   },
   "author": "Governor HQ",
@@ -45,10 +45,10 @@
     "node": ">=16.0.0"
   },
   "dependencies": {
-    "@yelabb/constitution-core": "^3.0.0"
+    "@the-governor-hq/constitution-core": "^3.0.0"
   },
   "peerDependencies": {
-    "@yelabb/constitution-core": "^3.0.0"
+    "@the-governor-hq/constitution-core": "^3.0.0"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",

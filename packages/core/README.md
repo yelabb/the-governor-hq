@@ -1,4 +1,4 @@
-# @yelabb/constitution-core
+# @the-governor-hq/constitution-core
 
 **Core AI Safety Infrastructure for Governor HQ Constitutional Framework**
 
@@ -12,7 +12,7 @@ This package contains shared safety rules, constraints, and utilities used acros
 Validates AI-generated content before showing it to users:
 
 ```typescript
-import { createValidator } from '@yelabb/constitution-core';
+import { createValidator } from '@the-governor-hq/constitution-core';
 
 const validator = createValidator({ domain: 'wearables', onViolation: 'block' });
 
@@ -61,9 +61,9 @@ return result.output; // Safe to show user
 This package is typically not installed directly. Instead, install a domain-specific constitution:
 
 ```bash
-npm install --save-dev @yelabb/constitution-wearables
-npm install --save-dev @yelabb/constitution-bci
-npm install --save-dev @yelabb/constitution-therapy
+npm install --save-dev @the-governor-hq/constitution-wearables
+npm install --save-dev @the-governor-hq/constitution-bci
+npm install --save-dev @the-governor-hq/constitution-therapy
 ```
 
 ### TypeScript Support
@@ -81,7 +81,7 @@ import {
   ValidationResult,
   validateLanguage,
   UNIVERSAL_RULES 
-} from '@yelabb/constitution-core';
+} from '@the-governor-hq/constitution-core';
 
 // Runtime Validator (fully typed)
 const validator = createValidator({
@@ -114,7 +114,7 @@ const {
   createValidator,
   validateLanguage,
   UNIVERSAL_RULES 
-} = require('@yelabb/constitution-core');
+} = require('@the-governor-hq/constitution-core');
 
 // Full autocomplete and IntelliSense support in VS Code
 const validator = createValidator({ 
@@ -202,7 +202,7 @@ All domain-specific constitutions inherit these foundations:
 ## Documentation
 
 - [Full Documentation](https://the-governor-hq.vercel.app)
-- [GitHub Repository](https://github.com/yelabb/the-governor-hq)
+- [GitHub Repository](https://github.com/the-governor-hq/constitution)
 
 ---
 

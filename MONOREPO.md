@@ -137,7 +137,7 @@ This allows:
 
 ```bash
 # Clone the repo
-git clone https://github.com/yelabb/the-governor-hq.git
+git clone https://github.com/the-governor-hq/constitution.git
 cd the-governor-hq/docs
 
 # Install all packages
@@ -213,7 +213,7 @@ cd packages/your-domain
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/yelabb/the-governor-hq",
+    "url": "https://github.com/the-governor-hq/constitution",
     "directory": "packages/your-domain"
   },
   "author": "Governor HQ",
@@ -300,8 +300,8 @@ Every domain must have comprehensive docs explaining its safety model.
 
 ## Questions?
 
-- 💬 [GitHub Discussions](https://github.com/yelabb/the-governor-hq/discussions)
-- 🐛 [Issue Tracker](https://github.com/yelabb/the-governor-hq/issues)
+- 💬 [GitHub Discussions](https://github.com/the-governor-hq/constitution/discussions)
+- 🐛 [Issue Tracker](https://github.com/the-governor-hq/constitution/issues)
 
 ## License
 

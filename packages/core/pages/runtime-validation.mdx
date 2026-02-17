@@ -37,7 +37,7 @@ const llmOutput = await callLLM(prompt);
 Runtime validation blocks unsafe content:
 
 ```typescript
-import { createValidator } from '@yelabb/constitution-core';
+import { createValidator } from '@the-governor-hq/constitution-core';
 
 const validator = createValidator({ domain: 'wearables' });
 
@@ -107,7 +107,7 @@ const result = await validator.validate(llmOutput);
 ### Install
 
 ```bash
-npm install @yelabb/constitution-core
+npm install @the-governor-hq/constitution-core
 ```
 
 ---
@@ -115,7 +115,7 @@ npm install @yelabb/constitution-core
 ### Create Validator
 
 ```typescript
-import { createValidator } from '@yelabb/constitution-core';
+import { createValidator } from '@the-governor-hq/constitution-core';
 
 const validator = createValidator({
   domain: 'wearables',      // or 'bci', 'therapy', 'core'
@@ -473,7 +473,7 @@ const validator = createValidator({
 ### Unit Tests
 
 ```typescript
-import { createValidator } from '@yelabb/constitution-core';
+import { createValidator } from '@the-governor-hq/constitution-core';
 
 describe('Runtime Validator', () => {
   const validator = createValidator({ domain: 'wearables' });

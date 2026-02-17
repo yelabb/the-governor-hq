@@ -1,4 +1,4 @@
-# @yelabb/constitution-bci
+# @the-governor-hq/constitution-bci
 
 **AI Safety Constitution for Brain-Computer Interface (BCI) Data Projects**
 
@@ -11,7 +11,7 @@ This package is under active development. Core infrastructure is being defined.
 ## Quick Start (Coming Soon)
 
 ```bash
-npm install --save-dev @yelabb/constitution-bci
+npm install --save-dev @the-governor-hq/constitution-bci
 ```
 
 ## What It Will Cover
@@ -83,13 +83,13 @@ Beyond the universal core rules, BCI systems must:
 ## Documentation
 
 - 📖 [Full Documentation](https://the-governor-hq.vercel.app)
-- 🐙 [GitHub Repository](https://github.com/yelabb/the-governor-hq)
+- 🐙 [GitHub Repository](https://github.com/the-governor-hq/constitution)
 
 ## Related Packages
 
-- [`@yelabb/constitution-core`](../core) - Core safety infrastructure (auto-installed)
-- [`@yelabb/constitution-wearables`](../wearables) - Smartwatch/fitness tracker data
-- [`@yelabb/constitution-therapy`](../therapy) - Therapy and mental health data
+- [`@the-governor-hq/constitution-core`](../core) - Core safety infrastructure (auto-installed)
+- [`@the-governor-hq/constitution-wearables`](../wearables) - Smartwatch/fitness tracker data
+- [`@the-governor-hq/constitution-therapy`](../therapy) - Therapy and mental health data
 
 ## License
 

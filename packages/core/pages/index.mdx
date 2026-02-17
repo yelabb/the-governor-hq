@@ -6,7 +6,7 @@
 
 ## What is Constitution Core?
 
-**@yelabb/constitution-core** is the foundational package that powers all Governor HQ domain-specific constitutions (wearables, BCI, therapy).
+**@the-governor-hq/constitution-core** is the foundational package that powers all Governor HQ domain-specific constitutions (wearables, BCI, therapy).
 
 It provides:
 - **Validators** — Enforce AI safety rules at authoring time
@@ -36,7 +36,7 @@ Each domain (wearables, BCI, therapy) has specific safety rules, but they all sh
 ## Package Structure
 
 ```
-@yelabb/constitution-core/
+@the-governor-hq/constitution-core/
 ├── src/
 │   ├── validators/          # Safety rule validators
 │   │   ├── medical-claims.ts
@@ -64,7 +64,7 @@ Each domain (wearables, BCI, therapy) has specific safety rules, but they all sh
 ### Using Validators
 
 ```typescript
-import { validateMedicalClaims } from '@yelabb/constitution-core';
+import { validateMedicalClaims } from '@the-governor-hq/constitution-core';
 
 const code = `
   return "This smartwatch can detect heart attacks before they happen.";
@@ -81,7 +81,7 @@ if (!result.valid) {
 ### Using Runtime Middleware
 
 ```typescript
-import { createResponseValidator } from '@yelabb/constitution-core';
+import { createResponseValidator } from '@the-governor-hq/constitution-core';
 
 const validator = createResponseValidator({
   enableMedicalClaimsCheck: true,
@@ -120,10 +120,10 @@ npx governor-validate --strict src/
 All Governor HQ domain packages depend on core:
 
 ```json
-// @yelabb/constitution-wearables/package.json
+// @the-governor-hq/constitution-wearables/package.json
 {
   "dependencies": {
-    "@yelabb/constitution-core": "^3.0.4"
+    "@the-governor-hq/constitution-core": "^3.0.4"
   }
 }
 ```
@@ -135,7 +135,7 @@ They extend core validators with domain-specific rules.
 You can use core directly:
 
 ```bash
-npm install @yelabb/constitution-core
+npm install @the-governor-hq/constitution-core
 ```
 
 Or use domain-specific packages (wearables, BCI, therapy) which include core automatically.
@@ -200,7 +200,7 @@ Uses GPT-4 as an LLM judge to test edge cases.
 Foundation for domain MCP servers:
 
 ```typescript
-import { BaseMCPServer } from '@yelabb/constitution-core';
+import { BaseMCPServer } from '@the-governor-hq/constitution-core';
 
 class WearablesMCPServer extends BaseMCPServer {
   getContext() {
@@ -221,12 +221,12 @@ class WearablesMCPServer extends BaseMCPServer {
 
 ```bash
 # Install core directly
-npm install @yelabb/constitution-core
+npm install @the-governor-hq/constitution-core
 
 # Or use a domain package (includes core)
-npm install @yelabb/constitution-wearables
-npm install @yelabb/constitution-bci
-npm install @yelabb/constitution-therapy
+npm install @the-governor-hq/constitution-wearables
+npm install @the-governor-hq/constitution-bci
+npm install @the-governor-hq/constitution-therapy
 ```
 
 ---
@@ -259,7 +259,7 @@ Updates:
 
 Core is the foundation of Governor HQ. Changes here affect all domain packages.
 
-See [CONTRIBUTING.md](https://github.com/yelabb/the-governor-hq/blob/main/CONTRIBUTING.md)
+See [CONTRIBUTING.md](https://github.com/the-governor-hq/constitution/blob/main/CONTRIBUTING.md)
 
 ---
 

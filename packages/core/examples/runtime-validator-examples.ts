@@ -3,7 +3,7 @@
  * Demonstrates the hard post-generation gate: LLM → Validator → Output
  */
 
-import { createValidator, type ValidationResult } from '@yelabb/constitution-core';
+import { createValidator, type ValidationResult } from '@the-governor-hq/constitution-core';
 
 // ============================================================================
 // Example 1: Basic Validation

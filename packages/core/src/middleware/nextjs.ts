@@ -152,7 +152,7 @@ export function withFieldValidation(
  * @example
  * ```typescript
  * import { NextResponse } from 'next/server';
- * import { validateResponse } from '@yelabb/constitution-core';
+ * import { validateResponse } from '@the-governor-hq/constitution-core';
  * 
  * export async function POST(request: Request) {
  *   const { message } = await request.json();

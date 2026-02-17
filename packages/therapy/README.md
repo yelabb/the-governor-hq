@@ -1,4 +1,4 @@
-# @yelabb/constitution-therapy
+# @the-governor-hq/constitution-therapy
 
 **AI Safety Constitution for Therapy and Mental Health Data Projects**
 
@@ -11,7 +11,7 @@ This package is under active development. Core infrastructure is being defined.
 ## Quick Start (Coming Soon)
 
 ```bash
-npm install --save-dev @yelabb/constitution-therapy
+npm install --save-dev @the-governor-hq/constitution-therapy
 ```
 
 ## What It Will Cover
@@ -95,13 +95,13 @@ All therapy-adjacent systems must:
 ## Documentation
 
 - 📖 [Full Documentation](https://the-governor-hq.vercel.app)
-- 🐙 [GitHub Repository](https://github.com/yelabb/the-governor-hq)
+- 🐙 [GitHub Repository](https://github.com/the-governor-hq/constitution)
 
 ## Related Packages
 
-- [`@yelabb/constitution-core`](../core) - Core safety infrastructure (auto-installed)
-- [`@yelabb/constitution-wearables`](../wearables) - Smartwatch/fitness tracker data
-- [`@yelabb/constitution-bci`](../bci) - Brain-computer interface data
+- [`@the-governor-hq/constitution-core`](../core) - Core safety infrastructure (auto-installed)
+- [`@the-governor-hq/constitution-wearables`](../wearables) - Smartwatch/fitness tracker data
+- [`@the-governor-hq/constitution-bci`](../bci) - Brain-computer interface data
 
 ## Important Note
 

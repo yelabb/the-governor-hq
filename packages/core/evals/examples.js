@@ -149,7 +149,7 @@ function example5_TestFrameworkIntegration() {
   
   console.log(`
 // jest.config.js or mocha test file
-const { judgeResponse } = require('@yelabb/constitution-core/evals/llm-judge');
+const { judgeResponse } = require('@the-governor-hq/constitution-core/evals/llm-judge');
 
 describe('Governor HQ Safety Tests', () => {
   let judgeClient;

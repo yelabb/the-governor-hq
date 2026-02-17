@@ -8,12 +8,12 @@
 
 **The Governor HQ** is now a **monorepo** with domain-specific packages. Choose the package that matches your project:
 
-- **`@yelabb/constitution-wearables`** - For wearables/smartwatch data projects
-- **`@yelabb/constitution-bci`** - For brain-computer interface projects  
-- **`@yelabb/constitution-therapy`** - For therapy/mental health data projects
-- **`@yelabb/constitution-core`** - Core utilities for custom implementations
+- **`@the-governor-hq/constitution-wearables`** - For wearables/smartwatch data projects
+- **`@the-governor-hq/constitution-bci`** - For brain-computer interface projects  
+- **`@the-governor-hq/constitution-therapy`** - For therapy/mental health data projects
+- **`@the-governor-hq/constitution-core`** - Core utilities for custom implementations
 
-> **Migrating from old package?** If you previously used `@yelabb/constitution`, uninstall it and choose the domain-specific package above.
+> **Migrating from old package?** If you previously used `@the-governor-hq/constitution`, uninstall it and choose the domain-specific package above.
 
 ---
 
@@ -23,16 +23,16 @@
 
 ```bash
 # For Wearables/Smartwatch Projects
-npm install --save-dev @yelabb/constitution-wearables
+npm install --save-dev @the-governor-hq/constitution-wearables
 
 # For Brain-Computer Interface (BCI) Projects
-npm install --save-dev @yelabb/constitution-bci
+npm install --save-dev @the-governor-hq/constitution-bci
 
 # For Therapy/Mental Health Data Projects
-npm install --save-dev @yelabb/constitution-therapy
+npm install --save-dev @the-governor-hq/constitution-therapy
 
 # Core utilities only (for custom implementations)
-npm install --save-dev @yelabb/constitution-core
+npm install --save-dev @the-governor-hq/constitution-core
 ```
 
 **That's it!** The post-install script automatically configures:
@@ -73,7 +73,7 @@ Or add to Claude Desktop config (`~/Library/Application Support/Claude/config.js
   "mcpServers": {
     "governor-hq-wearables": {
       "command": "node",
-      "args": ["./node_modules/@yelabb/constitution-wearables/mcp-server.js"]
+      "args": ["./node_modules/@the-governor-hq/constitution-wearables/mcp-server.js"]
     }
   }
 }
@@ -96,12 +96,12 @@ Clone or link this repository alongside your wearable data project:
 ```bash
 # Option A: Git submodule
 cd your-project/
-git submodule add https://github.com/yelabb/the-governor-hq.git docs/governor-hq
+git submodule add https://github.com/the-governor-hq/constitution.git docs/governor-hq
 git submodule update --init --recursive
 
 # Option B: Clone separately
 cd ~/projects/
-git clone https://github.com/yelabb/the-governor-hq.git governor-hq-docs
+git clone https://github.com/the-governor-hq/constitution.git governor-hq-docs
 ```
 
 ### Step 2: Configure AI Assistant Context

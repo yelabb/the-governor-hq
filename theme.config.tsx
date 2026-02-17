@@ -4,9 +4,9 @@ import { DocsThemeConfig } from 'nextra-theme-docs'
 const config: DocsThemeConfig = {
   logo: <strong>The Governor HQ System Principles</strong>,
   project: {
-    link: 'https://github.com/yelabb/the-governor-hq',
+    link: 'https://github.com/the-governor-hq/constitution',
   },
-  docsRepositoryBase: 'https://github.com/yelabb/docs/tree/main/the-governor-hq',
+  docsRepositoryBase: 'https://github.com/the-governor-hq/constitution',
   footer: {
     text: '© The Governor HQ System Principles ',
   },

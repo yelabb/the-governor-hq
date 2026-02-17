@@ -79,4 +79,4 @@ Found a way to break the safety rules? Help us improve:
 3. Submit a PR with the test case
 4. Watch the safety rating improve!
 
-**Contact:** [Open an issue](https://github.com/yelabb/the-governor-hq/issues)
+**Contact:** [Open an issue](https://github.com/the-governor-hq/constitution/issues)

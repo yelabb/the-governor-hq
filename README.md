@@ -6,13 +6,13 @@
 ### AI Safety Constitutions for Health & Biometric Data Projects
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
-[![GitHub stars](https://img.shields.io/github/stars/yelabb/the-governor-hq?style=flat-square)](https://github.com/yelabb/the-governor-hq/stargazers)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://github.com/yelabb/the-governor-hq/pulls)
+[![GitHub stars](https://img.shields.io/github/stars/the-governor-hq/constitution?style=flat-square)](https://github.com/the-governor-hq/constitution/stargazers)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://github.com/the-governor-hq/constitution/pulls)
 [![MCP Compatible](https://img.shields.io/badge/MCP-Compatible-purple?style=flat-square)](https://modelcontextprotocol.io)
 
 **AI behavior guidance layer working with health data. Prescriptive, executable constraints that prevent medical claims and ensure ethical boundaries across multiple domains.**
 
-[Quick Start](#-quick-start) • [Documentation](https://the-governor-hq.vercel.app) • [Examples](EXAMPLE.md) • [Report Issue](https://github.com/yelabb/the-governor-hq/issues)
+[Quick Start](#-quick-start) • [Documentation](https://the-governor-hq.vercel.app) • [Examples](EXAMPLE.md) • [Report Issue](https://github.com/the-governor-hq/constitution/issues)
 ## 🚧 Status: In Development
 </div>
 
@@ -46,11 +46,11 @@ AI coding assistants (Copilot, Claude, ChatGPT) can generate dangerous code when
 Install only the domains you need:
 
 ### 🏃 Wearables & Fitness Trackers
-[![npm](https://img.shields.io/npm/v/@yelabb/constitution-wearables?label=%40yelabb%2Fconstitution-wearables)](https://www.npmjs.com/package/@yelabb/constitution-wearables)
+[![npm](https://img.shields.io/npm/v/@the-governor-hq/constitution-wearables?label=%40yelabb%2Fconstitution-wearables)](https://www.npmjs.com/package/@the-governor-hq/constitution-wearables)
 
 For smartwatch and fitness tracker data (Garmin, Apple Watch, Whoop, Oura, Fitbit):
 ```bash
-npm install --save-dev @yelabb/constitution-wearables
+npm install --save-dev @the-governor-hq/constitution-wearables
 ```
 
 **Covers:** Sleep, HRV, heart rate, activity, training load, recovery, readiness scores
@@ -60,11 +60,11 @@ npm install --save-dev @yelabb/constitution-wearables
 ---
 
 ### 🧠 Brain-Computer Interfaces (BCI)
-[![npm](https://img.shields.io/npm/v/@yelabb/constitution-bci?label=%40yelabb%2Fconstitution-bci)](https://www.npmjs.com/package/@yelabb/constitution-bci) ![Status](https://img.shields.io/badge/status-in%20development-orange)
+[![npm](https://img.shields.io/npm/v/@the-governor-hq/constitution-bci?label=%40yelabb%2Fconstitution-bci)](https://www.npmjs.com/package/@the-governor-hq/constitution-bci) ![Status](https://img.shields.io/badge/status-in%20development-orange)
 
 For EEG, fNIRS, and neurofeedback data:
 ```bash
-npm install --save-dev @yelabb/constitution-bci
+npm install --save-dev @the-governor-hq/constitution-bci
 ```
 
 **Covers:** Brain waves, focus detection, meditation states, neurofeedback, sleep stages
@@ -74,11 +74,11 @@ npm install --save-dev @yelabb/constitution-bci
 ---
 
 ### 💭 Therapy & Mental Health
-[![npm](https://img.shields.io/npm/v/@yelabb/constitution-therapy?label=%40yelabb%2Fconstitution-therapy)](https://www.npmjs.com/package/@yelabb/constitution-therapy) ![Status](https://img.shields.io/badge/status-in%20development-orange)
+[![npm](https://img.shields.io/npm/v/@the-governor-hq/constitution-therapy?label=%40yelabb%2Fconstitution-therapy)](https://www.npmjs.com/package/@the-governor-hq/constitution-therapy) ![Status](https://img.shields.io/badge/status-in%20development-orange)
 
 For therapy and emotional wellbeing data:
 ```bash
-npm install --save-dev @yelabb/constitution-therapy
+npm install --save-dev @the-governor-hq/constitution-therapy
 ```
 
 **Covers:** Mood tracking, journaling, symptom logging, behavioral patterns
@@ -88,11 +88,11 @@ npm install --save-dev @yelabb/constitution-therapy
 ---
 
 ### ⚙️ Core Infrastructure
-[![npm](https://img.shields.io/npm/v/@yelabb/constitution-core?label=%40yelabb%2Fconstitution-core)](https://www.npmjs.com/package/@yelabb/constitution-core)
+[![npm](https://img.shields.io/npm/v/@the-governor-hq/constitution-core?label=%40yelabb%2Fconstitution-core)](https://www.npmjs.com/package/@the-governor-hq/constitution-core)
 
 Shared safety rules and utilities (auto-installed with domain packages):
 ```bash
-npm install --save-dev @yelabb/constitution-core
+npm install --save-dev @the-governor-hq/constitution-core
 ```
 
 **Contains:** Universal safety rules, language constraints, validation utilities
@@ -107,7 +107,7 @@ npm install --save-dev @yelabb/constitution-core
 
 ```bash
 # For wearables/fitness data
-npm install --save-dev @yelabb/constitution-wearables
+npm install --save-dev @the-governor-hq/constitution-wearables
 ```
 
 **2. Your AI is now context-aware!**
@@ -198,13 +198,13 @@ npm run eval
 the-governor-hq/
 ├── packages/
 │   ├── core/              # Shared safety infrastructure
-│   │   └── @yelabb/constitution-core
+│   │   └── @the-governor-hq/constitution-core
 │   ├── wearables/         # Smartwatch/fitness tracker constitution
-│   │   └── @yelabb/constitution-wearables
+│   │   └── @the-governor-hq/constitution-wearables
 │   ├── bci/               # Brain-computer interface constitution
-│   │   └── @yelabb/constitution-bci
+│   │   └── @the-governor-hq/constitution-bci
 │   └── therapy/           # Therapy/mental health constitution
-│       └── @yelabb/constitution-therapy
+│       └── @the-governor-hq/constitution-therapy
 ├── pages/                 # Documentation site (Nextra)
 └── README.md              # This file
 ```
@@ -504,15 +504,15 @@ All code was tested and validated by human developers.
 ## 🔗 Links
 
 ### Packages
-- 📦 **Wearables:** [@yelabb/constitution-wearables](https://www.npmjs.com/package/@yelabb/constitution-wearables)
-- 📦 **BCI:** [@yelabb/constitution-bci](https://www.npmjs.com/package/@yelabb/constitution-bci) (in development)
-- 📦 **Therapy:** [@yelabb/constitution-therapy](https://www.npmjs.com/package/@yelabb/constitution-therapy) (in development)
-- 📦 **Core:** [@yelabb/constitution-core](https://www.npmjs.com/package/@yelabb/constitution-core)
+- 📦 **Wearables:** [@the-governor-hq/constitution-wearables](https://www.npmjs.com/package/@the-governor-hq/constitution-wearables)
+- 📦 **BCI:** [@the-governor-hq/constitution-bci](https://www.npmjs.com/package/@the-governor-hq/constitution-bci) (in development)
+- 📦 **Therapy:** [@the-governor-hq/constitution-therapy](https://www.npmjs.com/package/@the-governor-hq/constitution-therapy) (in development)
+- 📦 **Core:** [@the-governor-hq/constitution-core](https://www.npmjs.com/package/@the-governor-hq/constitution-core)
 
 ### Resources
 - 📖 **Documentation:** [https://the-governor-hq.vercel.app](https://the-governor-hq.vercel.app)
-- 💬 **Discussions:** [GitHub Discussions](https://github.com/yelabb/the-governor-hq/discussions)
-- 🐛 **Issues:** [Issue Tracker](https://github.com/yelabb/the-governor-hq/issues)
+- 💬 **Discussions:** [GitHub Discussions](https://github.com/the-governor-hq/constitution/discussions)
+- 🐛 **Issues:** [Issue Tracker](https://github.com/the-governor-hq/constitution/issues)
 - 🌐 **MCP Protocol:** [Model Context Protocol](https://modelcontextprotocol.io)
 
 ---

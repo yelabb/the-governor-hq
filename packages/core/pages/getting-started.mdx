@@ -12,13 +12,13 @@ Most developers should use a domain-specific package, which includes core automa
 
 ```bash
 # For wearable/fitness apps
-npm install @yelabb/constitution-wearables
+npm install @the-governor-hq/constitution-wearables
 
 # For BCI/neurofeedback apps  
-npm install @yelabb/constitution-bci
+npm install @the-governor-hq/constitution-bci
 
 # For therapy/mental health apps
-npm install @yelabb/constitution-therapy
+npm install @the-governor-hq/constitution-therapy
 ```
 
 Each domain package extends core with specialized rules.
@@ -30,7 +30,7 @@ Each domain package extends core with specialized rules.
 For custom domains or direct validator access:
 
 ```bash
-npm install @yelabb/constitution-core
+npm install @the-governor-hq/constitution-core
 ```
 
 ---
@@ -65,7 +65,7 @@ npx governor-validate --strict src/
 ### Validate Code Programmatically
 
 ```typescript
-import { validateMedicalClaims } from '@yelabb/constitution-core';
+import { validateMedicalClaims } from '@the-governor-hq/constitution-core';
 
 const code = `
   function getHealthInsight(hrv: number) {
@@ -90,7 +90,7 @@ if (!result.valid) {
 Validate AI responses before showing to users:
 
 ```typescript
-import { createResponseValidator } from '@yelabb/constitution-core';
+import { createResponseValidator } from '@the-governor-hq/constitution-core';
 
 const validator = createResponseValidator({
   enableMedicalClaimsCheck: true,
@@ -249,7 +249,7 @@ jobs:
 Install core in your TypeScript project:
 
 ```bash
-npm install @yelabb/constitution-core
+npm install @the-governor-hq/constitution-core
 npm install -D @types/node
 ```
 
@@ -300,7 +300,7 @@ npm --version   # Should be 7+
 npx governor-validate src/
 
 # Or install globally
-npm install -g @yelabb/constitution-core
+npm install -g @the-governor-hq/constitution-core
 governor-validate src/
 ```
 
@@ -334,7 +334,7 @@ Or file an issue: we want to know about false negatives!
 ## Summary
 
 **To get started:**
-1. Install: `npm install @yelabb/constitution-core`
+1. Install: `npm install @the-governor-hq/constitution-core`
 2. Validate: `npx governor-validate src/`
 3. Integrate: Add to CI/CD and pre-commit hooks
 4. Runtime: Use middleware for AI responses

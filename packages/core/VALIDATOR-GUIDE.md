@@ -13,7 +13,7 @@ The Runtime Validator provides a hard safety gate that blocks unsafe AI-generate
 ### Basic Usage
 
 ```typescript
-import { createValidator } from '@yelabb/constitution-core';
+import { createValidator } from '@the-governor-hq/constitution-core';
 
 const validator = createValidator({
   domain: 'wearables',
@@ -36,10 +36,10 @@ return result.output; // Safe to show user
 
 ## 📦 Installation
 
-Already included with `@yelabb/constitution-core`:
+Already included with `@the-governor-hq/constitution-core`:
 
 ```bash
-npm install @yelabb/constitution-core
+npm install @the-governor-hq/constitution-core
 ```
 
 ---
@@ -88,7 +88,7 @@ interface ValidatorConfig {
 
 ```typescript
 import express from 'express';
-import { governorValidator } from '@yelabb/constitution-core';
+import { governorValidator } from '@the-governor-hq/constitution-core';
 
 const app = express();
 
@@ -106,7 +106,7 @@ app.post('/api/chat',
 ### 2. Next.js Pages API
 
 ```typescript
-import { withGovernor } from '@yelabb/constitution-core';
+import { withGovernor } from '@the-governor-hq/constitution-core';
 
 export default withGovernor(
   async (req, res) => {
@@ -125,7 +125,7 @@ export default withGovernor(
 
 ```typescript
 import { NextResponse } from 'next/server';
-import { validateResponse } from '@yelabb/constitution-core';
+import { validateResponse } from '@the-governor-hq/constitution-core';
 
 export async function POST(request: Request) {
   const { message } = await request.json();
@@ -141,7 +141,7 @@ export async function POST(request: Request) {
 ### 4. Standalone Validation
 
 ```typescript
-import { createValidator } from '@yelabb/constitution-core';
+import { createValidator } from '@the-governor-hq/constitution-core';
 
 const validator = createValidator({
   domain: 'wearables',
@@ -176,7 +176,7 @@ async function processAIResponse(text: string) {
 ### 5. Streaming Responses (Advanced)
 
 ```typescript
-import { createValidator } from '@yelabb/constitution-core';
+import { createValidator } from '@the-governor-hq/constitution-core';
 
 const validator = createValidator({ domain: 'wearables' });
 
@@ -223,7 +223,7 @@ async function streamWithValidation(prompt: string) {
 ## 🎨 Custom Validation Rules
 
 ```typescript
-import { createValidator, ValidationRule, SeverityLevel } from '@yelabb/constitution-core';
+import { createValidator, ValidationRule, SeverityLevel } from '@the-governor-hq/constitution-core';
 
 const customRules: ValidationRule[] = [
   {
@@ -346,7 +346,7 @@ Use pattern matching by default, enable LLM judge in production for critical app
 ## 🧪 Testing
 
 ```typescript
-import { createValidator } from '@yelabb/constitution-core';
+import { createValidator } from '@the-governor-hq/constitution-core';
 
 describe('AI Response Validation', () => {
   const validator = createValidator({
@@ -439,7 +439,7 @@ console.log('Validation result:', {
 ### Manual Sanitization
 
 ```typescript
-import { attemptSanitization } from '@yelabb/constitution-core';
+import { attemptSanitization } from '@the-governor-hq/constitution-core';
 
 const unsafe = "You should take magnesium";
 const sanitized = attemptSanitization(unsafe);
@@ -449,7 +449,7 @@ const sanitized = attemptSanitization(unsafe);
 ### Pattern Checking Only
 
 ```typescript
-import { runPatternChecks } from '@yelabb/constitution-core';
+import { runPatternChecks } from '@the-governor-hq/constitution-core';
 
 const patterns = runPatternChecks(text);
 console.log({
@@ -462,7 +462,7 @@ console.log({
 ### Domain Disclaimers
 
 ```typescript
-import { getDisclaimer } from '@yelabb/constitution-core';
+import { getDisclaimer } from '@the-governor-hq/constitution-core';
 
 const disclaimer = getDisclaimer('wearables');
 // "Based on your personal wearable data trends. Not medical advice..."

@@ -1,4 +1,4 @@
-# Changelog - @yelabb/constitution-core
+# Changelog - @the-governor-hq/constitution-core
 
 All notable changes to the core package will be documented in this file.
 
@@ -42,17 +42,17 @@ All notable changes to the core package will be documented in this file.
 - ✅ **Improved developer experience** - other packages consuming this library get full autocomplete and type checking
 
 #### Migration Guide
-For packages depending on `@yelabb/constitution-core`:
+For packages depending on `@the-governor-hq/constitution-core`:
 - No breaking changes to the runtime API
 - Type definitions are enhanced but backward compatible
 - Update imports if using TypeScript (no changes needed for JavaScript)
 
 ```typescript
 // Before (still works)
-const { BaseGovernorMCPServer } = require('@yelabb/constitution-core');
+const { BaseGovernorMCPServer } = require('@the-governor-hq/constitution-core');
 
 // After (TypeScript - recommended)
-import { BaseGovernorMCPServer, ServerConfig } from '@yelabb/constitution-core';
+import { BaseGovernorMCPServer, ServerConfig } from '@the-governor-hq/constitution-core';
 ```
 
 ## [1.0.0] - 2026-02-15

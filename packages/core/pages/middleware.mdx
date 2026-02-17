@@ -18,7 +18,7 @@ Middleware automatically validates AI responses before they reach users, providi
 
 ```typescript
 import express from 'express';
-import { governorValidator } from '@yelabb/constitution-core';
+import { governorValidator } from '@the-governor-hq/constitution-core';
 
 const app = express();
 
@@ -98,7 +98,7 @@ app.post('/api/chat',
 ```typescript
 // app/api/chat/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { createValidator } from '@yelabb/constitution-core';
+import { createValidator } from '@the-governor-hq/constitution-core';
 
 const validator = createValidator({
   domain: 'wearables',
@@ -132,7 +132,7 @@ export async function POST(request: NextRequest) {
 ```typescript
 // pages/api/chat.ts
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { createValidator } from '@yelabb/constitution-core';
+import { createValidator } from '@the-governor-hq/constitution-core';
 
 const validator = createValidator({ domain: 'wearables' });
 
@@ -162,7 +162,7 @@ export default async function handler(
 
 ```typescript
 import { TRPCError } from '@trpc/server';
-import { createValidator } from '@yelabb/constitution-core';
+import { createValidator } from '@the-governor-hq/constitution-core';
 
 const validator = createValidator({ domain: 'wearables' });
 
@@ -191,7 +191,7 @@ export const protectedProcedure = t.procedure.use(governorMiddleware);
 ## GraphQL Middleware
 
 ```typescript
-import { createValidator } from '@yelabb/constitution-core';
+import { createValidator } from '@the-governor-hq/constitution-core';
 
 const validator = createValidator({ domain: 'wearables' });
 
@@ -219,7 +219,7 @@ const resolvers = {
 For Server-Sent Events or streaming AI responses:
 
 ```typescript
-import { createValidator } from '@yelabb/constitution-core';
+import { createValidator } from '@the-governor-hq/constitution-core';
 
 const validator = createValidator({ domain: 'wearables' });
 
@@ -267,7 +267,7 @@ app.post('/api/stream', async (req, res) => {
 
 ```typescript
 import { Server } from 'socket.io';
-import { createValidator } from '@yelabb/constitution-core';
+import { createValidator } from '@the-governor-hq/constitution-core';
 
 const io = new Server(server);
 const validator = createValidator({ domain: 'wearables' });
@@ -294,7 +294,7 @@ io.on('connection', (socket) => {
 Create reusable middleware for your stack:
 
 ```typescript
-import { createValidator, type ValidatorConfig } from '@yelabb/constitution-core';
+import { createValidator, type ValidatorConfig } from '@the-governor-hq/constitution-core';
 
 export function createGovernorMiddleware(config: ValidatorConfig) {
   const validator = createValidator(config);
@@ -365,7 +365,7 @@ app.use((err, req, res, next) => {
 ### Caching
 
 ```typescript
-import { createValidator } from '@yelabb/constitution-core';
+import { createValidator } from '@the-governor-hq/constitution-core';
 import NodeCache from 'node-cache';
 
 const cache = new NodeCache({ stdTTL: 3600 });
@@ -412,7 +412,7 @@ app.post('/api/chat', async (req, res) => {
 ## Monitoring & Metrics
 
 ```typescript
-import { createValidator } from '@yelabb/constitution-core';
+import { createValidator } from '@the-governor-hq/constitution-core';
 
 const validator = createValidator({
   domain: 'wearables',

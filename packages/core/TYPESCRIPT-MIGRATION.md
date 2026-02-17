@@ -2,7 +2,7 @@
 
 ## Overview
 
-The `@yelabb/constitution-core` package has been migrated from JavaScript with manually maintained `.d.ts` files to native TypeScript. This provides better type safety, eliminates sync issues between implementation and types, and improves the developer experience.
+The `@the-governor-hq/constitution-core` package has been migrated from JavaScript with manually maintained `.d.ts` files to native TypeScript. This provides better type safety, eliminates sync issues between implementation and types, and improves the developer experience.
 
 ## What Changed
 
@@ -48,12 +48,12 @@ If you're consuming this package from JavaScript or TypeScript, **no changes are
 
 ```javascript
 // Still works exactly the same
-const { BaseGovernorMCPServer } = require('@yelabb/constitution-core');
+const { BaseGovernorMCPServer } = require('@the-governor-hq/constitution-core');
 ```
 
 ```typescript
 // Still works, but now with better types
-import { BaseGovernorMCPServer } from '@yelabb/constitution-core';
+import { BaseGovernorMCPServer } from '@the-governor-hq/constitution-core';
 ```
 
 ### Enhanced Type Safety
@@ -125,7 +125,7 @@ npm publish
 
 ### Recommended: Migrate to TypeScript
 
-For packages like `@yelabb/constitution-wearables`, `@yelabb/constitution-bci`, etc., consider migrating to TypeScript as well for consistency.
+For packages like `@the-governor-hq/constitution-wearables`, `@the-governor-hq/constitution-bci`, etc., consider migrating to TypeScript as well for consistency.
 
 **Benefits:**
 - Type-safe configuration
@@ -147,7 +147,7 @@ For packages like `@yelabb/constitution-wearables`, `@yelabb/constitution-bci`, 
 
 3. **Add type annotations**
    ```typescript
-   import { BaseGovernorMCPServer, ServerConfig } from '@yelabb/constitution-core';
+   import { BaseGovernorMCPServer, ServerConfig } from '@the-governor-hq/constitution-core';
    
    const config: ServerConfig = {
      // Now fully type-checked!

@@ -52,7 +52,7 @@ You are working on a project that processes brain-computer interface (BCI) data 
 
 ## BEFORE GENERATING CODE:
 
-- Check node_modules/@yelabb/constitution-bci for full documentation
+- Check node_modules/@the-governor-hq/constitution-bci for full documentation
 - Compare to personal baseline (not clinical norms)
 - Use suggestive language ("might", "consider", "could")
 - Include privacy protections for neural data
@@ -88,7 +88,7 @@ function updateVSCodeSettings(targetDir: string): boolean {
   }
 
   const instructionRef = {
-    text: 'Follow the Governor HQ Constitutional Framework in node_modules/@yelabb/constitution-bci for BCI/neural data safety constraints. Never generate code that makes mental health diagnoses or emotion reading claims.',
+    text: 'Follow the Governor HQ Constitutional Framework in node_modules/@the-governor-hq/constitution-bci for BCI/neural data safety constraints. Never generate code that makes mental health diagnoses or emotion reading claims.',
   };
 
   const hasInstruction = settings[
@@ -124,7 +124,7 @@ function install(): void {
     log('Next steps:', 'bright');
     log('  1. Restart your AI coding assistant', 'blue');
     log('  2. Check .cursorrules for active constraints', 'blue');
-    log('  3. Read docs: node_modules/@yelabb/constitution-bci/', 'blue');
+    log('  3. Read docs: node_modules/@the-governor-hq/constitution-bci/', 'blue');
     log('');
   } catch (error) {
     log(`\n❌ Installation failed: ${(error as Error).message}\n`, 'red');

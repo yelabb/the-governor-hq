@@ -1,5 +1,5 @@
 /**
- * @yelabb/constitution-core
+ * @the-governor-hq/constitution-core
  * 
  * Core AI Safety Infrastructure for Governor HQ Constitutional Framework
  * Shared rules and utilities for all domain-specific constitutions
