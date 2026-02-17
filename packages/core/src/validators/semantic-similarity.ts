@@ -251,17 +251,18 @@ export async function checkSemanticSimilarity(
   for (const concept of FORBIDDEN_MEDICAL_CONCEPTS) {
     const similarity = cosineSimilarity(textEmbedding, concept.embedding);
     
-    // Use severity-based thresholds:
-    // - critical: 0.75 (strict - medical diagnoses, treatments)
-    // - high: 0.77 (medium - medical scope, alarming language)
-    // - medium: 0.78 (lenient - prescriptive commands, need clear intent)
+    // Use severity-based thresholds — lower threshold = easier to detect.
+    // Math.min ensures we never raise the bar above the caller's default threshold:
+    // - critical: cap at 0.75 (most sensitive — diagnoses, treatments)
+    // - high: cap at 0.77 (slightly less sensitive — scope violations, alarming language)
+    // - medium: cap at 0.78 (use caller default if already below — prescriptive commands)
     let severityThreshold = threshold;
     if (concept.severity === 'critical') {
       severityThreshold = Math.min(threshold, 0.75);
     } else if (concept.severity === 'high') {
-      severityThreshold = Math.max(threshold, 0.77);
+      severityThreshold = Math.min(threshold, 0.77);
     } else if (concept.severity === 'medium') {
-      severityThreshold = Math.max(threshold, 0.78);
+      severityThreshold = Math.min(threshold, 0.78);
     }
     
     if (similarity >= severityThreshold) {
