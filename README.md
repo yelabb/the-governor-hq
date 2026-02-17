@@ -555,7 +555,7 @@ No. Only **recommendation features** require baselines. Data visualization, stat
 The **5 Hard Rules are non-negotiable** for liability protection. However, you can:
 - Adjust language patterns for your brand voice
 - Add domain-specific constraints
-- Customize violation actions (block, sanitize, warn, log)
+- Customize violation actions (block, warn, log)
 - Fork and modify for internal use
 
 </details>

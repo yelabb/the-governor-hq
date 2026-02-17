@@ -60,39 +60,29 @@ function generateSafeAlternative(_originalText, patterns, domain = 'core', custo
     return DOMAIN_SAFE_MESSAGES[domain];
 }
 /**
- * Attempt to sanitize text by replacing unsafe patterns
- * This is a best-effort approach - blocking is safer
+ * @deprecated This function is deprecated and will be removed in a future version.
+ *
+ * Naive auto-sanitization is unsafe because it semantically alters medical/safety advice.
+ * Programmatically replacing words like "must" → "might" or removing medical terms
+ * can create misleading or dangerous content.
+ *
+ * **Why this is deprecated:**
+ * - Auto-replacing medical terms can create false sense of safety
+ * - Semantic changes to health advice can be dangerous
+ * - Better to block unsafe content than to modify it programmatically
+ *
+ * **Migration path:**
+ * - Use `onViolation: 'block'` instead of `onViolation: 'sanitize'`
+ * - Use `generateSafeAlternative()` to provide explicit safe alternatives
+ * - Let humans review and rewrite unsafe content, not automated replacements
+ *
+ * This function now returns a blocked message instead of attempting sanitization.
  */
-function attemptSanitization(text) {
-    let sanitized = text;
-    // Replace prescriptive language with suggestive alternatives
-    const prescriptiveReplacements = {
-        'must': 'might',
-        'should': 'could',
-        'need to': 'may want to',
-        'have to': 'might consider',
-        'required to': 'could consider',
-        'you must': 'you might',
-        'you should': 'you could',
-        'you need': 'you may want',
-    };
-    for (const [prescriptive, suggestive] of Object.entries(prescriptiveReplacements)) {
-        const regex = new RegExp(`\\b${prescriptive}\\b`, 'gi');
-        sanitized = sanitized.replace(regex, suggestive);
-    }
-    // Remove medical claims (conservative - may break sentences)
-    const medicalClaims = [
-        /\bdiagnos(e|ed|is|ing)\b/gi,
-        /\byou (have|likely have|may have) (a|an|the)\b/gi,
-    ];
-    for (const pattern of medicalClaims) {
-        sanitized = sanitized.replace(pattern, '[removed]');
-    }
-    // Clean up artifacts
-    sanitized = sanitized.replace(/\s+\[removed\]\s+/g, ' ');
-    sanitized = sanitized.replace(/\s{2,}/g, ' ');
-    sanitized = sanitized.trim();
-    return sanitized;
+function attemptSanitization(_text) {
+    console.warn('⚠️  attemptSanitization() is deprecated. Auto-sanitizing medical/safety content is unsafe. ' +
+        'Use onViolation: "block" instead. See docs for migration guide.');
+    // Return blocked message instead of attempting to "fix" the content
+    return '⚠️ Content blocked by safety validator. Automatic sanitization is deprecated as it is unsafe to programmatically alter medical/safety advice.';
 }
 /**
  * Create a user-facing explanation of why content was blocked

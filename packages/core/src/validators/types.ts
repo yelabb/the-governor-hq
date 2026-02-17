@@ -4,6 +4,17 @@
  */
 
 export type Domain = 'core' | 'wearables' | 'bci' | 'therapy';
+
+/**
+ * Action to take when violations are detected
+ * 
+ * @deprecated 'sanitize' is deprecated as of v3.3.0 - use 'block' instead
+ * 
+ * - 'block': Replace unsafe content with safe alternative (recommended)
+ * - 'warn': Log warning but allow content (development)
+ * - 'log': Silent logging only (analytics)
+ * - 'sanitize': DEPRECATED - now behaves like 'block'
+ */
 export type ViolationAction = 'block' | 'warn' | 'log' | 'sanitize';
 export type SeverityLevel = 'critical' | 'high' | 'medium' | 'low';
 export type LLMProvider = 'groq' | 'openai' | 'anthropic';

@@ -186,7 +186,7 @@ testAsync('governorValidator allows safe content', async () => {
   }
 });
 
-testAsync('governorValidator sanitizes in sanitize mode', async () => {
+testAsync('governorValidator blocks in deprecated sanitize mode', async () => {
   const middleware = governorValidator({ 
     domain: 'wearables', 
     onViolation: 'sanitize' 
@@ -201,8 +201,9 @@ testAsync('governorValidator sanitizes in sanitize mode', async () => {
   res.json({ message: 'You should exercise more.' });
   
   const data = res.getJsonData();
-  if (data.message === 'You should exercise more.') {
-    throw new Error('Sanitize mode should modify prescriptive language');
+  // Sanitize mode is deprecated - should block content
+  if (!data.message.includes('⚠️ Content blocked')) {
+    throw new Error('Sanitize mode should block content (deprecated behavior)');
   }
 });
 
@@ -225,8 +226,9 @@ testAsync('validateField validates specific field', async () => {
   });
   
   const data = res.getJsonData();
-  if (data.data.message === 'You have depression.') {
-    throw new Error('Field validation should sanitize unsafe content');
+  // Sanitize mode is deprecated - should block content
+  if (!data.data.message.includes('⚠️ Content blocked')) {
+    throw new Error('Field validation should block unsafe content (sanitize deprecated)');
   }
 });
 
@@ -401,7 +403,11 @@ testAsync('Express middleware works with multiple fields', async () => {
   });
   
   const data = res.getJsonData();
-  // Should sanitize "should" but keep safe content
+  // Sanitize mode is deprecated - unsafe content is blocked
+  if (!data.message.includes('⚠️ Content blocked')) {
+    throw new Error('Unsafe field should be blocked (sanitize mode deprecated)');
+  }
+  // Safe content should pass through
   if (data.content !== 'Your HRV is normal.') {
     throw new Error('Safe field modified incorrectly');
   }

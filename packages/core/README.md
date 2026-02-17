@@ -35,9 +35,11 @@ return result.output;
 - ⚡ <10ms validation speed (regex mode)
 - 🛡️ **Hardened Pattern Matcher** with semantic similarity (prevents spacing/spelling attacks)
 - 🔍 Optional LLM judge for edge cases
-- 🎯 Multiple violation actions (block, sanitize, warn, log)
+- 🎯 Multiple violation actions (block, warn, log) - **sanitize deprecated**
 - 📊 Built-in confidence scoring
 - 🔧 Custom rules support
+
+> **⚠️ Note**: `onViolation: 'sanitize'` is deprecated as of v3.3.0. Use `'block'` instead. Auto-sanitizing medical advice is unsafe.
 
 [📖 Full Validator Guide →](https://the-governor-hq.vercel.app/packages/core/runtime-validation)
 [🛡️ Hardened Pattern Matcher →](https://the-governor-hq.vercel.app/packages/core/hardened-pattern-matcher)
@@ -67,7 +69,7 @@ export default withGovernor(
     const aiResponse = await callLLM(req.body.message);
     res.json({ message: aiResponse });
   },
-  { domain: 'therapy', onViolation: 'sanitize' }
+  { domain: 'therapy', onViolation: 'block' } // Use 'block' instead of deprecated 'sanitize'
 );
 ```
 

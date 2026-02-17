@@ -160,13 +160,13 @@ test('Block mode returns blocked message', () => {
   }
 });
 
-test('Sanitize mode attempts to fix content', () => {
+test('Sanitize mode is deprecated - blocks content instead', () => {
   const validator = createValidator({ domain: 'wearables', onViolation: 'sanitize' });
   const result = validator.validateSync('You should exercise more.');
   
-  // Should attempt to replace "should" with "could"
-  if (result.output === 'You should exercise more.') {
-    throw new Error('Expected sanitized output');
+  // Sanitize mode is deprecated - should block content like 'block' mode
+  if (!result.output.includes('⚠️ Content blocked')) {
+    throw new Error('Expected blocked output (sanitize mode is deprecated)');
   }
 });
 

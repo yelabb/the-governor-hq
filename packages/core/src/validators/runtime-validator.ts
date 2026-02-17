@@ -20,7 +20,6 @@ import {
 } from './pattern-matcher';
 import {
   generateSafeAlternative,
-  attemptSanitization,
   createViolationExplanation,
 } from './sanitizer';
 import { initializeVectorDatabase } from './semantic-similarity';
@@ -270,7 +269,14 @@ export class RuntimeValidator {
         return `⚠️ Content blocked by safety validator. Reason: ${createViolationExplanation(patterns)}`;
       
       case 'sanitize':
-        return attemptSanitization(text);
+        // DEPRECATED: Sanitize mode is deprecated as of v3.3.0
+        // Auto-sanitization is unsafe - blocks content instead
+        console.warn(
+          '⚠️  onViolation: "sanitize" is deprecated as of v3.3.0. ' +
+          'Auto-sanitizing medical/safety content is unsafe. Use "block" instead.'
+        );
+        // Fall through to block behavior
+        return `⚠️ Content blocked by safety validator. Reason: ${createViolationExplanation(patterns)} (Note: sanitize mode is deprecated, blocking instead)`;
       
       case 'warn':
         console.warn(`⚠️ Safety violation detected: ${createViolationExplanation(patterns)}`);

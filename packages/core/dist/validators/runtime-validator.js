@@ -230,7 +230,12 @@ class RuntimeValidator {
             case 'block':
                 return `⚠️ Content blocked by safety validator. Reason: ${(0, sanitizer_1.createViolationExplanation)(patterns)}`;
             case 'sanitize':
-                return (0, sanitizer_1.attemptSanitization)(text);
+                // DEPRECATED: Sanitize mode is deprecated as of v3.3.0
+                // Auto-sanitization is unsafe - blocks content instead
+                console.warn('⚠️  onViolation: "sanitize" is deprecated as of v3.3.0. ' +
+                    'Auto-sanitizing medical/safety content is unsafe. Use "block" instead.');
+                // Fall through to block behavior
+                return `⚠️ Content blocked by safety validator. Reason: ${(0, sanitizer_1.createViolationExplanation)(patterns)} (Note: sanitize mode is deprecated, blocking instead)`;
             case 'warn':
                 console.warn(`⚠️ Safety violation detected: ${(0, sanitizer_1.createViolationExplanation)(patterns)}`);
                 console.warn(`Original text: ${text.substring(0, 100)}...`);

@@ -130,7 +130,7 @@ node quick-test.js  # Requires GROQ_API_KEY
 - ✓ Allowing safe suggestive language
 - ✓ Allowing baseline comparisons
 - ✓ Allowing healthcare professional references
-- ✓ Violation action modes (block, sanitize, warn, log)
+- ✓ Violation action modes (block, warn, log) - sanitize is deprecated
 - ✓ Custom rules execution
 - ✓ Metadata generation
 - ✓ Performance (<100ms validation)
@@ -169,7 +169,7 @@ test('Validator blocks medical claims', () => {
 - ✓ Validator attachment to request object
 - ✓ Auto-validation of responses
 - ✓ Blocking unsafe content in block mode
-- ✓ Sanitizing content in sanitize mode
+- ✓ Deprecated sanitize mode (now blocks instead of sanitizing)
 - ✓ Field-specific validation
 - ✓ Error handling
 - ✓ Response structure preservation

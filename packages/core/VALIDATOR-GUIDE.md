@@ -76,9 +76,11 @@ interface ValidatorConfig {
 ### Actions Explained
 
 - **`block`** - Replace unsafe content with safe alternative (production)
-- **`sanitize`** - Attempt to fix unsafe patterns automatically
+- **`sanitize`** - ⚠️ **DEPRECATED** - Previously attempted to fix unsafe patterns automatically. Now blocks content. Use `block` instead.
 - **`warn`** - Log warning but allow content (development)
 - **`log`** - Silent logging only (analytics)
+
+> **⚠️ Deprecation Notice**: The `sanitize` mode is deprecated as of v3.3.0. Programmatic sanitization of medical/safety advice is unsafe because it semantically alters content in unpredictable ways. Use `block` mode instead.
 
 ---
 
@@ -436,14 +438,31 @@ console.log('Validation result:', {
 
 ## 📚 Advanced Topics
 
-### Manual Sanitization
+### ⚠️ Manual Sanitization (DEPRECATED)
+
+> **Deprecation Notice**: `attemptSanitization` is deprecated as of v3.3.0 and will be removed in v4.0.0.
+> 
+> **Why?** Auto-replacing words in medical/safety advice is dangerous:
+> - Changing "must" → "might" can alter critical safety information
+> - Removing medical terms can create misleading content
+> - Better to block unsafe content than to programmatically modify it
+> 
+> **Migration:** Use `onViolation: 'block'` or `generateSafeAlternative()` instead.
 
 ```typescript
+// ❌ DEPRECATED - Do not use
 import { attemptSanitization } from '@the-governor-hq/constitution-core';
 
 const unsafe = "You should take magnesium";
 const sanitized = attemptSanitization(unsafe);
-// Result: "You could take magnesium"
+// Now returns: "⚠️ Content blocked by safety validator..."
+
+// ✅ RECOMMENDED - Use safe alternatives instead
+import { generateSafeAlternative, runPatternChecks } from '@the-governor-hq/constitution-core';
+
+const patterns = runPatternChecks(unsafe);
+const safeResponse = generateSafeAlternative(unsafe, patterns, 'core');
+// Returns a safe alternative message
 ```
 
 ### Pattern Checking Only

@@ -248,19 +248,23 @@ console.log(result1);
 }
 ```
 
-### Example 2: Sanitize Mode
+### Example 2: Block Mode (Recommended)
+
+> **⚠️ Note**: Sanitize mode is deprecated. Use block mode instead.
 
 ```typescript
 const validator = createValidator({
   domain: 'therapy',
-  onViolation: 'sanitize'
+  onViolation: 'block'
 });
 
 const text = 'You should exercise more to treat your depression.';
 const result = validator.validateSync(text);
 
 console.log(result.output);
-// Output: "You could exercise more. Discuss mood patterns with a mental health professional."
+// Output: "⚠️ Content blocked by safety validator. Reason: contains medical claims..."
+console.log(result.safeAlternative);
+// Output: "I can help track patterns, but for mental health support or concerns, please reach out to a mental health professional."
 ```
 
 ### Example 3: Custom Rules
@@ -349,7 +353,7 @@ export default withGovernor(
     
     res.json({ response: aiResponse });
   },
-  { domain: 'therapy', onViolation: 'sanitize' }
+  { domain: 'therapy', onViolation: 'block' }
 );
 ```
 
@@ -533,17 +537,12 @@ import { createValidator } from '@the-governor-hq/constitution-core';
 
 const text = 'You should take vitamin D for better sleep.';
 
-// Test 1: Block mode
+// Test 1: Block mode (recommended, replaces deprecated sanitize mode)
 const blockValidator = createValidator({ onViolation: 'block' });
 console.log('BLOCK MODE:', blockValidator.validateSync(text).output);
 // Output: "⚠️ Content blocked by safety validator..."
 
-// Test 2: Sanitize mode
-const sanitizeValidator = createValidator({ onViolation: 'sanitize' });
-console.log('SANITIZE MODE:', sanitizeValidator.validateSync(text).output);
-// Output: "You could consider your sleep patterns. Discuss with a healthcare professional."
-
-// Test 3: Warn mode (allows but logs)
+// Test 2: Warn mode (allows but logs)
 const warnValidator = createValidator({ onViolation: 'warn' });
 console.log('WARN MODE:', warnValidator.validateSync(text).output);
 // Console: ⚠️ Safety violation detected: Supplement recommendation
