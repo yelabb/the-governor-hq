@@ -2,8 +2,8 @@
 
 **Current Status:** v3.3.2 — **Active Development / Beta**
 
-# Multi-layered safety system for AI-assisted development with wearable, BCI, and therapy data.  
-### Runtime validation • Hardened pattern matcher • API middleware • MCP servers • CLI tools
+# A constraint-enforcement framework for AI-assisted development with physiological, neural, and behavioral data.
+### Runtime validation · Hardened pattern matching · API middleware · MCP servers · CLI tools
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/the-governor-hq/constitution?style=flat-square)](https://github.com/the-governor-hq/constitution/stargazers)
@@ -12,23 +12,23 @@
 
 
 
-[Quick Start](#-quick-start-in-60-seconds) • [What You Get](#-what-you-get) • [Examples](#-see-it-in-action) • [Documentation](https://the-governor-hq.vercel.app)
+[Quick Start](#-quick-start-in-60-seconds) · [Architecture](#-what-you-get) · [Examples](#-see-it-in-action) · [Documentation](https://the-governor-hq.vercel.app)
 
 </div>
 
 ---
 
-## 👋 Welcome
+## Overview
 
-Building a health app with AI assistance? **You're in the right place.**
+Large language models used in code-generation workflows have no intrinsic understanding of medical liability, regulatory scope, or the difference between a wellness observation and a clinical claim. When these models operate on biometric inputs — heart-rate variability, EEG power spectra, sleep architecture, mood-tracking logs — the probability of generating output that crosses into medical advice is non-trivial.
 
-The Governor HQ gives you **tools** that prevent AI from generating dangerous code when working with biometric data — medical claims, supplement recommendations, disease diagnoses, or treatment advice.
+The Governor HQ is a **constraint-enforcement framework** that interposes safety boundaries at multiple points in the AI-assisted development pipeline: IDE context injection, runtime output validation, API middleware, and CI/CD gating. It enforces a strict separation between **consumer wellness observations** (permissible) and **clinical assertions** (prohibited) — including medical diagnoses, supplement dosing, disease naming, and treatment protocols.
 
-> **🆕 v3.1.1 Released:** New **Hardened Pattern Matcher** with semantic similarity prevents adversarial attacks (spacing, special chars, misspellings) that bypass traditional regex. [Learn more](#️-hardened-pattern-matcher-new-in-v311)
+> **v3.1.1:** Introduced the **Hardened Pattern Matcher** with text-normalization and semantic-similarity scoring to detect adversarial obfuscation (character spacing, special-character insertion, misspellings) that bypass traditional regular expressions. [Details below](#️-hardened-pattern-matcher-new-in-v311).
 
 ---
 
-## 🚀 Quick Start in 60 Seconds
+## Quick Start
 
 **1. Install your domain package:**
 
@@ -83,11 +83,11 @@ That's it. Your development environment is now protected.
 
 ---
 
-## 🛠️ What You Get
+## Components
 
-The Governor HQ is a **multi-layered defense system** with 7 delivery mechanisms:
+The framework provides seven enforcement mechanisms across the development lifecycle:
 
-### 1. 🔒 Runtime Validator
+### 1. Runtime Validator
 
 Post-generation safety gate that validates AI output before it reaches users:
 
@@ -117,7 +117,7 @@ if (result.hasCriticalViolations) {
 - 🎯 Multiple violation actions
 - 📊 TypeScript support with full type safety
 
-### 2. 🛡️ API Middleware
+### 2. API Middleware
 
 Protect your Express or Next.js endpoints automatically:
 
@@ -142,7 +142,7 @@ export async function POST(request) {
 }
 ```
 
-### 3. 🤖 MCP Servers
+### 3. MCP Servers
 
 Model Context Protocol integration for Claude Desktop, ChatGPT, and any MCP-compatible AI:
 
@@ -154,7 +154,7 @@ npm run ai:context
 
 Automatically provides safety context to external AI tools.
 
-### 4. ⚡ CLI Validator
+### 4. CLI Validator
 
 Command-line validation for CI/CD pipelines:
 
@@ -168,7 +168,7 @@ npx governor-validate "src/**/*.{ts,tsx}"
 # Exit code 1 if violations found (perfect for CI)
 ```
 
-### 5. 🎯 IDE Integration
+### 5. IDE Integration
 
 Auto-configures Cursor and VS Code on installation:
 
@@ -176,7 +176,7 @@ Auto-configures Cursor and VS Code on installation:
 - **`.vscode/settings.json`** — GitHub Copilot instructions
 - Real-time guidance as you code
 
-### 6. 🧪 Evaluation System
+### 6. Evaluation System
 
 Red-teaming framework with 28+ adversarial test cases:
 
@@ -191,7 +191,7 @@ npm run eval
 
 LLM-as-judge methodology proves constraints work in production.
 
-### 7. 📚 Comprehensive Documentation
+### 7. Comprehensive Documentation
 
 - Hard rules (5 absolute boundaries)
 - Language rules (tone, phrasing, framing)
@@ -201,7 +201,7 @@ LLM-as-judge methodology proves constraints work in production.
 
 ---
 
-## 📊 See It In Action
+## Concrete Examples
 
 ### Before Governor HQ ❌
 
@@ -279,7 +279,7 @@ await validator.validate("You have d i a g n o s e d insomnia");
 
 ---
 
-## 📦 Choose Your Domain
+## Domain Packages
 
 Install only the packages you need. Each includes all tools (validator, middleware, MCP, CLI, hardened matcher, etc.):
 
@@ -298,63 +298,68 @@ Install only the packages you need. Each includes all tools (validator, middlewa
 
 ---
 
-## 🎯 The 5 Hard Rules
+## The 5 Hard Rules (Invariant Constraints)
 
-These absolute boundaries apply to ALL generated code and cannot be violated:
+These constraints are architectural invariants — they are enforced at every layer and are not configurable. They define the boundary between consumer wellness (permissible) and clinical advice (prohibited).
 
-| Rule | Never Allow | Always Require |
-|------|-------------|----------------|
-| 1️⃣ **No Medical Claims** | Diagnoses, medical authority, clinical assessments | Personal baseline comparisons only |
-| 2️⃣ **No Supplements** | Vitamins, minerals, dosages, medications | Behavioral suggestions only |
-| 3️⃣ **No Disease Names** | Medical conditions, disorders, illnesses | Neutral descriptions of patterns |
-| 4️⃣ **No Treatment Language** | "Treat", "cure", "prevent", "heal" | "Consider", "might", "when ready" |
-| 5️⃣ **No Commanding** | "You should", "you must", "you need to" | Optional framing with disclaimers |
+| # | Constraint | Prohibited Output | Required Alternative |
+|---|-----------|-------------------|---------------------|
+| 1 | **No Medical Claims** | Diagnoses, clinical assessments, medical-authority assertions | Intra-individual baseline comparisons only |
+| 2 | **No Supplement/Pharmacological Advice** | Vitamin, mineral, or medication dosing; supplement recommendations | Behavioral suggestions only (sleep timing, activity pacing, rest) |
+| 3 | **No Disease Naming** | Named medical conditions, disorders, ICD/DSM classifications | Neutral pattern descriptions ("lower than your recent norm") |
+| 4 | **No Treatment Language** | "Treat", "cure", "prevent", "heal", "remedy" | Hedged framing: "consider", "might", "when you're ready" |
+| 5 | **No Imperative Directives** | "You should", "you must", "you need to" | Optional framing with explicit disclaimers |
 
-**Enforcement:** Runtime validator + Middleware + MCP context + Pattern matching + Eval system
+**Enforcement:** All five layers (IDE context → MCP → Runtime Validator → Middleware → CI/CD gate)
 
-[📖 Complete Hard Rules Documentation](https://the-governor-hq.vercel.app/constraints/hard-rules)
+[Full constraint specification](https://the-governor-hq.vercel.app/constraints/hard-rules)
 
 ---
 
-## 🏗️ How It Works
+## Architecture: Threat Model and Enforcement Layers
 
-The Governor HQ uses a **defense-in-depth** approach with multiple safety layers:
+The framework applies a **defense-in-depth** strategy across five sequential enforcement layers. Each layer operates independently; a violation that escapes layer $n$ is subject to detection at layers $n+1 \ldots 5$. This redundancy is deliberate — no single classifier, pattern library, or heuristic is assumed to be complete.
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│  Layer 1: IDE Integration (.cursorrules + VS Code)         │
-│  → Guides AI during code generation                         │
+│  Layer 1: IDE Context Injection (.cursorrules + VS Code)   │
+│  → Pre-generation: constrains the model's prompt context    │
+│  → Latency: 0ms (static file, loaded at IDE startup)       │
 └─────────────────────────────────────────────────────────────┘
                               ↓
 ┌─────────────────────────────────────────────────────────────┐
-│  Layer 2: MCP Servers (Claude Desktop, ChatGPT)            │
-│  → Injects safety context into external AI tools            │
+│  Layer 2: MCP Servers (Claude Desktop, ChatGPT, etc.)      │
+│  → Pre-generation: injects domain-specific safety rules     │
+│  → Latency: 0ms (served via stdio on tool invocation)       │
 └─────────────────────────────────────────────────────────────┘
                               ↓
 ┌─────────────────────────────────────────────────────────────┐
 │  Layer 3: Runtime Validator (Post-generation)              │
-│  → Regex patterns (<10ms) + Semantic similarity (100-300ms) │
-│  → Prevents adversarial attacks (spacing/misspellings)      │
+│  → Pattern matching: <10ms (regex) / 100–300ms (semantic)   │
+│  → Text normalization + adversarial-obfuscation detection   │
+│  → Optional LLM judge for ambiguous cases (~500–2000ms)     │
 └─────────────────────────────────────────────────────────────┘
                               ↓
 ┌─────────────────────────────────────────────────────────────┐
-│  Layer 4: API Middleware (Production)                      │
-│  → Protects endpoints from unsafe responses                 │
+│  Layer 4: API Middleware (Production endpoints)            │
+│  → Request/response interception for Express / Next.js      │
+│  → Blocks or sanitizes unsafe payloads before client recv   │
 └─────────────────────────────────────────────────────────────┘
                               ↓
 ┌─────────────────────────────────────────────────────────────┐
-│  Layer 5: CLI Validator (CI/CD)                            │
-│  → Prevents unsafe code from reaching production            │
+│  Layer 5: CLI Validator (CI/CD pipeline gate)              │
+│  → Static analysis of source files pre-deployment           │
+│  → Non-zero exit code blocks merge / deploy                 │
 └─────────────────────────────────────────────────────────────┘
 ```
 
-**No single point of failure.** If one layer misses a violation, others catch it.
+**Failure assumption:** Each layer is designed under the assumption that the preceding layer may fail. No single enforcement point is considered sufficient.
 
 ---
 
-## 🧪 Testing
+## Testing Methodology
 
-Three-layer testing strategy ensures safety guarantees:
+Three-layer testing strategy validates constraint enforcement:
 
 ### 1. Unit Tests
 
@@ -422,7 +427,7 @@ npm run validate:safety
 
 ---
 
-## 📖 Documentation
+## Documentation
 
 **For Developers:**
 - [Getting Started Guide](https://the-governor-hq.vercel.app/getting-started) — Installation and setup
@@ -445,7 +450,7 @@ npm run validate:safety
 
 ---
 
-## 🎯 Use Cases
+## Application Domains
 
 | Industry | Application | Safety Benefit |
 |----------|-------------|----------------|
@@ -458,7 +463,7 @@ npm run validate:safety
 
 ---
 
-## 🏗️ Monorepo Structure
+## Repository Structure
 
 ```
 the-governor-hq/
@@ -480,7 +485,7 @@ the-governor-hq/
 
 ---
 
-## ❓ Frequently Asked Questions
+## Frequently Asked Questions
 
 <details>
 <summary><b>Do I need to modify my existing codebase?</b></summary>
@@ -593,7 +598,7 @@ Yes. MIT License. Use freely in commercial or personal projects. Attribution app
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 We welcome contributions that strengthen safety constraints or improve developer experience.
 
@@ -612,7 +617,7 @@ We welcome contributions that strengthen safety constraints or improve developer
 
 ---
 
-## 🛠️ Development
+## Development
 
 **Run documentation site locally:**
 
@@ -650,25 +655,44 @@ Built with [Nextra](https://nextra.site/) for documentation.
 
 ---
 
-## 📊 Core Principles
+## Design Principles
 
-| Principle | What It Means |
-|-----------|---------------|
-| **Personal Baseline** | Learn each user's normal over 30-90 days, not population averages |
-| **Deviation-Driven** | Only activate when significant change from baseline detected |
-| **Behavioral Guidance** | Suggest timing, rest, activity — never medical interventions |
-| **Non-Medical** | Zero tolerance for diagnoses, supplements, treatment protocols |
-| **Optional Framing** | "Consider", "might", "when ready" — never "must" or "should" |
-| **Safety First** | Default to NO when uncertain about safety boundaries |
-| **Multi-Layered** | No single point of failure — 5+ independent safety mechanisms |
+The framework is grounded in established safety-engineering methodology — defense in depth, fail-safe defaults, and the principle of least authority — applied to the specific problem of constraining generative-AI output in health-adjacent domains.
+
+| Principle | Rationale |
+|-----------|----------|
+| **Intra-individual Baseline** | Population norms introduce ecological-fallacy risk. All comparisons are made against the user's own 30–90 day rolling baseline ($\mu \pm 2\sigma$). |
+| **Deviation-Gated Activation** | Output generation triggers only when a metric deviates significantly from the user's baseline distribution, reducing noise and false alarms. |
+| **Behavioral — Not Clinical** | Suggestions are limited to modifiable behaviors (sleep timing, activity pacing, rest). Pharmacological, supplement, and diagnostic content is prohibited. |
+| **Non-Medical Scope** | The system operates strictly within consumer-wellness boundaries. Zero tolerance for diagnoses, supplement dosing, or treatment protocols. |
+| **Hedged Framing** | All user-facing language uses epistemic hedging ("consider", "might", "when you're ready") rather than imperative forms ("must", "should", "need to"). |
+| **Fail-Safe Default** | When classification confidence is insufficient to determine safety, the system defaults to suppression rather than emission. |
+| **Defense in Depth** | Five independent enforcement layers ensure no single point of failure. A violation missed at one layer is caught by subsequent layers. |
 
 ---
 
-## ⚠️ Known Limitations & Beta Status
+## On Safety: This Framework Is Not a Guarantee
 
-**Current Status:** v3.2.0 — **Active Development / Beta**
+**This framework does not make your application "safe."** It reduces the probability of a specific class of failure — AI-generated content that crosses from consumer wellness into clinical territory — but it cannot eliminate that probability entirely.
 
-The Governor HQ is production-ready for runtime validation and middleware use, but some features are in active development. Here's what you should know:
+Safety and usability exist in tension. A system that blocks every output containing the word "sleep" would be maximally safe and completely useless. A system that permits everything would offer perfect usability and zero protection. The Governor HQ operates in the space between these extremes, and that positioning involves deliberate trade-offs:
+
+- **False positives degrade UX.** Aggressive pattern matching flags benign phrases (e.g., "take a break" matched against supplement-prescription patterns). We tune thresholds to minimize these, which necessarily means some edge cases will pass through.
+- **False negatives create risk.** Novel phrasings, languages other than English, or creative rewording by the LLM can evade detection. The hardened pattern matcher and optional LLM judge reduce — but do not eliminate — this surface.
+- **Latency has a cost.** Semantic similarity analysis (100–300ms) and LLM-as-judge validation (500–2000ms) improve detection accuracy but add latency that may be unacceptable for real-time applications. Most deployments will use the fast regex layer alone and accept its lower recall.
+- **The constraint set is not exhaustive.** The five hard rules and 200+ patterns reflect our current understanding of the risk surface. New categories of harmful output may emerge as LLMs evolve, and this framework will lag behind until rules are updated.
+
+In practice, this means: **The Governor HQ is a risk-reduction tool, not a compliance certification.** It is one component of a responsible development process that should also include human review, domain-expert consultation, regulatory awareness, and user testing. If your application requires clinical-grade safety guarantees, those guarantees must come from validated medical-device processes — not from a pattern-matching library.
+
+We believe transparency about these limitations is more valuable than false confidence.
+
+---
+
+## Known Limitations & Current Status
+
+**Current Status:** v3.3.2 — **Active Development / Beta**
+
+The framework is production-ready for runtime validation and middleware use, but certain components are in active development:
 
 ### ✅ Production Ready
 - ✅ **Runtime Validator** — Fully tested, hardened pattern matching with semantic similarity
@@ -740,7 +764,7 @@ We're actively seeking feedback on:
 
 ---
 
-## 🧠 For AI Assistants
+## For AI Assistants
 
 When integrated into your context, consult these resources:
 
@@ -756,7 +780,7 @@ When integrated into your context, consult these resources:
 
 ---
 
-## 📜 License
+## License
 
 MIT License — © 2026 The Governor HQ
 
@@ -764,12 +788,12 @@ Use freely in commercial or personal projects. See [LICENSE](LICENSE) for full t
 
 ---
 
-## 🙏 Built With AI Assistance
+## Built With AI Assistance
 
 This framework was developed with assistance from Claude Opus 4.5, Claude Sonnet 4.5, and Gemini 3.0 Pro and GPT 5.2.
 ---
 
-## 🔗 Links & Resources
+## Links & Resources
 
 **NPM Packages:**
 - [@the-governor-hq/constitution-wearables](https://www.npmjs.com/package/@the-governor-hq/constitution-wearables) — v3.3.1
@@ -789,7 +813,7 @@ This framework was developed with assistance from Claude Opus 4.5, Claude Sonnet
 
 ---
 
-## 🧩 Creating a New Domain Package
+## Creating a New Domain Package
 
 Want to add safety constraints for a new health data domain (e.g., nutrition, genomics, lab results)? Here's how:
 
@@ -857,10 +881,10 @@ For the complete step-by-step guide, see [MONOREPO.md — Adding a New Domain Pa
 
 <div align="center">
 
-**⚠️ Important Notice**
+**Scope Notice**
 
-This framework helps build consumer wellness products with AI assistance.  
-**It does not provide medical advice, diagnoses, or treatment recommendations.**
+This framework enforces constraints for consumer wellness applications built with AI assistance.  
+**It is a risk-reduction tool, not a clinical safety certification.** It does not provide medical advice, diagnoses, or treatment recommendations. See [On Safety](#on-safety-this-framework-is-not-a-guarantee) for a full discussion of limitations.
 
 
 [⬆ Back to Top](#the-governor-hq-constitutional-framework)
