@@ -1,6 +1,6 @@
 "use strict";
 /**
- * @yelabb/constitution-bci
+ * @the-governor-hq/constitution-bci
  * AI Safety Constitution for Brain-Computer Interface Data Projects
  */
 Object.defineProperty(exports, "__esModule", { value: true });

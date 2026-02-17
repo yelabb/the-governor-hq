@@ -88,7 +88,7 @@ You are working on a project that processes therapy, mood tracking, and mental w
 
 ## BEFORE GENERATING CODE:
 
-- Check node_modules/@yelabb/constitution-therapy for full documentation
+- Check node_modules/@the-governor-hq/constitution-therapy for full documentation
 - Use observational language ("you've noted feeling..." not "you have...")
 - Compare to personal baseline (not diagnostic criteria)
 - Include mental health professional referrals
@@ -113,7 +113,7 @@ function updateVSCodeSettings(targetDir) {
         settings['github.copilot.chat.codeGeneration.instructions'] = [];
     }
     const instructionRef = {
-        text: 'Follow the Governor HQ Constitutional Framework in node_modules/@yelabb/constitution-therapy for therapy/mental health data safety constraints. Never generate code that diagnoses conditions or provides therapy/treatment advice.',
+        text: 'Follow the Governor HQ Constitutional Framework in node_modules/@the-governor-hq/constitution-therapy for therapy/mental health data safety constraints. Never generate code that diagnoses conditions or provides therapy/treatment advice.',
     };
     const hasInstruction = settings['github.copilot.chat.codeGeneration.instructions'].some((instr) => instr.text && instr.text.includes('Governor HQ'));
     if (!hasInstruction) {
@@ -143,7 +143,7 @@ function install() {
         log('Next steps:', 'bright');
         log('  1. Restart your AI coding assistant', 'blue');
         log('  2. Check .cursorrules for active constraints', 'blue');
-        log('  3. Read docs: node_modules/@yelabb/constitution-therapy/', 'blue');
+        log('  3. Read docs: node_modules/@the-governor-hq/constitution-therapy/', 'blue');
         log('');
     }
     catch (error) {

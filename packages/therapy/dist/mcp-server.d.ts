@@ -3,7 +3,7 @@
  * MCP Server for Governor HQ Constitutional Framework - Therapy Package
  * Exposes therapy and mental health data safety constraints as context to AI assistants
  */
-import { BaseGovernorMCPServer } from '@yelabb/constitution-core';
+import { BaseGovernorMCPServer } from '@the-governor-hq/constitution-core';
 declare class GovernorHQMCPServer extends BaseGovernorMCPServer {
     constructor();
 }

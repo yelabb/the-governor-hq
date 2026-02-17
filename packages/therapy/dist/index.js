@@ -1,6 +1,6 @@
 "use strict";
 /**
- * @yelabb/constitution-therapy
+ * @the-governor-hq/constitution-therapy
  * AI Safety Constitution for Therapy and Mental Health Data Projects
  */
 Object.defineProperty(exports, "__esModule", { value: true });
