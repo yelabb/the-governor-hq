@@ -375,7 +375,7 @@ The Governor HQ uses a **defense-in-depth** approach with multiple safety layers
 
 ---
 
-## 🧪 Production-Ready Testing## 🧪 Production-Ready Testing
+## 🧪 Testing
 
 Three-layer testing strategy ensures safety guarantees:
 
