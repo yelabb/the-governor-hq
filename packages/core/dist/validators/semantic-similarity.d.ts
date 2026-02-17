@@ -28,11 +28,22 @@ export declare function cosineSimilarity(vecA: number[], vecB: number[]): number
  */
 export declare function normalizeText(text: string): string;
 /**
- * Detect language of input text (simple heuristic-based detection)
- * Returns ISO 639-1 language code or 'unknown'
+ * Detect language of input text using word-frequency scoring.
+ * Returns ISO 639-1 language code or 'unknown'.
  *
- * NOTE: This is a basic detector. For production, consider integrating
- * a proper language detection library like 'franc' or 'cld3'
+ * Strategy:
+ *  1. Non-Latin scripts are identified by character-set presence (single match
+ *     is sufficient because the scripts are mutually exclusive).
+ *  2. Latin-script languages are scored by counting how many language-distinctive
+ *     words appear in the text.  Words that are shared across languages (e.g.
+ *     "de", "la", "un", "que", "para", "con") are intentionally excluded from
+ *     every list to prevent misclassification.
+ *  3. The language with the highest score wins, provided it meets the minimum
+ *     match threshold (MIN_MATCHES).  Ties are broken by the first encountered
+ *     winner in iteration order, which is a stable, predictable tie-break.
+ *
+ * NOTE: For production deployments with high multilingual traffic consider a
+ * dedicated library such as 'franc' or 'cld3' for greater accuracy.
  */
 export declare function detectLanguage(text: string): string;
 /**

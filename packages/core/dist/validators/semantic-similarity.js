@@ -127,64 +127,112 @@ function normalizeText(text) {
     return normalized.trim();
 }
 /**
- * Detect language of input text (simple heuristic-based detection)
- * Returns ISO 639-1 language code or 'unknown'
+ * Detect language of input text using word-frequency scoring.
+ * Returns ISO 639-1 language code or 'unknown'.
  *
- * NOTE: This is a basic detector. For production, consider integrating
- * a proper language detection library like 'franc' or 'cld3'
+ * Strategy:
+ *  1. Non-Latin scripts are identified by character-set presence (single match
+ *     is sufficient because the scripts are mutually exclusive).
+ *  2. Latin-script languages are scored by counting how many language-distinctive
+ *     words appear in the text.  Words that are shared across languages (e.g.
+ *     "de", "la", "un", "que", "para", "con") are intentionally excluded from
+ *     every list to prevent misclassification.
+ *  3. The language with the highest score wins, provided it meets the minimum
+ *     match threshold (MIN_MATCHES).  Ties are broken by the first encountered
+ *     winner in iteration order, which is a stable, predictable tie-break.
+ *
+ * NOTE: For production deployments with high multilingual traffic consider a
+ * dedicated library such as 'franc' or 'cld3' for greater accuracy.
  */
 function detectLanguage(text) {
-    const cleaned = text.toLowerCase().replace(/[^\p{L}\s]/gu, '');
-    // Character set patterns for major language families
-    const patterns = {
-        // CJK (Chinese, Japanese, Korean)
-        'zh': /[\u4e00-\u9fff]/, // Chinese characters
-        'ja': /[\u3040-\u309f\u30a0-\u30ff]/, // Hiragana/Katakana
-        'ko': /[\uac00-\ud7af]/, // Hangul
-        // Cyrillic (Russian, Ukrainian, etc.)
-        'ru': /[\u0400-\u04ff]/,
-        // Arabic
-        'ar': /[\u0600-\u06ff\u0750-\u077f]/,
-        // Devanagari (Hindi, Sanskrit)
-        'hi': /[\u0900-\u097f]/,
-        // Thai
-        'th': /[\u0e00-\u0e7f]/,
-        // Hebrew
-        'he': /[\u0590-\u05ff]/,
-    };
-    // Check character-based languages first
-    for (const [lang, pattern] of Object.entries(patterns)) {
-        if (pattern.test(text)) {
+    // Minimum word-matches required before committing to a Latin-script language.
+    // A value of 1 is intentionally low so that short phrases (3-5 words) are
+    // still detectable, while random single-word ambiguous terms return 'unknown'.
+    const MIN_MATCHES = 1;
+    // ── Non-Latin scripts (character-range detection) ────────────────────────
+    // Order matters only if scripts overlap (they do not), so order is arbitrary.
+    const scriptPatterns = [
+        // Japanese must be checked before Chinese: Japanese text often contains
+        // CJK kanji (shared range U+4E00-U+9FFF) alongside Hiragana/Katakana.
+        // Checking Hiragana/Katakana first ensures Japanese wins over Chinese
+        // whenever those syllabary characters are present.
+        ['ja', /[\u3040-\u309f\u30a0-\u30ff]/], // Hiragana / Katakana (Japanese)
+        ['zh', /[\u4e00-\u9fff]/], // CJK Unified Ideographs (Chinese)
+        ['ko', /[\uac00-\ud7af]/], // Hangul (Korean)
+        ['ru', /[\u0400-\u04ff]/], // Cyrillic
+        ['ar', /[\u0600-\u06ff\u0750-\u077f]/], // Arabic
+        ['hi', /[\u0900-\u097f]/], // Devanagari (Hindi)
+        ['th', /[\u0e00-\u0e7f]/], // Thai
+        ['he', /[\u0590-\u05ff]/], // Hebrew
+    ];
+    for (const [lang, pattern] of scriptPatterns) {
+        if (pattern.test(text))
             return lang;
+    }
+    // ── Latin-script scoring ─────────────────────────────────────────────────
+    // Normalise: lowercase, strip punctuation / digits, keep Unicode letters.
+    const cleaned = text.toLowerCase().replace(/[^\p{L}\s]/gu, '');
+    const wordSet = new Set(cleaned.split(/\s+/).filter(w => w.length > 0));
+    // Each list contains words that are:
+    //  • highly frequent in their language, AND
+    //  • NOT commonly shared with sibling languages listed here.
+    // Deliberately omitted cross-language words: de, la, en, un, una, que, para,
+    // con, por, a, o, em, com, le, les, il, lo, i, in, di, est, son, são, tem.
+    const langWords = {
+        // German — distinctive via compound-capable function words and umlauts
+        de: [
+            'und', 'nicht', 'ich', 'haben', 'werden', 'dass', 'aber', 'wenn',
+            'dann', 'auch', 'oder', 'nach', 'für', 'wir', 'ihr', 'sein',
+            'nehmen', 'müssen', 'sollten', 'können', 'arzt', 'schlaf',
+            'aufsuchen', 'erwägen',
+        ],
+        // French — distinctive via second-person plural forms and nasal vocabulary
+        fr: [
+            'vous', 'avez', 'votre', 'nous', 'leur', 'leurs', 'aussi', 'très',
+            'dans', 'donc', 'bien', 'tous', 'tout', 'cette', 'cela', 'même',
+            'après', 'toujours', 'jamais', 'médecin', 'prenez', 'devez',
+            'envisager', 'pourriez', 'insomnie',
+        ],
+        // Spanish — distinctive via 2nd-person verb forms and tilde-bearing words
+        es: [
+            'tienes', 'tiene', 'también', 'está', 'están', 'pero', 'nosotros',
+            'ellos', 'muy', 'aquí', 'después', 'antes', 'siempre', 'nunca',
+            'médico', 'toma', 'debes', 'dormir', 'ritmo', 'línea', 'considera',
+            'hablar', 'proveedor',
+        ],
+        // Portuguese — distinctive via nasal vowels and ç/ã forms
+        pt: [
+            'você', 'voce', 'não', 'mais', 'isso', 'pelo', 'pela', 'então',
+            'quando', 'porque', 'meu', 'minha', 'também', 'tome', 'deve',
+            'consultar', 'tratar', 'insônia', 'falar', 'considere', 'médico',
+            'tem', 'são',
+        ],
+        // Italian — distinctive via 2nd-person singular "hai" and -oi/-rebbe forms
+        it: [
+            'hai', 'quindi', 'però', 'anche', 'già', 'questo', 'questa',
+            'tutti', 'tutto', 'loro', 'lui', 'lei', 'mio', 'mia', 'suo', 'sua',
+            'prendi', 'devi', 'medico', 'insonnia', 'curare', 'potresti',
+            'considerare', 'parlare', 'che',
+        ],
+        // English — distinctive via articles and modal auxiliaries absent elsewhere
+        en: [
+            'the', 'you', 'have', 'this', 'that', 'with', 'from', 'your',
+            'they', 'were', 'been', 'will', 'would', 'could', 'should',
+            'sleep', 'take', 'consider', 'doctor', 'consult', 'baseline',
+            'seems', 'might', 'speak',
+        ],
+    };
+    // Count distinctive-word matches for each language
+    let bestLang = 'unknown';
+    let bestScore = 0;
+    for (const [lang, words] of Object.entries(langWords)) {
+        const score = words.reduce((n, w) => n + (wordSet.has(w) ? 1 : 0), 0);
+        if (score > bestScore) {
+            bestScore = score;
+            bestLang = lang;
         }
     }
-    // For Latin-script languages, use common word patterns
-    // Spanish
-    if (/\b(el|la|los|las|un|una|de|en|que|tienes|tiene|para|con|está|son)\b/.test(cleaned)) {
-        return 'es';
-    }
-    // French
-    if (/\b(le|la|les|un|une|de|en|vous|avez|est|sont|pour|avec|des|dans)\b/.test(cleaned)) {
-        return 'fr';
-    }
-    // German
-    if (/\b(der|die|das|den|dem|ein|eine|und|sie|haben|ist|sind|mit|für)\b/.test(cleaned)) {
-        return 'de';
-    }
-    // Italian
-    if (/\b(il|la|lo|i|gli|le|un|una|di|in|che|hai|ha|sono|per|con)\b/.test(cleaned)) {
-        return 'it';
-    }
-    // Portuguese
-    if (/\b(o|a|os|as|um|uma|de|em|que|tem|são|para|com|não)\b/.test(cleaned)) {
-        return 'pt';
-    }
-    // Default to English if Latin script with common English words
-    if (/\b(the|is|are|you|have|this|that|with|for|from|your)\b/.test(cleaned)) {
-        return 'en';
-    }
-    // If we can't detect, assume multilingual model will handle it
-    return 'unknown';
+    return bestScore >= MIN_MATCHES ? bestLang : 'unknown';
 }
 /**
  * Check text against forbidden medical concepts using semantic similarity
@@ -210,19 +258,20 @@ async function checkSemanticSimilarity(text, threshold = 0.75) {
     const matches = [];
     for (const concept of exports.FORBIDDEN_MEDICAL_CONCEPTS) {
         const similarity = cosineSimilarity(textEmbedding, concept.embedding);
-        // Use severity-based thresholds:
-        // - critical: 0.75 (strict - medical diagnoses, treatments)
-        // - high: 0.77 (medium - medical scope, alarming language)
-        // - medium: 0.78 (lenient - prescriptive commands, need clear intent)
+        // Use severity-based thresholds — lower threshold = easier to detect.
+        // Math.min ensures we never raise the bar above the caller's default threshold:
+        // - critical: cap at 0.75 (most sensitive — diagnoses, treatments)
+        // - high: cap at 0.77 (slightly less sensitive — scope violations, alarming language)
+        // - medium: cap at 0.78 (use caller default if already below — prescriptive commands)
         let severityThreshold = threshold;
         if (concept.severity === 'critical') {
             severityThreshold = Math.min(threshold, 0.75);
         }
         else if (concept.severity === 'high') {
-            severityThreshold = Math.max(threshold, 0.77);
+            severityThreshold = Math.min(threshold, 0.77);
         }
         else if (concept.severity === 'medium') {
-            severityThreshold = Math.max(threshold, 0.78);
+            severityThreshold = Math.min(threshold, 0.78);
         }
         if (similarity >= severityThreshold) {
             matches.push({
