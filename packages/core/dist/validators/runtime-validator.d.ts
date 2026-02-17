@@ -10,7 +10,12 @@ import type { ValidatorConfig, ValidationResult, Domain } from './types';
  */
 export declare class RuntimeValidator {
     private config;
+    private initializationPromise;
     constructor(config?: ValidatorConfig);
+    /**
+     * Initialize semantic similarity vector database
+     */
+    private initSemanticDatabase;
     /**
      * Validate text against safety constraints
      * @param text - The text to validate (e.g., LLM output)

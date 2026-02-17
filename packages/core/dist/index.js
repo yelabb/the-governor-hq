@@ -6,7 +6,7 @@
  * Shared rules and utilities for all domain-specific constitutions
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PRODUCT_PRINCIPLES = exports.LANGUAGE_RULES = exports.UNIVERSAL_RULES = exports.BaseGovernorMCPServer = exports.getDisclaimer = exports.attemptSanitization = exports.generateSafeAlternative = exports.checkAlarmingPatterns = exports.checkSuggestivePatterns = exports.checkMedicalKeywords = exports.checkPrescriptiveLanguage = exports.checkForbiddenPatterns = exports.runPatternChecks = exports.validateResponse = exports.withFieldValidation = exports.createGovernorValidator = exports.withGovernor = exports.validationErrorHandler = exports.validateField = exports.governorValidator = exports.validateText = exports.createValidator = exports.RuntimeValidator = void 0;
+exports.PRODUCT_PRINCIPLES = exports.LANGUAGE_RULES = exports.UNIVERSAL_RULES = exports.BaseGovernorMCPServer = exports.FORBIDDEN_MEDICAL_CONCEPTS = exports.batchCheckSemantic = exports.initializeVectorDatabase = exports.checkSemanticSimilarity = exports.normalizeText = exports.cosineSimilarity = exports.generateEmbedding = exports.getDisclaimer = exports.attemptSanitization = exports.generateSafeAlternative = exports.detectAdversarialAttack = exports.runSemanticChecks = exports.runHardenedChecks = exports.checkAlarmingPatterns = exports.checkSuggestivePatterns = exports.checkMedicalKeywords = exports.checkPrescriptiveLanguage = exports.checkForbiddenPatterns = exports.runPatternChecks = exports.validateResponse = exports.withFieldValidation = exports.createGovernorValidator = exports.withGovernor = exports.validationErrorHandler = exports.validateField = exports.governorValidator = exports.validateText = exports.createValidator = exports.RuntimeValidator = void 0;
 exports.validateLanguage = validateLanguage;
 exports.validateScope = validateScope;
 const base_mcp_server_1 = require("./base-mcp-server");
@@ -34,10 +34,22 @@ Object.defineProperty(exports, "checkPrescriptiveLanguage", { enumerable: true, 
 Object.defineProperty(exports, "checkMedicalKeywords", { enumerable: true, get: function () { return pattern_matcher_1.checkMedicalKeywords; } });
 Object.defineProperty(exports, "checkSuggestivePatterns", { enumerable: true, get: function () { return pattern_matcher_1.checkSuggestivePatterns; } });
 Object.defineProperty(exports, "checkAlarmingPatterns", { enumerable: true, get: function () { return pattern_matcher_1.checkAlarmingPatterns; } });
+Object.defineProperty(exports, "runHardenedChecks", { enumerable: true, get: function () { return pattern_matcher_1.runHardenedChecks; } });
+Object.defineProperty(exports, "runSemanticChecks", { enumerable: true, get: function () { return pattern_matcher_1.runSemanticChecks; } });
+Object.defineProperty(exports, "detectAdversarialAttack", { enumerable: true, get: function () { return pattern_matcher_1.detectAdversarialAttack; } });
 var sanitizer_1 = require("./validators/sanitizer");
 Object.defineProperty(exports, "generateSafeAlternative", { enumerable: true, get: function () { return sanitizer_1.generateSafeAlternative; } });
 Object.defineProperty(exports, "attemptSanitization", { enumerable: true, get: function () { return sanitizer_1.attemptSanitization; } });
 Object.defineProperty(exports, "getDisclaimer", { enumerable: true, get: function () { return sanitizer_1.getDisclaimer; } });
+// Semantic Similarity (for advanced use cases)
+var semantic_similarity_1 = require("./validators/semantic-similarity");
+Object.defineProperty(exports, "generateEmbedding", { enumerable: true, get: function () { return semantic_similarity_1.generateEmbedding; } });
+Object.defineProperty(exports, "cosineSimilarity", { enumerable: true, get: function () { return semantic_similarity_1.cosineSimilarity; } });
+Object.defineProperty(exports, "normalizeText", { enumerable: true, get: function () { return semantic_similarity_1.normalizeText; } });
+Object.defineProperty(exports, "checkSemanticSimilarity", { enumerable: true, get: function () { return semantic_similarity_1.checkSemanticSimilarity; } });
+Object.defineProperty(exports, "initializeVectorDatabase", { enumerable: true, get: function () { return semantic_similarity_1.initializeVectorDatabase; } });
+Object.defineProperty(exports, "batchCheckSemantic", { enumerable: true, get: function () { return semantic_similarity_1.batchCheckSemantic; } });
+Object.defineProperty(exports, "FORBIDDEN_MEDICAL_CONCEPTS", { enumerable: true, get: function () { return semantic_similarity_1.FORBIDDEN_MEDICAL_CONCEPTS; } });
 // Core safety rules that apply to all domains
 exports.UNIVERSAL_RULES = {
     NO_MEDICAL_CLAIMS: 'Systems must never make medical diagnoses, claims, or treatment recommendations',

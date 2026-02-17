@@ -20,6 +20,9 @@ export type {
   ValidationRule,
   PatternCheckResult,
   LLMJudgeResult,
+  SemanticCheckResult,
+  SemanticViolation,
+  ForbiddenConcept,
 } from './validators/types';
 
 // Middleware
@@ -34,12 +37,26 @@ export {
   checkMedicalKeywords,
   checkSuggestivePatterns,
   checkAlarmingPatterns,
+  runHardenedChecks,
+  runSemanticChecks,
+  detectAdversarialAttack,
 } from './validators/pattern-matcher';
 export {
   generateSafeAlternative,
   attemptSanitization,
   getDisclaimer,
 } from './validators/sanitizer';
+
+// Semantic Similarity (for advanced use cases)
+export {
+  generateEmbedding,
+  cosineSimilarity,
+  normalizeText,
+  checkSemanticSimilarity,
+  initializeVectorDatabase,
+  batchCheckSemantic,
+  FORBIDDEN_MEDICAL_CONCEPTS,
+} from './validators/semantic-similarity';
 
 // MCP Server
 export { BaseGovernorMCPServer };
