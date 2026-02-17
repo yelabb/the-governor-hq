@@ -1,5 +1,6 @@
 <div align="center">
 
+**Current Status:** v3.2.0 — **Active Development / Beta**
 
 # Multi-layered safety system for AI-assisted development with wearable, BCI, and therapy data.  
 ### Runtime validation • Hardened pattern matcher • API middleware • MCP servers • CLI tools
@@ -646,6 +647,84 @@ Built with [Nextra](https://nextra.site/) for documentation.
 | **Optional Framing** | "Consider", "might", "when ready" — never "must" or "should" |
 | **Safety First** | Default to NO when uncertain about safety boundaries |
 | **Multi-Layered** | No single point of failure — 5+ independent safety mechanisms |
+
+---
+
+## ⚠️ Known Limitations & Beta Status
+
+**Current Status:** v3.2.0 — **Active Development / Beta**
+
+The Governor HQ is production-ready for runtime validation and middleware use, but some features are in active development. Here's what you should know:
+
+### ✅ Production Ready
+- ✅ **Runtime Validator** — Fully tested, hardened pattern matching with semantic similarity
+- ✅ **Express/Next.js Middleware** — Battle-tested in production environments
+- ✅ **CLI Validator** (`governor-validate`) — Stable, CI/CD ready
+- ✅ **Core Safety Rules** — Comprehensive pattern library (200+ patterns)
+- ✅ **Auto-Configuration** — Cursor, Copilot, Claude Desktop integration
+
+### 🚧 In Development
+- 🚧 **LLM Judge** (v3.2.0) — Recently added, supports Groq/OpenAI/Anthropic (needs more real-world testing)
+- 🚧 **BCI Package** — Core constraints defined, MCP server in testing
+- 🚧 **Therapy Package** — Core constraints defined, MCP server in testing
+- 🚧 **Evaluation Framework** — Red-teaming tests exist, needs broader coverage
+
+### 🔍 Known Limitations
+
+**1. Pattern Matching Scope**
+- Pattern matcher catches common violations but may miss novel phrasings
+- Relies on predefined rules — creative AI rewording may bypass detection
+- Mitigation: Use LLM judge for additional layer (optional)
+
+**2. Language Support**
+- Currently English-only
+- Non-English health advice may bypass validation
+- Roadmap: Multi-language support in v4.0
+
+**3. MCP Server Integration**
+- Claude Desktop MCP integration requires manual restart after installation
+- Windows path handling can be inconsistent
+- Some MCP features require beta Claude Desktop versions
+
+**4. False Positives**
+- Aggressive pattern matching may flag safe content
+- Example: "Take a break" (safe) vs "Take melatonin" (unsafe) — requires tuning
+- Mitigation: Use `onViolation: 'sanitize'` mode for graceful handling
+
+**5. Performance Considerations**
+- Semantic similarity analysis adds ~50-100ms latency per validation
+- LLM judge adds ~500-2000ms when enabled
+- Recommendation: Cache validator instances, use async validation
+
+**6. Ecosystem Coverage**
+- Focused on TypeScript/JavaScript ecosystems
+- Python, Go, Rust ports are community-driven (not yet official)
+- Native integrations exist for Express, Next.js; others need custom setup
+
+### 📋 What We Need From You
+
+We're actively seeking feedback on:
+
+1. **False Positives/Negatives** — Share cases where validation is too strict or too lenient
+2. **Edge Cases** — Novel phrasings that bypass detection
+3. **Integration Challenges** — Problems with your specific tech stack
+4. **Performance Issues** — Bottlenecks in high-traffic scenarios
+5. **Feature Requests** — Domain-specific rules you need
+
+**Report issues:** [GitHub Issues](https://github.com/the-governor-hq/constitution/issues)  
+**Discuss features:** [GitHub Discussions](https://github.com/the-governor-hq/constitution/discussions)
+
+### 🛣️ Roadmap Highlights
+
+- Expanded BCI safety patterns
+- Improved therapy language detection
+- Performance optimizations
+- Multi-language support
+- Plugin architecture for custom validators
+- Enhanced LLM judge with confidence scoring
+- Python/Go/Rust native implementations
+- GraphQL middleware support
+- Real-time validation streaming
 
 ---
 
