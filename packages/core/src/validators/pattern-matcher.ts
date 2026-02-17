@@ -267,12 +267,19 @@ export async function runHardenedChecks(
     //
     // Design note: semantic similarity is the primary detection mechanism for languages
     // not fully covered by the regex patterns above. The filter below is intentionally
-    // narrow so that multilingual prescriptive violations (e.g., Russian должны,
-    // Chinese 必须, Japanese すべき) that ARE caught by regex still propagate to
-    // semantic violations as corroborating signals.
+    // gated on English/unknown text only: for non-English input the prescriptive-language
+    // regex has limited coverage, so a semantic-prescriptive hit without a regex match is
+    // NOT a false positive — it is the correct signal. Suppressing it would cause genuine
+    // non-English prescriptive violations (e.g., "Vous devez consulter un médecin",
+    // "Devi consultare un medico", "Você deve consultar um médico") to be missed.
     const hasSuggestiveLanguage = checkSuggestivePatterns(text);
     const hasExplicitPrescriptive = patterns.prescriptive.length > 0;
-    if (hasSuggestiveLanguage && !hasExplicitPrescriptive) {
+    // detectedLanguage comes from the semantic result so we don't add a round-trip.
+    // 'en' and 'unknown' are the only cases where regex prescriptive coverage is
+    // reliable enough to use it as a gate for suppressing semantic violations.
+    const detectedLang = semantic.detectedLanguage ?? 'unknown';
+    const isEnglishOrUnknown = detectedLang === 'en' || detectedLang === 'unknown';
+    if (hasSuggestiveLanguage && !hasExplicitPrescriptive && isEnglishOrUnknown) {
       semanticViolations = semanticViolations.filter(v => {
         // Only suppress prescriptive-category semantic hits, never diagnosis or treatment
         const isPrescriptiveOnly = v.rule === 'semantic-prescriptive';
