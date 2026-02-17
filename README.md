@@ -1,6 +1,6 @@
 <div align="center">
 
-**Current Status:** v3.2.0 — **Active Development / Beta**
+**Current Status:** v3.3.2 — **Active Development / Beta**
 
 # Multi-layered safety system for AI-assisted development with wearable, BCI, and therapy data.  
 ### Runtime validation • Hardened pattern matcher • API middleware • MCP servers • CLI tools
