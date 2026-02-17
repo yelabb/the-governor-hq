@@ -4,21 +4,37 @@
  * Prevents spacing/spelling attacks that bypass regex patterns
  */
 
-import { pipeline, env } from '@xenova/transformers';
 import type { SemanticCheckResult, ForbiddenConcept } from './types';
 
-// Disable local model caching in CI/CD environments
-if (process.env.CI) {
-  env.cacheDir = './.cache';
-}
-
 let embeddingPipeline: any = null;
+let transformersModule: any = null;
+
+/**
+ * Dynamically import transformers (ES Module compatibility)
+ * Using Function constructor to prevent TypeScript from transforming the import()
+ */
+async function getTransformers() {
+  if (!transformersModule) {
+    // Use Function constructor to preserve dynamic import in CommonJS
+    // This prevents TypeScript from converting it to require()
+    const dynamicImport = new Function('specifier', 'return import(specifier)');
+    transformersModule = await dynamicImport('@xenova/transformers');
+    
+    // Disable local model caching in CI/CD environments
+    if (process.env.CI) {
+      transformersModule.env.cacheDir = './.cache';
+    }
+  }
+  return transformersModule;
+}
 
 /**
  * Initialize the embedding pipeline (lazy loading)
  */
 async function getEmbeddingPipeline() {
   if (!embeddingPipeline) {
+    const { pipeline } = await getTransformers();
+    
     // Use a small, fast embedding model
     // all-MiniLM-L6-v2: 80MB, ~384 dimensional embeddings, good quality
     embeddingPipeline = await pipeline(

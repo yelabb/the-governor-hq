@@ -2,6 +2,17 @@
 
 All notable changes to the core package will be documented in this file.
 
+## [3.1.1] - 2026-02-17
+
+### 🐛 Bug Fixes
+
+#### Fixed ES Module Import Error
+- **Issue**: `@xenova/transformers` is an ES Module and cannot be loaded with CommonJS `require()`
+- **Solution**: Changed to use dynamic `import()` via Function constructor to preserve ES Module compatibility
+- **Impact**: Fixes CI/CD test failures with error `ERR_REQUIRE_ESM`
+- **Files Modified**: `src/validators/semantic-similarity.ts`
+- **Technical Details**: TypeScript's CommonJS output was converting static imports to `require()`, which doesn't work with ESM-only packages. Now using `new Function('specifier', 'return import(specifier)')` to preserve dynamic import syntax in compiled output.
+
 ## [3.1.0] - 2026-02-17
 
 ### 🛡️ Feature: Hardened Pattern Matcher with Semantic Similarity

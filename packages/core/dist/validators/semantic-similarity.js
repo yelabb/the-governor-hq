@@ -12,20 +12,34 @@ exports.normalizeText = normalizeText;
 exports.checkSemanticSimilarity = checkSemanticSimilarity;
 exports.initializeVectorDatabase = initializeVectorDatabase;
 exports.batchCheckSemantic = batchCheckSemantic;
-const transformers_1 = require("@xenova/transformers");
-// Disable local model caching in CI/CD environments
-if (process.env.CI) {
-    transformers_1.env.cacheDir = './.cache';
-}
 let embeddingPipeline = null;
+let transformersModule = null;
+/**
+ * Dynamically import transformers (ES Module compatibility)
+ * Using Function constructor to prevent TypeScript from transforming the import()
+ */
+async function getTransformers() {
+    if (!transformersModule) {
+        // Use Function constructor to preserve dynamic import in CommonJS
+        // This prevents TypeScript from converting it to require()
+        const dynamicImport = new Function('specifier', 'return import(specifier)');
+        transformersModule = await dynamicImport('@xenova/transformers');
+        // Disable local model caching in CI/CD environments
+        if (process.env.CI) {
+            transformersModule.env.cacheDir = './.cache';
+        }
+    }
+    return transformersModule;
+}
 /**
  * Initialize the embedding pipeline (lazy loading)
  */
 async function getEmbeddingPipeline() {
     if (!embeddingPipeline) {
+        const { pipeline } = await getTransformers();
         // Use a small, fast embedding model
         // all-MiniLM-L6-v2: 80MB, ~384 dimensional embeddings, good quality
-        embeddingPipeline = await (0, transformers_1.pipeline)('feature-extraction', 'Xenova/all-MiniLM-L6-v2');
+        embeddingPipeline = await pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2');
     }
     return embeddingPipeline;
 }
