@@ -25,7 +25,7 @@ These attacks can slip past regex patterns while remaining semantically identica
 
 The hardened pattern matcher uses a **two-stage validation approach**:
 
-### Stage 1: Fast Regex Patterns (<10ms)
+### Stage 1: Fast Regex Patterns (under 10ms)
 Quick keyword and pattern matching to catch obvious violations.
 
 ### Stage 2: Semantic Similarity (100-300ms)
@@ -48,7 +48,7 @@ const result = await validator.validate('You have d i a g n o s e d insomnia');
 
 ## How It Works
 
-### 1. Text Normalization
+### Text Normalization
 
 Before checking patterns, text is normalized to remove obfuscation:
 
@@ -66,7 +66,7 @@ normalizeText('diagnoz');           // → 'diagnose'
 - Convert to lowercase
 - Fix common misspellings
 
-### 2. Adversarial Attack Detection
+### Adversarial Attack Detection
 
 Automatically detects when text has been manipulated:
 
@@ -88,7 +88,7 @@ console.log(result);
 - `special-chars` - Special characters inserted
 - `misspelling` - Intentional misspellings
 
-### 3. Semantic Similarity Matching
+### Semantic Similarity Matching
 
 Compares text embeddings against a vector database of forbidden medical concepts:
 
@@ -150,7 +150,7 @@ const validator = createValidator({
 - **0.90+**: Very strict - only exact matches
 - **0.75-0.89**: Recommended - catches paraphrases
 - **0.60-0.74**: Permissive - may have false positives
-- **<0.60**: Not recommended - too many false positives
+- **Below 0.60**: Not recommended - too many false positives
 
 ---
 
@@ -160,33 +160,36 @@ const validator = createValidator({
 
 | Validation Type | Latency | Use Case |
 |----------------|---------|----------|
-| Regex only | <10ms | Fast real-time checks |
+| Regex only | under 10ms | Fast real-time checks |
 | + Semantic similarity (first use) | 2-5s | Model initialization |
 | + Semantic similarity (cached) | 100-300ms | Production use |
 
 ### Optimization Tips
 
-1. **Initialize once at startup:**
-   ```typescript
-   import { initializeVectorDatabase } from '@the-governor-hq/constitution-core';
-   
-   // During app startup
-   await initializeVectorDatabase();
-   ```
+**Initialize once at startup:**
 
-2. **Use regex as first pass:**
-   Regex patterns catch most violations quickly. Semantic similarity only runs when enabled.
+```typescript
+import { initializeVectorDatabase } from '@the-governor-hq/constitution-core';
 
-3. **Batch processing:**
-   ```typescript
-   import { batchCheckSemantic } from '@the-governor-hq/constitution-core';
-   
-   const results = await batchCheckSemantic([
-     'Text 1',
-     'Text 2',
-     'Text 3'
-   ]);
-   ```
+// During app startup
+await initializeVectorDatabase();
+```
+
+**Use regex as first pass:**
+
+Regex patterns catch most violations quickly. Semantic similarity only runs when enabled.
+
+**Batch processing:**
+
+```typescript
+import { batchCheckSemantic } from '@the-governor-hq/constitution-core';
+
+const results = await batchCheckSemantic([
+  'Text 1',
+  'Text 2',
+  'Text 3'
+]);
+```
 
 ---
 
@@ -283,7 +286,7 @@ const result = await validator.validate(text);  // Note: async now
 **Breaking changes:**
 - Semantic validation is **async** (returns Promise)
 - First initialization downloads embedding model (~80MB)
-- Slightly higher latency (100-300ms vs <10ms)
+- Slightly higher latency (100-300ms vs under 10ms)
 
 ---
 
