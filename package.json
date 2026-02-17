@@ -12,6 +12,7 @@
     "build": "npm run sync-docs && next build",
     "start": "next start",
     "test": "npm run test --workspaces",
+    "validate:safety": "node scripts/validate-safety.js",
     "publish:all": "npm publish --workspaces --access public",
     "ai:context": "node ./node_modules/@the-governor-hq/constitution-wearables/dist/mcp-server.js"
   },

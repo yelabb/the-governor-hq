@@ -2,40 +2,128 @@
 
 **Core AI Safety Infrastructure for Governor HQ Constitutional Framework**
 
-This package contains shared safety rules, constraints, and utilities used across all domain-specific constitutions (wearables, BCI, therapy, etc.).
+This package contains shared safety infrastructure used across all domain-specific constitutions (wearables, BCI, therapy). It provides runtime validators, middleware, CLI tools, and MCP servers for comprehensive safety enforcement.
 
-## What's Included
+---
 
-### 🛡️ Runtime Validator (NEW!)
+## 🛠️ Tools Included
+
+### 1. Runtime Validator
 **Hard post-generation gate: LLM → Validator → Output**
 
-Validates AI-generated content before showing it to users:
+Fast pattern matching (<10ms) with optional LLM judge for edge cases:
 
 ```typescript
 import { createValidator } from '@the-governor-hq/constitution-core';
 
-const validator = createValidator({ domain: 'wearables', onViolation: 'block' });
+const validator = createValidator({ 
+  domain: 'wearables', 
+  onViolation: 'block' 
+});
 
-const llmOutput = await callLLM(prompt);
-const result = await validator.validate(llmOutput);
+const result = await validator.validate(aiGeneratedText);
 
 if (!result.safe) {
-  return result.safeAlternative; // Blocked unsafe content
+  console.log('Blocked:', result.violations);
+  return result.safeAlternative;
 }
 
-return result.output; // Safe to show user
+return result.output;
 ```
 
 **Features:**
-- ⚡ Fast pattern matching (<10ms)
+- ⚡ <10ms validation speed
 - 🔍 Optional LLM judge for edge cases
-- 🎯 Express & Next.js middleware
-- 🔧 Customizable violation actions (block/warn/log/sanitize)
-- 📊 Built-in monitoring and metrics
+- 🎯 Multiple violation actions (block, sanitize, warn, log)
+- 📊 Built-in confidence scoring
+- 🔧 Custom rules support
 
-**[📖 Full Validator Guide →](./VALIDATOR-GUIDE.md)** | **[See Examples →](./examples/runtime-validator-examples.ts)**
+[📖 Full Validator Guide →](https://the-governor-hq.vercel.app/packages/core/runtime-validation)
+
+### 2. API Middleware
+**Automatic validation for Express and Next.js**
+
+Express example:
+```typescript
+import { governorValidator } from '@the-governor-hq/constitution-core/middleware';
+
+app.post('/api/chat', 
+  governorValidator({ domain: 'wearables', onViolation: 'block' }),
+  async (req, res) => {
+    const aiResponse = await callLLM(req.body.message);
+    res.json({ message: aiResponse }); // Auto-validated
+  }
+);
+```
+
+Next.js example:
+```typescript
+import { withGovernor } from '@the-governor-hq/constitution-core/middleware';
+
+export default withGovernor(
+  async (req, res) => {
+    const aiResponse = await callLLM(req.body.message);
+    res.json({ message: aiResponse });
+  },
+  { domain: 'therapy', onViolation: 'sanitize' }
+);
+```
+
+[📖 Middleware Guide →](https://the-governor-hq.vercel.app/packages/core/middleware)
+
+### 3. CLI Validator
+**Command-line validation for CI/CD pipelines**
+
+```bash
+# Validate a file
+npx governor-validate src/components/InsightCard.tsx
+
+# Validate all TypeScript files
+npx governor-validate "src/**/*.{ts,tsx}"
+
+# Exit code 1 if violations found (perfect for CI)
+```
+
+### 4. MCP Server Base Class
+**Foundation for domain-specific MCP servers**
+
+```typescript
+import { BaseGovernorMCPServer } from '@the-governor-hq/constitution-core';
+
+const server = new BaseGovernorMCPServer({
+  serverName: 'my-constitution',
+  uriScheme: 'my-uri',
+  baseDir: __dirname,
+  resources: {
+    'hard-rules': './rules.md',
+    'language-rules': './language.md'
+  },
+  contextSummary: 'Domain-specific safety rules'
+});
+
+server.start();
+```
+
+### 5. Evaluation System
+**Red-teaming framework with 28+ adversarial test cases**
+
+```bash
+cd packages/core
+npm run eval
+
+# Output:
+# ✓ 26/29 test cases passed (89.66%)
+# ✗ Disease naming violation detected
+# ✗ Cardiovascular claims not blocked
+```
+
+LLM-as-judge methodology with multi-model testing.
+
+[📖 Eval System Guide →](./evals/README.md)
 
 ---
+
+## What's Included
 
 ### Universal Safety Rules
 - No medical diagnoses or claims
