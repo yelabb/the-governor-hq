@@ -48,7 +48,8 @@
   "dependencies": {
     "@the-governor-hq/constitution-core": "3.1.1"
   },
-  \"peerDependencies\": {`n    \"@the-governor-hq/constitution-core\": \"3.1.1\"
+  "peerDependencies": {
+    "@the-governor-hq/constitution-core": "3.1.1"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
