@@ -5,7 +5,7 @@
  * Exposes wearable data safety constraints as context to AI assistants
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-const constitution_core_1 = require("@yelabb/constitution-core");
+const constitution_core_1 = require("@the-governor-hq/constitution-core");
 class GovernorHQMCPServer extends constitution_core_1.BaseGovernorMCPServer {
     constructor() {
         super({
