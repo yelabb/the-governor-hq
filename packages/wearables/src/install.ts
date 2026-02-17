@@ -23,7 +23,8 @@ function log(message: string, color: keyof typeof COLORS = 'reset'): void {
 
 function createCursorRules(targetDir: string): boolean {
   const cursorRulesPath = path.join(targetDir, '.cursorrules');
-  const sourcePath = path.join(__dirname, '.cursorrules');
+  // Go up one directory from dist/ to package root where .cursorrules lives
+  const sourcePath = path.join(__dirname, '..', '.cursorrules');
 
   if (fs.existsSync(cursorRulesPath)) {
     log('⚠️  .cursorrules already exists, skipping...', 'yellow');
