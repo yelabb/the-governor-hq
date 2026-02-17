@@ -9,22 +9,22 @@ The Governor HQ Constitutional Framework is organized as a **monorepo** with dom
 ```
 the-governor-hq/
 ├── packages/
-│   ├── core/              # @yelabb/constitution-core
+│   ├── core/              # @the-governor-hq/constitution-core
 │   │   ├── index.js       # Shared safety rules & utilities
 │   │   ├── index.d.ts     # TypeScript definitions
 │   │   ├── package.json
 │   │   └── README.md
-│   ├── wearables/         # @yelabb/constitution-wearables
+│   ├── wearables/         # @the-governor-hq/constitution-wearables
 │   │   ├── pages/         # Domain-specific documentation
 │   │   ├── mcp-server.js  # MCP server implementation
 │   │   ├── install.js     # Auto-configuration script
 │   │   ├── .cursorrules   # Cursor AI rules
 │   │   ├── package.json
 │   │   └── README.md
-│   ├── bci/               # @yelabb/constitution-bci
+│   ├── bci/               # @the-governor-hq/constitution-bci
 │   │   ├── package.json
 │   │   └── README.md
-│   └── therapy/           # @yelabb/constitution-therapy
+│   └── therapy/           # @the-governor-hq/constitution-therapy
 │       ├── package.json
 │       └── README.md
 ├── pages/                 # Shared documentation site (Nextra)
@@ -38,7 +38,7 @@ the-governor-hq/
 
 ```
 ┌─────────────────────────────────────────────┐
-│         @yelabb/constitution-core           │
+│         @the-governor-hq/constitution-core           │
 │  Universal safety rules & infrastructure    │
 └──────────────┬──────────────────────────────┘
                │
@@ -50,11 +50,11 @@ the-governor-hq/
 └──────────┘ └─────┘ └─────────┘
 ```
 
-All domain-specific packages depend on `@yelabb/constitution-core`.
+All domain-specific packages depend on `@the-governor-hq/constitution-core`.
 
 ## Package Roles
 
-### `@yelabb/constitution-core`
+### `@the-governor-hq/constitution-core`
 
 **Purpose:** Shared safety infrastructure used by all domains
 
@@ -68,7 +68,7 @@ All domain-specific packages depend on `@yelabb/constitution-core`.
 **Published independently:** Yes  
 **Users install directly:** Usually not (auto-installed by domain packages)
 
-### `@yelabb/constitution-wearables`
+### `@the-governor-hq/constitution-wearables`
 
 **Purpose:** Safety constraints for smartwatch/fitness tracker data
 
@@ -83,7 +83,7 @@ All domain-specific packages depend on `@yelabb/constitution-core`.
 **Users install directly:** Yes  
 **Status:** ✅ Production ready
 
-### `@yelabb/constitution-bci`
+### `@the-governor-hq/constitution-bci`
 
 **Purpose:** Safety constraints for brain-computer interface data
 
@@ -97,7 +97,7 @@ All domain-specific packages depend on `@yelabb/constitution-core`.
 **Users install directly:** Yes  
 **Status:** 🚧 In development
 
-### `@yelabb/constitution-therapy`
+### `@the-governor-hq/constitution-therapy`
 
 **Purpose:** Safety constraints for therapy and mental health data
 
@@ -117,7 +117,7 @@ The root `package.json` uses npm workspaces:
 
 ```json
 {
-  "name": "@yelabb/governor-hq-monorepo",
+  "name": "@the-governor-hq/governor-hq-monorepo",
   "private": true,
   "workspaces": [
     "packages/*"
@@ -196,7 +196,7 @@ cd packages/your-domain
 
 ```json
 {
-  "name": "@yelabb/constitution-your-domain",
+  "name": "@the-governor-hq/constitution-your-domain",
   "version": "1.0.0",
   "description": "AI Safety Constitution for [Your Domain] Data Projects",
   "main": "mcp-server.js",
@@ -219,7 +219,7 @@ cd packages/your-domain
   "author": "Governor HQ",
   "license": "MIT",
   "dependencies": {
-    "@yelabb/constitution-core": "^1.0.0"
+    "@the-governor-hq/constitution-core": "^1.0.0"
   }
 }
 ```
@@ -287,7 +287,7 @@ npm publish --access public
 Each domain has unique data types and safety constraints. Keep packages independent.
 
 ### Core Inheritance
-All domains inherit universal safety rules from `@yelabb/constitution-core`.
+All domains inherit universal safety rules from `@the-governor-hq/constitution-core`.
 
 ### User Choice
 Users should install only the domains they need, not everything.

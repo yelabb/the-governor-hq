@@ -1,5 +1,5 @@
 {
-  "name": "@yelabb/governor-hq-monorepo",
+  "name": "@the-governor-hq/governor-hq-monorepo",
   "version": "3.0.2",
   "description": "AI Safety Constitutions for Health Data Projects - Monorepo with domain-specific packages",
   "private": true,

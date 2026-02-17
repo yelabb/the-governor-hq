@@ -8,7 +8,7 @@
 ## ⚡ Quick Install
 
 ```bash
-npm install --save-dev @yelabb/constitution
+npm install --save-dev @the-governor-hq/constitution
 ```
 
 **Done!** Your AI assistant (Cursor, Copilot, Claude, ChatGPT) now has safety context for wearable data development.
