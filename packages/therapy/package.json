@@ -1,6 +1,6 @@
 {
   "name": "@the-governor-hq/constitution-therapy",
-  "version": "3.0.5",
+  "version": "3.0.6",
   "description": "AI Safety Constitution for Therapy and Mental Health Data Projects",
   "main": "dist/mcp-server.js",
   "types": "dist/index.d.ts",

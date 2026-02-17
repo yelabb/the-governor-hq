@@ -60,7 +60,7 @@ function updateVSCodeSettings(targetDir: string): boolean {
   }
 
   const instructionRef = {
-    text: 'Follow the Governor HQ Constitutional Framework in node_modules/@governor-hq/constitution for wearable health data safety constraints. Check hard-rules.mdx before generating health-related code.',
+    text: 'Follow the Governor HQ Constitutional Framework in node_modules/@the-governor-hq/constitution-wearables for wearable health data safety constraints. Check hard-rules.mdx before generating health-related code.',
   };
 
   const hasInstruction = settings[
@@ -92,7 +92,7 @@ function createMCPConfig(targetDir: string): boolean {
     mcpServers: {
       'governor-hq-constitution': {
         command: 'node',
-        args: ['./node_modules/@governor-hq/constitution/mcp-server.js'],
+        args: ['./node_modules/@the-governor-hq/constitution-wearables/dist/mcp-server.js'],
         description: 'AI Safety Constitution for Wearable Data Projects',
         enabled: true,
       },
@@ -125,7 +125,7 @@ function updatePackageJson(targetDir: string): boolean {
 
   if (!packageJson.scripts['ai:context']) {
     packageJson.scripts['ai:context'] =
-      'node ./node_modules/@governor-hq/constitution/mcp-server.js';
+      'node ./node_modules/@the-governor-hq/constitution-wearables/dist/mcp-server.js';
     fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
     log('✓ Added ai:context script to package.json', 'green');
     return true;
@@ -150,13 +150,13 @@ function printSuccessMessage(): void {
 
   log('📖 Quick Reference:', 'blue');
   log(
-    '   • Hard Rules: node_modules/@governor-hq/constitution/pages/constraints/hard-rules.mdx'
+    '   • Hard Rules: node_modules/@the-governor-hq/constitution-wearables/pages/constraints/hard-rules.mdx'
   );
   log(
-    '   • Quick Ref: node_modules/@governor-hq/constitution/pages/quick-reference.mdx'
+    '   • Quick Ref: node_modules/@the-governor-hq/constitution-wearables/pages/quick-reference.mdx'
   );
   log(
-    '   • Full Guide: node_modules/@governor-hq/constitution/pages/ai-agent-guide.mdx\n'
+    '   • Full Guide: node_modules/@the-governor-hq/constitution-wearables/pages/ai-agent-guide.mdx\n'
   );
 
   log('🚀 Next Steps:', 'blue');
@@ -170,7 +170,7 @@ function printSuccessMessage(): void {
   );
   log('   "I\'m using the Governor HQ Constitutional Framework', 'bright');
   log('   for wearable health data safety. Check node_modules/', 'bright');
-  log('   @governor-hq/constitution/pages/constraints/hard-rules.mdx', 'bright');
+  log('   @the-governor-hq/constitution-wearables/pages/constraints/hard-rules.mdx', 'bright');
   log('   before generating any health-related code."\n', 'bright');
 
   log('='.repeat(60) + '\n', 'bright');

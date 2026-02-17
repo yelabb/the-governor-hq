@@ -3,7 +3,7 @@
     "governor-hq-constitution": {
       "command": "node",
       "args": [
-        "./node_modules/@governor-hq/constitution/mcp-server.js"
+        "./node_modules/@the-governor-hq/constitution-wearables/dist/mcp-server.js"
       ],
       "description": "AI Safety Constitution for Wearable Data Projects",
       "enabled": true
