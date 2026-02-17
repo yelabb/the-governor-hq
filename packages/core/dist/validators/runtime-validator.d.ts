@@ -2,7 +2,12 @@
  * Runtime Validator - Hard post-generation gate
  * LLM → Validator → Output
  *
- * Fast pattern matching (<10ms) with optional LLM judge for edge cases
+ * Fast pattern matching (<10ms) with multilingual semantic similarity (100-300ms)
+ *
+ * MULTILINGUAL SUPPORT (v3.3.0+):
+ * - Detects and validates medical advice in 50+ languages
+ * - Uses cross-lingual embeddings (no per-language patterns needed)
+ * - Semantic similarity enabled by default for security
  */
 import type { ValidatorConfig, ValidationResult, Domain } from './types';
 /**

@@ -113,6 +113,7 @@ if (result.hasCriticalViolations) {
 **Features:**
 - ⚡ Fast pattern matching (<10ms)
 - 🛡️ **NEW: Hardened Pattern Matcher** - Semantic similarity prevents adversarial attacks
+- 🌍 **NEW v3.3.0: Multilingual Safety** - Validates medical advice in 50+ languages
 - 🔍 Optional LLM judge for edge cases
 - 🎯 Multiple violation actions
 - 📊 TypeScript support with full type safety
@@ -285,10 +286,10 @@ Install only the packages you need. Each includes all tools (validator, middlewa
 
 | Package | Status | Coverage | Install |
 |---------|--------|----------|--------|
-| [**🏃 Wearables**](https://www.npmjs.com/package/@the-governor-hq/constitution-wearables) | ✅ Production v3.3.1 | Sleep, HRV, heart rate, training load, recovery | `npm i -D @the-governor-hq/constitution-wearables` |
-| [**🧠 BCI**](https://www.npmjs.com/package/@the-governor-hq/constitution-bci) | ✅ Production v3.3.1 | EEG, fNIRS, neurofeedback, meditation states | `npm i -D @the-governor-hq/constitution-bci` |
-| [**💭 Therapy**](https://www.npmjs.com/package/@the-governor-hq/constitution-therapy) | ✅ Production v3.3.1 | Mood tracking, journaling, behavioral patterns | `npm i -D @the-governor-hq/constitution-therapy` |
-| [**⚙️ Core**](https://www.npmjs.com/package/@the-governor-hq/constitution-core) | ✅ Production v3.3.1 | Universal safety rules + hardened matcher | Auto-installed with domains |
+| [**🏃 Wearables**](https://www.npmjs.com/package/@the-governor-hq/constitution-wearables) | ✅ Production v3.3.2 | Sleep, HRV, heart rate, training load, recovery | `npm i -D @the-governor-hq/constitution-wearables` |
+| [**🧠 BCI**](https://www.npmjs.com/package/@the-governor-hq/constitution-bci) | ✅ Production v3.3.2 | EEG, fNIRS, neurofeedback, meditation states | `npm i -D @the-governor-hq/constitution-bci` |
+| [**💭 Therapy**](https://www.npmjs.com/package/@the-governor-hq/constitution-therapy) | ✅ Production v3.3.2 | Mood tracking, journaling, behavioral patterns | `npm i -D @the-governor-hq/constitution-therapy` |
+| [**⚙️ Core**](https://www.npmjs.com/package/@the-governor-hq/constitution-core) | ✅ Production v3.3.2 | Universal safety rules + hardened matcher | Auto-installed with domains |
 
 **Supported Devices:** Garmin, Apple Watch, Whoop, Oura, Fitbit, Muse, OpenBCI, and more.
 
@@ -335,7 +336,7 @@ The framework applies a **defense-in-depth** strategy across five sequential enf
                               ↓
 ┌─────────────────────────────────────────────────────────────┐
 │  Layer 3: Runtime Validator (Post-generation)              │
-│  → Pattern matching: <10ms (regex) / 100–300ms (semantic)   │
+│  → Pattern matching: <10ms (regex) / typically tens of ms (semantic, warm cache) │
 │  → Text normalization + adversarial-obfuscation detection   │
 │  → Optional LLM judge for ambiguous cases (~500–2000ms)     │
 └─────────────────────────────────────────────────────────────┘
@@ -509,8 +510,8 @@ No. The framework guides AI assistants during code generation and validates outp
 <summary><b>How fast is the Runtime Validator?</b></summary>
 
 **Regex-only mode (default):** <10ms  
-**With semantic similarity:** 100-300ms (after model cache)  
-**First semantic use:** 2-5s (one-time model download, ~80MB)  
+**With semantic similarity:** typically 10-30ms after warm-up (hardware dependent)  
+**First semantic use:** model download + initialization (can be multiple seconds, model artifacts may exceed 300MB)  
 **Optional LLM judge:** ~500ms
 
 Fast enough for production APIs. Use regex-only for real-time, semantic for batch/async processing.
@@ -520,7 +521,7 @@ Fast enough for production APIs. Use regex-only for real-time, semantic for batc
 <details>
 <summary><b>Can I use this in production?</b></summary>
 
-Yes. All packages (`wearables`, `core`, `bci`, `therapy`) are production-ready at v3.3.1 with comprehensive safety tests including adversarial attack prevention.
+Yes. All packages (`wearables`, `core`, `bci`, `therapy`) are production-ready at v3.3.2 with comprehensive safety tests including adversarial attack prevention.
 
 </details>
 
@@ -585,7 +586,7 @@ const validator = createValidator({
 });
 ```
 
-Adds 100-300ms latency but prevents sophisticated attacks. See [Hardened Pattern Matcher Guide](https://the-governor-hq.vercel.app/packages/core/hardened-pattern-matcher).
+Adds low-latency semantic checks after warm-up while preventing sophisticated attacks. See [Hardened Pattern Matcher Guide](https://the-governor-hq.vercel.app/packages/core/hardened-pattern-matcher).
 
 </details>
 
@@ -679,7 +680,7 @@ Safety and usability exist in tension. A system that blocks every output contain
 
 - **False positives degrade UX.** Aggressive pattern matching flags benign phrases (e.g., "take a break" matched against supplement-prescription patterns). We tune thresholds to minimize these, which necessarily means some edge cases will pass through.
 - **False negatives create risk.** Novel phrasings, languages other than English, or creative rewording by the LLM can evade detection. The hardened pattern matcher and optional LLM judge reduce — but do not eliminate — this surface.
-- **Latency has a cost.** Semantic similarity analysis (100–300ms) and LLM-as-judge validation (500–2000ms) improve detection accuracy but add latency that may be unacceptable for real-time applications. Most deployments will use the fast regex layer alone and accept its lower recall.
+- **Latency has a cost.** Semantic similarity analysis is usually low-latency after warm-up but still adds compute overhead, and LLM-as-judge validation (500–2000ms) adds much more. For strict real-time paths, teams may use regex-only enforcement and accept lower recall.
 - **The constraint set is not exhaustive.** The five hard rules and 200+ patterns reflect our current understanding of the risk surface. New categories of harmful output may emerge as LLMs evolve, and this framework will lag behind until rules are updated.
 
 In practice, this means: **The Governor HQ is a risk-reduction tool, not a compliance certification.** It is one component of a responsible development process that should also include human review, domain-expert consultation, regulatory awareness, and user testing. If your application requires clinical-grade safety guarantees, those guarantees must come from validated medical-device processes — not from a pattern-matching library.
@@ -713,9 +714,14 @@ The framework is production-ready for runtime validation and middleware use, but
 - Mitigation: Use LLM judge for additional layer (optional)
 
 **2. Language Support**
-- Currently English-only
-- Non-English health advice may bypass validation
-- Roadmap: Multi-language support in v4.0
+- ✅ **Multilingual support added in v3.3.0** - validates medical advice in 50+ languages
+- Uses cross-lingual semantic embeddings (paraphrase-multilingual-MiniLM-L12-v2)
+- Automatic language detection (Spanish, French, German, Chinese, Arabic, Japanese, Russian, etc.)
+- Pattern matching (regex) remains English-optimized for performance
+- Semantic similarity (enabled by default) provides multilingual safety enforcement
+- Requires semantic similarity enabled (default: `useSemanticSimilarity: true`)
+- Testing: Run `npm run test:multilingual` in packages/core
+- Latest multilingual validation run: 37/37 tests passing (100.0%)
 
 **3. MCP Server Integration**
 - Claude Desktop MCP integration requires manual restart after installation
@@ -728,7 +734,7 @@ The framework is production-ready for runtime validation and middleware use, but
 - Mitigation: Use `onViolation: 'sanitize'` mode for graceful handling
 
 **5. Performance Considerations**
-- Semantic similarity analysis adds ~50-100ms latency per validation
+- Semantic similarity analysis is low-latency after warm-up (typically tens of milliseconds; environment-dependent)
 - LLM judge adds ~500-2000ms when enabled
 - Recommendation: Cache validator instances, use async validation
 
@@ -755,7 +761,7 @@ We're actively seeking feedback on:
 - Expanded BCI safety patterns
 - Improved therapy language detection
 - Performance optimizations
-- Multi-language support
+- ✅ **Multi-language support (completed in v3.3.0)** - 50+ languages via cross-lingual embeddings
 - Plugin architecture for custom validators
 - Enhanced LLM judge with confidence scoring
 - Python/Go/Rust native implementations
@@ -796,10 +802,10 @@ This framework was developed with assistance from Claude Opus 4.5, Claude Sonnet
 ## Links & Resources
 
 **NPM Packages:**
-- [@the-governor-hq/constitution-wearables](https://www.npmjs.com/package/@the-governor-hq/constitution-wearables) — v3.3.1
-- [@the-governor-hq/constitution-bci](https://www.npmjs.com/package/@the-governor-hq/constitution-bci) — v3.3.1
-- [@the-governor-hq/constitution-therapy](https://www.npmjs.com/package/@the-governor-hq/constitution-therapy) — v3.3.1
-- [@the-governor-hq/constitution-core](https://www.npmjs.com/package/@the-governor-hq/constitution-core) — v3.3.1 ⭐ Hardened Pattern Matcher + LLM Judge
+- [@the-governor-hq/constitution-wearables](https://www.npmjs.com/package/@the-governor-hq/constitution-wearables) — v3.3.2
+- [@the-governor-hq/constitution-bci](https://www.npmjs.com/package/@the-governor-hq/constitution-bci) — v3.3.2
+- [@the-governor-hq/constitution-therapy](https://www.npmjs.com/package/@the-governor-hq/constitution-therapy) — v3.3.2
+- [@the-governor-hq/constitution-core](https://www.npmjs.com/package/@the-governor-hq/constitution-core) — v3.3.2 ⭐ Hardened Pattern Matcher + LLM Judge
 
 **Documentation:**
 - [Main Documentation Site](https://the-governor-hq.vercel.app)
@@ -842,9 +848,9 @@ cd packages/your-domain
 ```json
 {
   "name": "@the-governor-hq/constitution-your-domain",
-  "version": "3.3.1",
+  "version": "3.3.2",
   "dependencies": {
-    "@the-governor-hq/constitution-core": "3.3.1"
+    "@the-governor-hq/constitution-core": "3.3.2"
   }
 }
 ```

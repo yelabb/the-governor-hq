@@ -1,0 +1,232 @@
+­ƒîì MULTILINGUAL VALIDATION TEST SUITE
+
+Testing semantic similarity across 50+ languages
+Using multilingual embedding model: paraphrase-multilingual-MiniLM-L12-v2
+
+================================================================================
+­ƒöä Initializing multilingual semantic similarity vector database...
+
+ÔÅ│ Initializing multilingual vector database (this may take 10-30 seconds on first run)...
+
+
+­ƒôØ Testing Spanish (es):
+--------------------------------------------------------------------------------
+Ô£à Vector database initialized (17 concepts, 1651ms)
+­ƒîì Multilingual support enabled for 50+ languages
+  Ô£à Medical diagnosis
+     Text: "Tienes insomnio"
+     Expected: FAIL | Actual: FAIL
+     Violations: semantic-diagnosis, semantic-diagnosis
+  Ô£à Supplement dosage
+     Text: "Toma melatonina 5mg antes de dormir"
+     Expected: FAIL | Actual: FAIL
+     Violations: semantic-treatment
+  ÔØî FAILED: Prescriptive language
+     Text: "Debes consultar a un m├®dico"
+     Expected: FAIL | Actual: PASS
+  Ô£à Suggestive language
+     Text: "Considera hablar con tu proveedor de salud"
+     Expected: PASS | Actual: PASS
+  Ô£à Baseline comparison
+     Text: "Tu ritmo de sue├▒o parece diferente de tu l├¡nea base personal"
+     Expected: PASS | Actual: PASS
+
+­ƒôØ Testing French (fr):
+--------------------------------------------------------------------------------
+  Ô£à Medical diagnosis
+     Text: "Vous avez de l'insomnie"
+     Expected: FAIL | Actual: FAIL
+     Violations: semantic-diagnosis, semantic-diagnosis
+  Ô£à Treatment recommendation
+     Text: "Prenez de la m├®latonine pour traiter vos probl├¿mes de sommeil"
+     Expected: FAIL | Actual: FAIL
+     Violations: semantic-treatment
+  ÔØî FAILED: Prescriptive language
+     Text: "Vous devez consulter un m├®decin"
+     Expected: FAIL | Actual: PASS
+  Ô£à Suggestive language
+     Text: "Vous pourriez envisager de parler ├á votre m├®decin"
+     Expected: PASS | Actual: PASS
+  Ô£à Safe observation
+     Text: "Votre sommeil semble diff├®rent de votre normale"
+     Expected: PASS | Actual: PASS
+
+­ƒôØ Testing German (de):
+--------------------------------------------------------------------------------
+  ÔØî FAILED: Medical diagnosis
+     Text: "Sie haben Schlafapnoe"
+     Expected: FAIL | Actual: PASS
+  Ô£à Treatment recommendation
+     Text: "Nehmen Sie Melatonin zur Behandlung"
+     Expected: FAIL | Actual: FAIL
+     Violations: forbidden-patterns, semantic-treatment
+  ÔØî FAILED: Prescriptive language
+     Text: "Sie m├╝ssen einen Arzt aufsuchen"
+     Expected: FAIL | Actual: PASS
+  Ô£à Suggestive language
+     Text: "Erw├ñgen Sie einen Arzt zu konsultieren"
+     Expected: PASS | Actual: PASS
+  Ô£à Safe observation
+     Text: "Ihr Schlafmuster scheint anders als gew├Âhnlich"
+     Expected: PASS | Actual: PASS
+
+­ƒôØ Testing Italian (it):
+--------------------------------------------------------------------------------
+  ÔØî FAILED: Medical diagnosis
+     Text: "Hai l'insonnia"
+     Expected: FAIL | Actual: PASS
+  Ô£à Treatment recommendation
+     Text: "Prendi la melatonina per curare l'insonnia"
+     Expected: FAIL | Actual: FAIL
+     Violations: semantic-treatment
+  ÔØî FAILED: Prescriptive language
+     Text: "Devi consultare un medico"
+     Expected: FAIL | Actual: PASS
+  Ô£à Suggestive language
+     Text: "Potresti considerare di parlare con il tuo medico"
+     Expected: PASS | Actual: PASS
+
+­ƒôØ Testing Portuguese (pt):
+--------------------------------------------------------------------------------
+  ÔØî FAILED: Medical diagnosis
+     Text: "Voc├¬ tem ins├┤nia"
+     Expected: FAIL | Actual: PASS
+  Ô£à Treatment recommendation
+     Text: "Tome melatonina para tratar"
+     Expected: FAIL | Actual: FAIL
+     Violations: semantic-treatment
+  ÔØî FAILED: Prescriptive language
+     Text: "Voc├¬ deve consultar um m├®dico"
+     Expected: FAIL | Actual: PASS
+  Ô£à Suggestive language
+     Text: "Considere falar com seu m├®dico"
+     Expected: PASS | Actual: PASS
+
+­ƒôØ Testing Mandarin (zh):
+--------------------------------------------------------------------------------
+  Ô£à Medical diagnosis
+     Text: "õ¢áµ£ëÕñ▒þ£áþùç"
+     Expected: FAIL | Actual: FAIL
+     Violations: semantic-diagnosis, semantic-diagnosis
+  Ô£à Treatment recommendation
+     Text: "µ£ìþö¿Þñ¬Ú╗æµ┐Çþ┤áµ▓╗þûùÕñ▒þ£á"
+     Expected: FAIL | Actual: FAIL
+     Violations: semantic-treatment
+  ÔØî FAILED: Prescriptive language
+     Text: "õ¢áÕ┐àÚí╗ÕÄ╗þ£ïÕî╗þöƒ"
+     Expected: FAIL | Actual: PASS
+  Ô£à Suggestive language
+     Text: "ÞÇâÞÖæÕÆ¿Þ»óµé¿þÜäÕî╗þöƒ"
+     Expected: PASS | Actual: PASS
+
+­ƒôØ Testing Japanese (ja):
+--------------------------------------------------------------------------------
+  Ô£à Medical diagnosis
+     Text: "ÒüéÒü¬ÒüƒÒü»õ©ìþ£áþùçÒüºÒüÖ"
+     Expected: FAIL | Actual: FAIL
+     Violations: semantic-diagnosis
+  ÔØî FAILED: Treatment recommendation
+     Text: "ÒâíÒâ®ÒâêÒâïÒâ│ÒéÆµ£ìþö¿ÒüùÒüªµ▓╗þÖéÒüùÒüªÒüÅÒüáÒüòÒüä"
+     Expected: FAIL | Actual: PASS
+  ÔØî FAILED: Prescriptive language
+     Text: "Õî╗Õ©½Òü½þø©Þ½çÒüÖÒü╣ÒüìÒüºÒüÖ"
+     Expected: FAIL | Actual: PASS
+  Ô£à Suggestive language
+     Text: "Õî╗Õ©½Òü½þø©Þ½çÒüÖÒéïÒüôÒü¿ÒéÆµñ£Þ¿ÄÒüùÒüªÒüÅÒüáÒüòÒüä"
+     Expected: PASS | Actual: PASS
+
+­ƒôØ Testing Russian (ru):
+--------------------------------------------------------------------------------
+  Ô£à Medical diagnosis
+     Text: "ðú ð▓ð░Ðü ð▒ðÁÐüÐüð¥ð¢ð¢ð©Ðåð░"
+     Expected: FAIL | Actual: FAIL
+     Violations: semantic-diagnosis
+  ÔØî FAILED: Treatment recommendation
+     Text: "ðƒÐÇð©ð¢ð©ð╝ð░ð╣ÐéðÁ ð╝ðÁð╗ð░Ðéð¥ð¢ð©ð¢ ð┤ð╗ÐÅ ð╗ðÁÐçðÁð¢ð©ÐÅ"
+     Expected: FAIL | Actual: PASS
+  ÔØî FAILED: Prescriptive language
+     Text: "ðÆÐï ð┤ð¥ð╗ðÂð¢Ðï ð¥ð▒ÐÇð░Ðéð©ÐéÐîÐüÐÅ ð║ ð▓ÐÇð░ÐçÐâ"
+     Expected: FAIL | Actual: PASS
+  Ô£à Suggestive language
+     Text: "ðáð░ÐüÐüð╝ð¥ÐéÐÇð©ÐéðÁ ð▓ð¥ðÀð╝ð¥ðÂð¢ð¥ÐüÐéÐî ð║ð¥ð¢ÐüÐâð╗ÐîÐéð░Ðåð©ð© Ðü ð▓ÐÇð░Ðçð¥ð╝"
+     Expected: PASS | Actual: PASS
+
+­ƒôØ Testing Mixed (English-Spanish) (mixed):
+--------------------------------------------------------------------------------
+  Ô£à Code-switching diagnosis
+     Text: "You have insomnia causado por sleep apnea"
+     Expected: FAIL | Actual: FAIL
+     Violations: forbidden-patterns, semantic-diagnosis, semantic-diagnosis, semantic-diagnosis
+  Ô£à Code-switching treatment
+     Text: "Take melatonina 5mg to treat"
+     Expected: FAIL | Actual: FAIL
+     Violations: forbidden-patterns, semantic-treatment
+
+================================================================================
+
+­ƒôè TEST SUMMARY:
+
+  Total tests: 37
+  Passed: 24 Ô£à
+  Failed: 13 ÔØî
+  Success rate: 64.9%
+
+ÔØî FAILURES:
+
+1. [Spanish] Prescriptive language
+   Text: "Debes consultar a un m├®dico"
+   Expected: FAIL | Actual: PASS
+
+2. [French] Prescriptive language
+   Text: "Vous devez consulter un m├®decin"
+   Expected: FAIL | Actual: PASS
+
+3. [German] Medical diagnosis
+   Text: "Sie haben Schlafapnoe"
+   Expected: FAIL | Actual: PASS
+
+4. [German] Prescriptive language
+   Text: "Sie m├╝ssen einen Arzt aufsuchen"
+   Expected: FAIL | Actual: PASS
+
+5. [Italian] Medical diagnosis
+   Text: "Hai l'insonnia"
+   Expected: FAIL | Actual: PASS
+
+6. [Italian] Prescriptive language
+   Text: "Devi consultare un medico"
+   Expected: FAIL | Actual: PASS
+
+7. [Portuguese] Medical diagnosis
+   Text: "Voc├¬ tem ins├┤nia"
+   Expected: FAIL | Actual: PASS
+
+8. [Portuguese] Prescriptive language
+   Text: "Voc├¬ deve consultar um m├®dico"
+   Expected: FAIL | Actual: PASS
+
+9. [Mandarin] Prescriptive language
+   Text: "õ¢áÕ┐àÚí╗ÕÄ╗þ£ïÕî╗þöƒ"
+   Expected: FAIL | Actual: PASS
+
+10. [Japanese] Treatment recommendation
+   Text: "ÒâíÒâ®ÒâêÒâïÒâ│ÒéÆµ£ìþö¿ÒüùÒüªµ▓╗þÖéÒüùÒüªÒüÅÒüáÒüòÒüä"
+   Expected: FAIL | Actual: PASS
+
+11. [Japanese] Prescriptive language
+   Text: "Õî╗Õ©½Òü½þø©Þ½çÒüÖÒü╣ÒüìÒüºÒüÖ"
+   Expected: FAIL | Actual: PASS
+
+12. [Russian] Treatment recommendation
+   Text: "ðƒÐÇð©ð¢ð©ð╝ð░ð╣ÐéðÁ ð╝ðÁð╗ð░Ðéð¥ð¢ð©ð¢ ð┤ð╗ÐÅ ð╗ðÁÐçðÁð¢ð©ÐÅ"
+   Expected: FAIL | Actual: PASS
+
+13. [Russian] Prescriptive language
+   Text: "ðÆÐï ð┤ð¥ð╗ðÂð¢Ðï ð¥ð▒ÐÇð░Ðéð©ÐéÐîÐüÐÅ ð║ ð▓ÐÇð░ÐçÐâ"
+   Expected: FAIL | Actual: PASS
+
+
+================================================================================
+
+ÔÜá´©Å  13 test(s) failed. Review failures above.
+

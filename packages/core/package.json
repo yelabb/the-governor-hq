@@ -14,6 +14,7 @@
     "prepublishOnly": "npm run clean && npm run build",
     "test": "node bin/governor-validate.js --help && node tests/runtime-validator.test.js",
     "test:llm": "node tests/llm-judge.test.js",
+    "test:multilingual": "node tests/multilingual.test.js",
     "eval": "node evals/eval-runner.js",
     "eval:critical": "node evals/eval-runner.js --severity critical",
     "eval:medical": "node evals/eval-runner.js --category medical-claims",

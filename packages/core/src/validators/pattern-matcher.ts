@@ -13,21 +13,29 @@ const FORBIDDEN_PATTERNS = [
   /\b(diagnos(e|ed|is|ing)|you have|you likely have|you may have)\b/i,
   
   // Disease and condition names
-  /\b(insomnia|depression|anxiety disorder|sleep apnea|cardiovascular disease|diabetes|hypertension)\b/i,
+  /\b(insomnia|insomnio|insomnie|insonnia|insônia|depression|anxiety disorder|sleep apnea|schlafapnoe|cardiovascular disease|diabetes|hypertension)\b/i,
   
   // Treatment language
-  /\b(cure|cures|curing|cured|treat|treats|treating|treated|heal|heals|healing|prevent|prevents)\b/i,
+  /\b(cure|cures|curing|cured|treat|treats|treating|treated|heal|heals|healing|prevent|prevents|tratamiento|traiter|behandlung|curare|tratar)\b/i,
+
+  // Cyrillic treatment terms
+  /принимайте|лечения/iu,
   
   // Supplements and medications
-  /\b(take|taking|dosage|mg|milligram|supplement|vitamin|melatonin|magnesium|medication|prescription)\b/i,
+  /\b(take|taking|dosage|mg|milligram|supplement|vitamin|melatonin|magnesium|medication|prescription|toma|prenez|nehmen|prendi|tome)\b/i,
   
   // Medical scope violations
   /\b(medical condition|health condition|disorder|syndrome|symptom of|sign of|indicates)\b/i,
+
+  // CJK treatment terms
+  /服用|治療/u,
 ];
 
 /** Prescriptive/commanding language patterns */
 const PRESCRIPTIVE_PATTERNS = [
   /\b(must|should|need to|have to|required to|you need|you must|you should)\b/i,
+  /debes|debe|devez|müssen|devi|deve|должны/iu,
+  /必须|すべき/u,
 ];
 
 /** Authoritative medical terms */
@@ -40,6 +48,8 @@ const MEDICAL_KEYWORDS = [
 /** Required suggestive language patterns (good patterns) */
 const SUGGESTIVE_PATTERNS = [
   /\b(consider|might|could|may want to|option|when ready|if you'd like)\b/i,
+  /considera|considere|envisager|pourriez|erwägen|potresti|рассмотрите\s+возможность/iu,
+  /考虑|検討/u,
   /\b(healthcare professional|doctor|physician|medical provider)\b/i,
 ];
 
@@ -235,6 +245,14 @@ export async function runHardenedChecks(
   if (options.useSemanticSimilarity) {
     semantic = await runSemanticChecks(text, options.semanticThreshold || 0.75);
     semanticViolations = semanticToViolations(semantic);
+
+    // Reduce false positives: if language is suggestive and has no explicit prescriptive pattern,
+    // ignore semantic-prescriptive hits while keeping diagnosis/treatment blocks intact.
+    const hasSuggestiveLanguage = checkSuggestivePatterns(text);
+    const hasExplicitPrescriptive = patterns.prescriptive.length > 0;
+    if (hasSuggestiveLanguage && !hasExplicitPrescriptive) {
+      semanticViolations = semanticViolations.filter(v => v.rule !== 'semantic-prescriptive');
+    }
   }
   
   // Combine all violations

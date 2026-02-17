@@ -1,7 +1,12 @@
 /**
  * Semantic Similarity Module
- * Uses embeddings to detect forbidden medical advice concepts
+ * Uses multilingual embeddings to detect forbidden medical advice concepts in ANY language
  * Prevents spacing/spelling attacks that bypass regex patterns
+ * 
+ * MULTILINGUAL SUPPORT (v3.3.0+):
+ * - Supports 50+ languages via cross-lingual embeddings
+ * - No per-language pattern translation needed
+ * - Forbidden concepts defined in English, matched semantically across languages
  */
 
 import type { SemanticCheckResult, ForbiddenConcept } from './types';
@@ -35,11 +40,13 @@ async function getEmbeddingPipeline() {
   if (!embeddingPipeline) {
     const { pipeline } = await getTransformers();
     
-    // Use a small, fast embedding model
-    // all-MiniLM-L6-v2: 80MB, ~384 dimensional embeddings, good quality
+    // Use multilingual embedding model for cross-lingual safety validation
+    // paraphrase-multilingual-MiniLM-L12-v2: ~420MB, 384-dim embeddings, 50+ languages
+    // This enables detection of forbidden medical concepts in ANY language
+    // without translating patterns or maintaining per-language rules
     embeddingPipeline = await pipeline(
       'feature-extraction',
-      'Xenova/all-MiniLM-L6-v2'
+      'Xenova/paraphrase-multilingual-MiniLM-L12-v2'
     );
   }
   return embeddingPipeline;
@@ -91,27 +98,32 @@ export function cosineSimilarity(vecA: number[], vecB: number[]): number {
 }
 
 /**
- * Normalize text to catch adversarial attacks
+ * Normalize text to catch adversarial attacks (multilingual-compatible)
  * - Remove extra spaces
- * - Remove special characters between letters
+ * - Remove special characters between letters (preserving Unicode letters)
  * - Convert to lowercase
- * - Fix common misspellings
+ * - Fix common English misspellings
+ * 
+ * IMPORTANT: Preserves non-ASCII Unicode letters for multilingual support
  */
 export function normalizeText(text: string): string {
   let normalized = text.toLowerCase();
   
-  // Remove special characters while preserving letters and spaces
-  // e.g., "d!i@a#g$n%o^s&e" → "diagnose"
-  normalized = normalized.replace(/[^a-z\s]/g, '');
+  // Remove special characters while preserving Unicode letters (including accents, CJK, etc.)
+  // Keeps: letters (any language), spaces, basic punctuation for readability
+  // Removes: decorative symbols, most special chars that could obfuscate medical terms
+  // \p{L} matches any Unicode letter (including Chinese, Arabic, Cyrillic, accented chars)
+  normalized = normalized.replace(/[^\p{L}\p{N}\s\.,;:!?'-]/gu, ' ');
   
   // Collapse multiple spaces
   normalized = normalized.replace(/\s+/g, ' ');
   
-  // Remove spaces between individual characters (e.g., "d i a g n o s e" → "diagnose")
-  // This matches single letters separated by spaces
-  normalized = normalized.replace(/\b([a-z])\s+(?=[a-z]\b)/g, '$1');
+  // Remove spaces between individual characters for languages that use them
+  // (e.g., "d i a g n o s e" → "diagnose", but preserves "失 眠" if that's the actual spacing)
+  // Only collapse single-char spacing for Latin alphabet to avoid breaking CJK
+  normalized = normalized.replace(/\b([a-z])\s+(?=[a-z]\b)/gi, '$1');
   
-  // Common intentional misspellings
+  // Common intentional English misspellings (other languages handled via embeddings)
   const misspellings: Record<string, string> = {
     'diagnoz': 'diagnose',
     'diagnoze': 'diagnose',
@@ -132,6 +144,81 @@ export function normalizeText(text: string): string {
 }
 
 /**
+ * Detect language of input text (simple heuristic-based detection)
+ * Returns ISO 639-1 language code or 'unknown'
+ * 
+ * NOTE: This is a basic detector. For production, consider integrating
+ * a proper language detection library like 'franc' or 'cld3'
+ */
+export function detectLanguage(text: string): string {
+  const cleaned = text.toLowerCase().replace(/[^\p{L}\s]/gu, '');
+  
+  // Character set patterns for major language families
+  const patterns: Record<string, RegExp> = {
+    // CJK (Chinese, Japanese, Korean)
+    'zh': /[\u4e00-\u9fff]/,  // Chinese characters
+    'ja': /[\u3040-\u309f\u30a0-\u30ff]/,  // Hiragana/Katakana
+    'ko': /[\uac00-\ud7af]/,  // Hangul
+    
+    // Cyrillic (Russian, Ukrainian, etc.)
+    'ru': /[\u0400-\u04ff]/,
+    
+    // Arabic
+    'ar': /[\u0600-\u06ff\u0750-\u077f]/,
+    
+    // Devanagari (Hindi, Sanskrit)
+    'hi': /[\u0900-\u097f]/,
+    
+    // Thai
+    'th': /[\u0e00-\u0e7f]/,
+    
+    // Hebrew
+    'he': /[\u0590-\u05ff]/,
+  };
+  
+  // Check character-based languages first
+  for (const [lang, pattern] of Object.entries(patterns)) {
+    if (pattern.test(text)) {
+      return lang;
+    }
+  }
+  
+  // For Latin-script languages, use common word patterns
+  // Spanish
+  if (/\b(el|la|los|las|un|una|de|en|que|tienes|tiene|para|con|está|son)\b/.test(cleaned)) {
+    return 'es';
+  }
+  
+  // French
+  if (/\b(le|la|les|un|une|de|en|vous|avez|est|sont|pour|avec|des|dans)\b/.test(cleaned)) {
+    return 'fr';
+  }
+  
+  // German
+  if (/\b(der|die|das|den|dem|ein|eine|und|sie|haben|ist|sind|mit|für)\b/.test(cleaned)) {
+    return 'de';
+  }
+  
+  // Italian
+  if (/\b(il|la|lo|i|gli|le|un|una|di|in|che|hai|ha|sono|per|con)\b/.test(cleaned)) {
+    return 'it';
+  }
+  
+  // Portuguese
+  if (/\b(o|a|os|as|um|uma|de|em|que|tem|são|para|com|não)\b/.test(cleaned)) {
+    return 'pt';
+  }
+  
+  // Default to English if Latin script with common English words
+  if (/\b(the|is|are|you|have|this|that|with|for|from|your)\b/.test(cleaned)) {
+    return 'en';
+  }
+  
+  // If we can't detect, assume multilingual model will handle it
+  return 'unknown';
+}
+
+/**
  * Check text against forbidden medical concepts using semantic similarity
  */
 export async function checkSemanticSimilarity(
@@ -139,6 +226,9 @@ export async function checkSemanticSimilarity(
   threshold: number = 0.75
 ): Promise<SemanticCheckResult> {
   const startTime = Date.now();
+  
+  // Detect input language for logging and analytics
+  const detectedLanguage = detectLanguage(text);
   
   // Check if vector database is initialized
   const isInitialized = FORBIDDEN_MEDICAL_CONCEPTS.every(c => c.embedding.length > 0);
@@ -148,6 +238,7 @@ export async function checkSemanticSimilarity(
       violations: [],
       maxSimilarity: 0,
       latencyMs: Date.now() - startTime,
+      detectedLanguage,
     };
   }
   
@@ -160,7 +251,20 @@ export async function checkSemanticSimilarity(
   for (const concept of FORBIDDEN_MEDICAL_CONCEPTS) {
     const similarity = cosineSimilarity(textEmbedding, concept.embedding);
     
-    if (similarity >= threshold) {
+    // Use severity-based thresholds:
+    // - critical: 0.75 (strict - medical diagnoses, treatments)
+    // - high: 0.77 (medium - medical scope, alarming language)
+    // - medium: 0.78 (lenient - prescriptive commands, need clear intent)
+    let severityThreshold = threshold;
+    if (concept.severity === 'critical') {
+      severityThreshold = Math.min(threshold, 0.75);
+    } else if (concept.severity === 'high') {
+      severityThreshold = Math.max(threshold, 0.77);
+    } else if (concept.severity === 'medium') {
+      severityThreshold = Math.max(threshold, 0.78);
+    }
+    
+    if (similarity >= severityThreshold) {
       matches.push({
         ...concept,
         similarity,
@@ -183,6 +287,7 @@ export async function checkSemanticSimilarity(
     })),
     maxSimilarity: matches.length > 0 ? matches[0].similarity || 0 : 0,
     latencyMs,
+    detectedLanguage,
   };
 }
 
@@ -281,14 +386,35 @@ export const FORBIDDEN_MEDICAL_CONCEPTS: ForbiddenConcept[] = [
     concept: 'medical-must-directive',
     category: 'prescriptive',
     severity: 'medium',
-    example: 'You must see a doctor about this condition',
+    example: 'You must see a doctor',
+    embedding: [],
+  },
+  {
+    concept: 'medical-should-directive',
+    category: 'prescriptive',
+    severity: 'medium',
+    example: 'You should consult a doctor',
+    embedding: [],
+  },
+  {
+    concept: 'medical-need-directive',
+    category: 'prescriptive',
+    severity: 'medium',
+    example: 'You need to consult a physician',
     embedding: [],
   },
   {
     concept: 'treatment-requirement',
     category: 'prescriptive',
     severity: 'medium',
-    example: 'You need to take medication for this',
+    example: 'You need to take medication',
+    embedding: [],
+  },
+  {
+    concept: 'specific-sleep-condition',
+    category: 'diagnosis',
+    severity: 'critical',
+    example: 'You have sleep apnea',
     embedding: [],
   },
 ];
@@ -296,9 +422,11 @@ export const FORBIDDEN_MEDICAL_CONCEPTS: ForbiddenConcept[] = [
 /**
  * Initialize the vector database by computing embeddings
  * This should be called once during application startup
+ * 
+ * Uses multilingual embedding model to enable cross-lingual safety validation
  */
 export async function initializeVectorDatabase(): Promise<void> {
-  console.log('🔄 Initializing semantic similarity vector database...');
+  console.log('🔄 Initializing multilingual semantic similarity vector database...');
   const startTime = Date.now();
   
   for (const concept of FORBIDDEN_MEDICAL_CONCEPTS) {
@@ -309,6 +437,7 @@ export async function initializeVectorDatabase(): Promise<void> {
   
   const latencyMs = Date.now() - startTime;
   console.log(`✅ Vector database initialized (${FORBIDDEN_MEDICAL_CONCEPTS.length} concepts, ${latencyMs}ms)`);
+  console.log('🌍 Multilingual support enabled for 50+ languages');
 }
 
 /**

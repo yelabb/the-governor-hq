@@ -14,7 +14,7 @@ export { governorValidator, validateField, validationErrorHandler } from './midd
 export { withGovernor, createGovernorValidator, withFieldValidation, validateResponse } from './middleware/nextjs';
 export { runPatternChecks, checkForbiddenPatterns, checkPrescriptiveLanguage, checkMedicalKeywords, checkSuggestivePatterns, checkAlarmingPatterns, runHardenedChecks, runSemanticChecks, detectAdversarialAttack, } from './validators/pattern-matcher';
 export { generateSafeAlternative, attemptSanitization, getDisclaimer, } from './validators/sanitizer';
-export { generateEmbedding, cosineSimilarity, normalizeText, checkSemanticSimilarity, initializeVectorDatabase, batchCheckSemantic, FORBIDDEN_MEDICAL_CONCEPTS, } from './validators/semantic-similarity';
+export { generateEmbedding, cosineSimilarity, normalizeText, detectLanguage, checkSemanticSimilarity, initializeVectorDatabase, batchCheckSemantic, FORBIDDEN_MEDICAL_CONCEPTS, } from './validators/semantic-similarity';
 export { BaseGovernorMCPServer };
 export type { ServerConfig };
 export interface LegacyValidationResult {

@@ -3,7 +3,12 @@
  * Runtime Validator - Hard post-generation gate
  * LLM → Validator → Output
  *
- * Fast pattern matching (<10ms) with optional LLM judge for edge cases
+ * Fast pattern matching (<10ms) with multilingual semantic similarity (100-300ms)
+ *
+ * MULTILINGUAL SUPPORT (v3.3.0+):
+ * - Detects and validates medical advice in 50+ languages
+ * - Uses cross-lingual embeddings (no per-language patterns needed)
+ * - Semantic similarity enabled by default for security
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RuntimeValidator = void 0;
@@ -28,7 +33,10 @@ class RuntimeValidator {
             useLLMJudge: config.useLLMJudge ?? false,
             llmProvider: config.llmProvider || 'groq',
             llmModel: config.llmModel || '',
-            useSemanticSimilarity: config.useSemanticSimilarity ?? false,
+            // Default to TRUE for multilingual support (v3.3.0+)
+            // Semantic similarity is now required to catch non-English medical advice
+            // Pattern matching alone is English-only and vulnerable to bypasses
+            useSemanticSimilarity: config.useSemanticSimilarity ?? true,
             semanticThreshold: config.semanticThreshold ?? 0.75,
             customRules: config.customRules || [],
             apiKey: config.apiKey || '',

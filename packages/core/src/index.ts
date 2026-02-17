@@ -57,6 +57,7 @@ export {
   generateEmbedding,
   cosineSimilarity,
   normalizeText,
+  detectLanguage,
   checkSemanticSimilarity,
   initializeVectorDatabase,
   batchCheckSemantic,
