@@ -1,6 +1,11 @@
 /**
  * LLM Client for Judge Validation
  * Supports Groq, OpenAI, and Anthropic
+ *
+ * MULTILINGUAL SUPPORT (v3.3.0+):
+ * - Evaluates safety in ANY language
+ * - LLMs understand semantic meaning across languages
+ * - No translation needed - direct multilingual evaluation
  */
 export type LLMProvider = 'groq' | 'openai' | 'anthropic';
 export interface LLMClientConfig {
@@ -49,7 +54,7 @@ export declare class LLMClient {
      */
     judge(text: string, domain: string): Promise<LLMJudgeResponse>;
     /**
-     * Build the judge prompt
+     * Build the judge prompt (multilingual-aware)
      */
     private buildJudgePrompt;
     /**

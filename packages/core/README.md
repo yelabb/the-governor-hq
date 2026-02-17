@@ -76,34 +76,47 @@ export default withGovernor(
 [📖 Middleware Guide →](https://the-governor-hq.vercel.app/packages/core/middleware)
 
 ### 3. Hardened Pattern Matcher
-**Semantic similarity to prevent adversarial attacks**
+**Semantic similarity to prevent adversarial attacks + multilingual support**
 
-Traditional regex patterns can be bypassed with spacing (`d i a g n o s e`), special characters (`d!i@a#g$n%o^s&e`), or misspellings (`diagnoz`). The hardened pattern matcher uses **semantic similarity embeddings** to catch these attacks:
+Traditional regex patterns can be bypassed with spacing (`d i a g n o s e`), special characters (`d!i@a#g$n%o^s&e`), misspellings (`diagnoz`), or **non-English text** (`tienes insomnio`). The hardened pattern matcher uses **multilingual semantic similarity embeddings** to catch these attacks:
 
 ```typescript
 import { createValidator } from '@the-governor-hq/constitution-core';
 
 const validator = createValidator({
   domain: 'wearables',
-  useSemanticSimilarity: true,  // Enable hardened checks
+  useSemanticSimilarity: true,  // Enabled by default in v3.3.0+ for multilingual support
   semanticThreshold: 0.75,       // Similarity threshold
 });
 
-// ❌ All blocked by semantic similarity:
+// ❌ All blocked by semantic similarity (English obfuscation):
 await validator.validate('You have d i a g n o s e d insomnia');  // spacing attack
 await validator.validate('Take mel@tonin 5mg');                    // special chars
 await validator.validate('You have diagnoz');                      // misspelling
+
+// ❌ Also blocked (multilingual v3.3.0+):
+await validator.validate('Tienes insomnio');                      // Spanish
+await validator.validate('Vous avez de l\'insomnie');             // French
+await validator.validate('Sie haben Schlafapnoe');                // German
+await validator.validate('你有失眠症');                             // Chinese
 ```
 
 **How it works:**
-1. **Text normalization** removes obfuscation
-2. **Adversarial detection** flags manipulation attempts  
-3. **Semantic matching** compares text embeddings against forbidden medical concepts
+1. **Text normalization** removes obfuscation (preserves Unicode for multilingual)
+2. **Language detection** identifies input language (50+ languages supported)
+3. **Adversarial detection** flags manipulation attempts  
+4. **Cross-lingual semantic matching** compares text embeddings against forbidden medical concepts
+
+**Multilingual Support (v3.3.0+):**
+- ✅ **50+ languages** supported automatically (Spanish, French, German, Chinese, Arabic, Japanese, Russian, etc.)
+- ✅ **No per-language patterns** needed - uses cross-lingual embedding model
+- ✅ **Forbidden concepts in English** map to semantic equivalents in any language
+- ✅ **Code-switching detection** catches mixed-language attacks
 
 **Performance:**
-- First use: 2-5s (model download, ~80MB)
-- Subsequent: 100-300ms per validation
-- Regex-only: <10ms (default, use for real-time)
+- First use: 10-30s (multilingual model download, ~420MB)
+- Subsequent: 150-400ms per validation
+- Regex-only: <10ms (fast-path for English optimization)
 
 [🛡️ Hardened Pattern Matcher Guide →](https://the-governor-hq.vercel.app/packages/core/hardened-pattern-matcher)
 

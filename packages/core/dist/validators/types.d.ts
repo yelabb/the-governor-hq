@@ -114,5 +114,6 @@ export interface SemanticCheckResult {
     violations: SemanticViolation[];
     maxSimilarity: number;
     latencyMs: number;
+    detectedLanguage?: string;
 }
 //# sourceMappingURL=types.d.ts.map

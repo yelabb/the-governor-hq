@@ -138,4 +138,5 @@ export interface SemanticCheckResult {
   violations: SemanticViolation[];
   maxSimilarity: number;
   latencyMs: number;
+  detectedLanguage?: string;  // ISO 639-1 language code (e.g., 'en', 'es', 'fr', 'zh')
 }
