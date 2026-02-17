@@ -13,7 +13,7 @@
     "start": "next start",
     "test": "npm run test --workspaces",
     "publish:all": "npm publish --workspaces --access public",
-    "ai:context": "node ./node_modules/@governor-hq/constitution/mcp-server.js"
+    "ai:context": "node ./node_modules/@the-governor-hq/constitution-wearables/dist/mcp-server.js"
   },
   "keywords": [
     "ai-safety",
