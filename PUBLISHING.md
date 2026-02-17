@@ -1,9 +1,69 @@
 # Publishing the Governor HQ Constitutional Framework to NPM
 
+## Versioning Strategy
+
+**Release Train: LOCKSTEP VERSIONING**
+
+All packages in this monorepo share the same version number. When any package is updated, ALL packages receive a version bump together.
+
+### Why Lockstep?
+
+- **User clarity**: Users know which versions work together
+- **Dependency safety**: Domain packages always reference the exact core version they were tested with
+- **Simpler releases**: One version number to track, not four
+- **Semantic alignment**: Breaking changes in core = breaking changes everywhere
+
+### Version Alignment
+
+```
+@the-governor-hq/governor-hq-monorepo:  3.1.1
+├── @the-governor-hq/constitution-core:      3.1.1
+├── @the-governor-hq/constitution-wearables: 3.1.1
+├── @the-governor-hq/constitution-bci:       3.1.1
+└── @the-governor-hq/constitution-therapy:   3.1.1
+```
+
+### Release Process
+
+1. Update version in **ALL** package.json files (root + all packages)
+2. Update core dependency references to exact version (no `^`)
+3. Build and test all packages
+4. Publish all packages together: `npm run publish:all`
+5. Create single GitHub release for the version
+
+### When to Bump
+
+- **Patch** (3.1.1 → 3.1.2): Bug fixes in any package
+- **Minor** (3.1.2 → 3.2.0): New features in any package
+- **Major** (3.2.0 → 4.0.0): Breaking changes in any package (especially core)
+
+### Lockstep Version Bump Commands
+
+Use the automated script to bump all packages together:
+
+```bash
+# Patch release (bug fixes)
+npm run version:patch
+
+# Minor release (new features)
+npm run version:minor
+
+# Major release (breaking changes)
+npm run version:major
+
+# Or specify exact version
+node scripts/version-lockstep.js 3.2.0
+```
+
+This updates:
+- All `package.json` version fields
+- All core dependency references to exact versions
+- Provides next-step instructions
+
 ## Prerequisites
 
 1. NPM account: https://www.npmjs.com/signup
-2. Organization (optional): Create `@governor-hq` org on npm
+2. Organization (optional): Create `@the-governor-hq` org on npm
 3. Git repository configured in package.json
 4. All files ready for publishing
 
@@ -31,7 +91,7 @@ cd ../docs
 npm link
 
 cd ../test-governor-install
-npm link @governor-hq/constitution
+npm link @the-governor-hq/constitution
 
 # 3. Test the installation
 ls -la .cursorrules
@@ -39,7 +99,7 @@ cat .vscode/settings.json
 npm run ai:context
 
 # 4. Unlink when done
-npm unlink @governor-hq/constitution
+npm unlink @the-governor-hq/constitution
 cd ../docs
 npm unlink
 ```
@@ -90,7 +150,7 @@ npm version major  # 1.1.0 -> 2.0.0
 npm publish --access public
 ```
 
-#### For Scoped Package (@governor-hq/constitution)
+#### For Scoped Package (@the-governor-hq/constitution)
 
 ```bash
 # First time (must specify public access)
@@ -104,7 +164,7 @@ npm publish
 
 ```bash
 # Check it's live
-npm view @governor-hq/constitution
+npm view @the-governor-hq/constitution
 
 # Test installation in a new project
 mkdir test-install
@@ -204,7 +264,7 @@ npm whoami  # Verify you're logged in
 
 - Check if package name is already taken
 - For scoped packages, need access to the org
-- Use `npm org ls @governor-hq` to check membership
+- Use `npm org ls @the-governor-hq` to check membership
 
 ### "Files not included in package"
 
@@ -241,10 +301,10 @@ node install.js
 
 ```bash
 # Deprecate a version
-npm deprecate @governor-hq/constitution@1.0.0 "Security vulnerability, upgrade to 1.0.1"
+npm deprecate @the-governor-hq/constitution@1.0.0 "Security vulnerability, upgrade to 1.0.1"
 
 # Unpublish (only within 72h of publish)
-npm unpublish @governor-hq/constitution@1.0.0
+npm unpublish @the-governor-hq/constitution@1.0.0
 ```
 
 ## Best Practices
@@ -283,7 +343,7 @@ npm run release:patch  # All-in-one: test, version, publish, push
 
 Final check before `npm publish --access public`:
 
-- [ ] Package name is available: `npm view @governor-hq/constitution`
+- [ ] Package name is available: `npm view @the-governor-hq/constitution`
 - [ ] All tests pass: `npm test`
 - [ ] Install script works: `node install.js`
 - [ ] MCP server works: `node mcp-server.js`

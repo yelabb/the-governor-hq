@@ -1,6 +1,6 @@
 # Instant AI Safety for Wearable Data Projects
 
-[![npm version](https://badge.fury.io/js/%40governor-hq%2Fconstitution.svg)](https://www.npmjs.com/package/@governor-hq/constitution)
+[![npm version](https://badge.fury.io/js/%40governor-hq%2Fconstitution.svg)](https://www.npmjs.com/package/@the-governor-hq/constitution)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 **Make your AI coding assistant safety-aware for wearable health data in 3 seconds.**
@@ -115,7 +115,7 @@ For AI assistants with MCP support (Claude, ChatGPT, etc.):
 npm run ai:context
 
 # Or use in Node.js
-const { GovernorHQMCPServer } = require('@governor-hq/constitution');
+const { GovernorHQMCPServer } = require('@the-governor-hq/constitution');
 const server = new GovernorHQMCPServer();
 server.start();
 ```
@@ -127,7 +127,7 @@ Add to your Claude Desktop config (`~/Library/Application Support/Claude/config.
   "mcpServers": {
     "governor-hq": {
       "command": "node",
-      "args": ["./node_modules/@governor-hq/constitution/mcp-server.js"]
+      "args": ["./node_modules/@the-governor-hq/constitution/mcp-server.js"]
     }
   }
 }
@@ -140,7 +140,7 @@ If you prefer manual setup:
 ### Cursor
 ```bash
 # Copy .cursorrules to your project
-cp node_modules/@governor-hq/constitution/.cursorrules .
+cp node_modules/@the-governor-hq/constitution/.cursorrules .
 ```
 
 ### VS Code / Copilot
@@ -148,7 +148,7 @@ Add to `.vscode/settings.json`:
 ```json
 {
   "github.copilot.chat.codeGeneration.instructions": [{
-    "text": "Follow the Governor HQ Constitutional Framework in node_modules/@governor-hq/constitution for wearable health data safety."
+    "text": "Follow the Governor HQ Constitutional Framework in node_modules/@the-governor-hq/constitution for wearable health data safety."
   }]
 }
 ```
@@ -165,7 +165,7 @@ Before generating any health-related code, check these rules:
 4. Personal baseline required (not population averages)
 5. Optional language only ("consider", "might")
 
-Full rules: node_modules/@governor-hq/constitution/pages/constraints/hard-rules.mdx
+Full rules: node_modules/@the-governor-hq/constitution/pages/constraints/hard-rules.mdx
 ```
 
 ## Use Cases

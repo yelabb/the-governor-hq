@@ -69,7 +69,7 @@
 │  📖 QUICK REFERENCE                                              │
 └──────────────────────────────────────────────────────────────────┘
 
-  Hard Rules:    node_modules/@governor-hq/constitution/
+  Hard Rules:    node_modules/@the-governor-hq/constitution/
                  pages/constraints/hard-rules.mdx
   
   Quick Ref:     pages/quick-reference.mdx
@@ -117,7 +117,7 @@
        "mcpServers": {
          "governor-hq": {
            "command": "node",
-           "args": ["./node_modules/@governor-hq/constitution/mcp-server.js"]
+           "args": ["./node_modules/@the-governor-hq/constitution/mcp-server.js"]
          }
        }
      }
@@ -136,7 +136,7 @@
 │  🌐 LINKS                                                        │
 └──────────────────────────────────────────────────────────────────┘
 
-  NPM:     https://www.npmjs.com/package/@governor-hq/constitution
+  NPM:     https://www.npmjs.com/package/@the-governor-hq/constitution
   Docs:    https://the-governor-hq.vercel.app
   GitHub:  https://github.com/the-governor-hq/constitution
   License: MIT

@@ -1,6 +1,6 @@
 {
   "name": "@the-governor-hq/constitution-wearables",
-  "version": "3.0.6",
+  "version": "3.1.1",
   "description": "AI Safety Constitution for Wearable/Smartwatch Data Projects - Instant context for AI coding assistants",
   "main": "dist/mcp-server.js",
   "types": "dist/index.d.ts",
@@ -53,10 +53,10 @@
     "node": ">=16.0.0"
   },
   "dependencies": {
-    "@the-governor-hq/constitution-core": "^3.0.0"
+    "@the-governor-hq/constitution-core": "3.1.1"
   },
   "peerDependencies": {
-    "@the-governor-hq/constitution-core": "^3.0.0"
+    "@the-governor-hq/constitution-core": "3.1.1"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",

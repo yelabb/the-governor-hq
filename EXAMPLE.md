@@ -12,7 +12,7 @@ my-wearable-app/
 ├── .vscode/
 │   └── settings.json               # ← Auto-updated by framework
 ├── node_modules/
-│   └── @governor-hq/constitution/  # ← Installed framework
+│   └── @the-governor-hq/constitution/  # ← Installed framework
 └── src/
     ├── utils/
     │   ├── baseline-gate.ts        # ← Use framework patterns
@@ -40,7 +40,7 @@ Create a recovery recommendation function that analyzes HRV data
 ### AI Response (with framework active):
 ```typescript
 // src/agents/recovery-agent.ts
-import { requireStableBaseline, MessageTemplates } from '@governor-hq/constitution';
+import { requireStableBaseline, MessageTemplates } from '@the-governor-hq/constitution';
 
 interface User {
   id: string;
@@ -132,7 +132,7 @@ export function analyzeSleep(hrv: number) {
 ```json
 {
   "github.copilot.chat.codeGeneration.instructions": [{
-    "text": "Follow the Governor HQ Constitutional Framework in node_modules/@governor-hq/constitution for wearable health data safety constraints."
+    "text": "Follow the Governor HQ Constitutional Framework in node_modules/@the-governor-hq/constitution for wearable health data safety constraints."
   }]
 }
 ```
@@ -143,7 +143,7 @@ export function analyzeSleep(hrv: number) {
   "mcpServers": {
     "governor-hq-constitution": {
       "command": "node",
-      "args": ["./node_modules/@governor-hq/constitution/mcp-server.js"],
+      "args": ["./node_modules/@the-governor-hq/constitution/mcp-server.js"],
       "enabled": true
     }
   }
@@ -159,7 +159,7 @@ import {
   validateUserFacingText,
   MessageTemplates,
   convertCommandsToSuggestions
-} from '@governor-hq/constitution';
+} from '@the-governor-hq/constitution';
 
 // Check baseline before recommendations
 if (!requireStableBaseline(user)) {
@@ -185,7 +185,7 @@ const fixed = convertCommandsToSuggestions("You should rest today");
 ```typescript
 // tests/recovery-agent.test.ts
 import { generateRecoveryRecommendation } from '../src/agents/recovery-agent';
-import { validateUserFacingText } from '@governor-hq/constitution';
+import { validateUserFacingText } from '@the-governor-hq/constitution';
 
 describe('Recovery Agent Safety', () => {
   test('generates no recommendations during learning phase', () => {
@@ -260,7 +260,7 @@ jobs:
 ```typescript
 // src/api/notifications.ts
 import { generateRecoveryRecommendation } from './agents/recovery-agent';
-import { validateUserFacingText } from '@governor-hq/constitution';
+import { validateUserFacingText } from '@the-governor-hq/constitution';
 
 export async function sendDailyInsight(userId: string) {
   const user = await fetchUserData(userId);
@@ -313,7 +313,7 @@ git commit -m "Add recovery recommendations"
 Update your AI's context:
 ```
 CRITICAL: Zero tolerance for supplement mentions. 
-Review node_modules/@governor-hq/constitution/pages/constraints/hard-rules.mdx
+Review node_modules/@the-governor-hq/constitution/pages/constraints/hard-rules.mdx
 ```
 
 ### Need to validate existing code?
