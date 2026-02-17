@@ -1,17 +1,15 @@
 <div align="center">
-<img width="512" alt="image" src="https://github.com/user-attachments/assets/cb620a5c-c8db-4eba-9bea-b9995b4ccbe2" />
 
-# The Governor HQ Constitutional Framework
 
-### Stop AI Assistants from Generating Dangerous Health Code
+# Multi-layered safety system for AI-assisted development with wearable, BCI, and therapy data.  
+### Runtime validation • API middleware • MCP servers • CLI tools • Auto-configuration
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/the-governor-hq/constitution?style=flat-square)](https://github.com/the-governor-hq/constitution/stargazers)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://github.com/the-governor-hq/constitution/pulls)
 [![MCP Compatible](https://img.shields.io/badge/MCP-Compatible-purple?style=flat-square)](https://modelcontextprotocol.io)
 
-**Multi-layered safety system for AI-assisted development with wearable, BCI, and therapy data.  
-Runtime validation • API middleware • MCP servers • CLI tools • Auto-configuration**
+
 
 [Quick Start](#-quick-start-in-60-seconds) • [What You Get](#-what-you-get) • [Examples](#-see-it-in-action) • [Documentation](https://the-governor-hq.vercel.app)
 
@@ -23,20 +21,9 @@ Runtime validation • API middleware • MCP servers • CLI tools • Auto-con
 
 Building a health app with AI assistance? **You're in the right place.**
 
-The Governor HQ gives you **production-ready tools** that prevent AI from generating dangerous code when working with biometric data — medical claims, supplement recommendations, disease diagnoses, or treatment advice.
+The Governor HQ gives you **tools** that prevent AI from generating dangerous code when working with biometric data — medical claims, supplement recommendations, disease diagnoses, or treatment advice.
 
-**Not just documentation. Actual executable code.**
 
-### What Makes This Different
-
-❌ **NOT** just a style guide or ethical principles document  
-✅ **IS** runtime validators, API middleware, MCP servers, and CLI tools  
-
-❌ **NOT** generic AI safety guidelines  
-✅ **IS** domain-specific constraints for wearables, BCI, and therapy data  
-
-❌ **NOT** one-size-fits-all  
-✅ **IS** install only the domains you need (smartwatch? BCI? therapy?)
 
 ---
 
@@ -624,8 +611,7 @@ Use freely in commercial or personal projects. See [LICENSE](LICENSE) for full t
 
 ## 🙏 Built With AI Assistance
 
-This framework was developed with assistance from Claude Opus 4.5, Claude Sonnet 4.5, Grok, and Gemini 3.0 Pro. All code was reviewed, tested, and validated by human developers to ensure safety guarantees.
-
+This framework was developed with assistance from Claude Opus 4.5, Claude Sonnet 4.5, and Gemini 3.0 Pro and GPT 5.2.
 ---
 
 ## 🔗 Links & Resources
@@ -655,7 +641,6 @@ This framework was developed with assistance from Claude Opus 4.5, Claude Sonnet
 This framework helps build consumer wellness products with AI assistance.  
 **It does not provide medical advice, diagnoses, or treatment recommendations.**
 
-Built with ❤️ for safe, ethical AI-assisted development in health tech.
 
 [⬆ Back to Top](#the-governor-hq-constitutional-framework)
 
