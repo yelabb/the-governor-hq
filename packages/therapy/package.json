@@ -1,6 +1,6 @@
 {
   "name": "@the-governor-hq/constitution-therapy",
-  "version": "3.2.0",
+  "version": "3.3.0",
   "description": "AI Safety Constitution for Therapy and Mental Health Data Projects",
   "main": "dist/mcp-server.js",
   "types": "dist/index.d.ts",
@@ -14,7 +14,8 @@
     "prepublishOnly": "npm run clean && npm run build",
     "test": "node mcp-server.test.js",
     "ai:context": "node dist/mcp-server.js",
-    "postinstall": "node dist/install.js"
+    "postinstall": "node dist/install.js",
+    "install:package": "node dist/install.js || echo 'Build required: run npm run build in packages/therapy'"
   },
   "files": [
     "dist/",
@@ -45,10 +46,10 @@
     "node": ">=16.0.0"
   },
   "dependencies": {
-    "@the-governor-hq/constitution-core": "3.2.0"
+    "@the-governor-hq/constitution-core": "3.3.0"
   },
   "peerDependencies": {
-    "@the-governor-hq/constitution-core": "3.2.0"
+    "@the-governor-hq/constitution-core": "3.3.0"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
