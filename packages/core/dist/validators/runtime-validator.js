@@ -168,7 +168,7 @@ class RuntimeValidator {
             safeAlternative,
             metadata: {
                 latencyMs,
-                rulesChecked: FORBIDDEN_PATTERNS.length + PRESCRIPTIVE_PATTERNS.length + this.config.customRules.length,
+                rulesChecked: pattern_matcher_1.TOTAL_PATTERN_RULES + this.config.customRules.length,
                 domain: this.config.domain,
                 action: this.config.onViolation,
                 usedLLMJudge,
@@ -203,7 +203,7 @@ class RuntimeValidator {
             safeAlternative,
             metadata: {
                 latencyMs,
-                rulesChecked: 50 + this.config.customRules.length, // Approximate
+                rulesChecked: pattern_matcher_1.TOTAL_PATTERN_RULES + this.config.customRules.length,
                 domain: this.config.domain,
                 action: this.config.onViolation,
                 usedLLMJudge: false,
@@ -269,16 +269,6 @@ class RuntimeValidator {
     }
 }
 exports.RuntimeValidator = RuntimeValidator;
-// Constants for internal use
-const FORBIDDEN_PATTERNS = [
-    'medical-claims',
-    'disease-names',
-    'treatment-language',
-    'supplements',
-];
-const PRESCRIPTIVE_PATTERNS = [
-    'must', 'should', 'need-to', 'have-to',
-];
 /**
  * Create a validator instance with configuration
  */

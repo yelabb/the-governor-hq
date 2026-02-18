@@ -4,6 +4,8 @@
  * Semantic similarity prevents spacing/spelling attacks
  */
 import type { PatternCheckResult, Violation, SemanticCheckResult } from './types';
+/** Total number of built-in pattern rules (for accurate rulesChecked metadata) */
+export declare const TOTAL_PATTERN_RULES: number;
 /**
  * Check text for forbidden patterns
  */

@@ -22,6 +22,7 @@ import {
   calculatePatternConfidence,
   runHardenedChecks,
   detectAdversarialAttack,
+  TOTAL_PATTERN_RULES,
 } from './pattern-matcher';
 import {
   generateSafeAlternative,
@@ -196,7 +197,7 @@ export class RuntimeValidator {
       safeAlternative,
       metadata: {
         latencyMs,
-        rulesChecked: FORBIDDEN_PATTERNS.length + PRESCRIPTIVE_PATTERNS.length + this.config.customRules.length,
+        rulesChecked: TOTAL_PATTERN_RULES + this.config.customRules.length,
         domain: this.config.domain,
         action: this.config.onViolation,
         usedLLMJudge,
@@ -236,7 +237,7 @@ export class RuntimeValidator {
       safeAlternative,
       metadata: {
         latencyMs,
-        rulesChecked: 50 + this.config.customRules.length, // Approximate
+        rulesChecked: TOTAL_PATTERN_RULES + this.config.customRules.length,
         domain: this.config.domain,
         action: this.config.onViolation,
         usedLLMJudge: false,
@@ -315,17 +316,7 @@ export class RuntimeValidator {
   }
 }
 
-// Constants for internal use
-const FORBIDDEN_PATTERNS = [
-  'medical-claims',
-  'disease-names',
-  'treatment-language',
-  'supplements',
-];
 
-const PRESCRIPTIVE_PATTERNS = [
-  'must', 'should', 'need-to', 'have-to',
-];
 
 /**
  * Create a validator instance with configuration

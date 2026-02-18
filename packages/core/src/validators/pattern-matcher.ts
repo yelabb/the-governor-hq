@@ -64,6 +64,14 @@ const ALARMING_PATTERNS = [
   /\b(warning|danger|dangerous|critical|emergency|urgent|immediately|serious risk)\b/i,
 ];
 
+/** Total number of built-in pattern rules (for accurate rulesChecked metadata) */
+export const TOTAL_PATTERN_RULES =
+  FORBIDDEN_PATTERNS.length +
+  PRESCRIPTIVE_PATTERNS.length +
+  MEDICAL_KEYWORDS.length +
+  SUGGESTIVE_PATTERNS.length +
+  ALARMING_PATTERNS.length;
+
 /**
  * Check text for forbidden patterns
  */
