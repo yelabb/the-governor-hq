@@ -1,4 +1,5 @@
 <div align="center">
+<a id="top"></a>
 
 **Current Status:** Active Development / Beta
 
@@ -12,7 +13,7 @@
 
 
 
-[Quick Start](#-quick-start-in-60-seconds) · [Any Language](#works-with-any-language-python-go-rust-) · [Architecture](#-what-you-get) · [Examples](#-see-it-in-action) · [Documentation](https://the-governor-hq.vercel.app)
+[Quick Start](#quick-start) · [Any Language](#works-with-any-language-python-go-rust-) · [Architecture](#components) · [Examples](#concrete-examples) · [Documentation](https://the-governor-hq.vercel.app)
 
 </div>
 
@@ -48,7 +49,7 @@ Pick the domain that matches your project:
 npm install --save-dev @the-governor-hq/constitution-wearables
 ```
 
-> **Need a domain we don't cover yet?** See [Creating a New Domain Package](#-creating-a-new-domain-package) below.
+> **Need a domain we don't cover yet?** See [Creating a New Domain Package](#creating-a-new-domain-package) below.
 
 **2. Auto-configuration happens instantly:**
 
@@ -345,7 +346,7 @@ Install only the packages you need. Each includes all tools (validator, middlewa
 
 **Supported Devices:** Garmin, Apple Watch, Whoop, Oura, Fitbit, Muse, OpenBCI, and more.
 
-> **Want to add a new domain?** See [Creating a New Domain Package](#-creating-a-new-domain-package) or the full [Monorepo Guide](MONOREPO.md).
+> **Want to add a new domain?** See [Creating a New Domain Package](#creating-a-new-domain-package) or the full [Monorepo Guide](MONOREPO.md).
 
 [📖 Full Package Documentation](https://the-governor-hq.vercel.app/packages)
 
@@ -972,6 +973,6 @@ This framework enforces constraints for consumer wellness applications built wit
 **It is a risk-reduction tool, not a clinical safety certification.** It does not provide medical advice, diagnoses, or treatment recommendations. See [On Safety](#on-safety-this-framework-is-not-a-guarantee) for a full discussion of limitations.
 
 
-[⬆ Back to Top](#the-governor-hq-constitutional-framework)
+[⬆ Back to Top](#top)
 
 
