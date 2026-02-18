@@ -1,6 +1,6 @@
 {
   "name": "@the-governor-hq/constitution-core",
-  "version": "3.3.3",
+  "version": "3.3.4",
   "description": "Core AI Safety Infrastructure - Shared rules and utilities for all Governor HQ constitutions",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
