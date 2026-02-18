@@ -104,8 +104,9 @@ await validator.validate('你有失眠症');                             // Chin
 **How it works:**
 1. **Text normalization** removes obfuscation (preserves Unicode for multilingual)
 2. **Language detection** identifies input language (50+ languages supported)
-3. **Adversarial detection** flags manipulation attempts  
+3. **Adversarial signal** records manipulation metadata + applies confidence penalty  
 4. **Cross-lingual semantic matching** compares text embeddings against forbidden medical concepts
+5. **Correlation gate** — adversarial detection only escalates to a critical violation when the normalized text reveals a forbidden hit that the original didn't (i.e. the manipulation was hiding something)
 
 **Multilingual Support (v3.3.0+):**
 - ✅ **50+ languages** supported automatically (Spanish, French, German, Chinese, Arabic, Japanese, Russian, etc.)

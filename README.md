@@ -1,6 +1,6 @@
 <div align="center">
 
-**Current Status:** v3.3.2 — **Active Development / Beta**
+**Current Status:** v3.3.3 — **Active Development / Beta**
 
 # A constraint-enforcement framework for AI-assisted development with physiological, neural, and behavioral data.
 ### Runtime validation · Hardened pattern matching · API middleware · MCP servers · CLI tools
@@ -24,7 +24,7 @@ Large language models used in code-generation workflows have no intrinsic unders
 
 The Governor HQ is a **constraint-enforcement framework** that interposes safety boundaries at multiple points in the AI-assisted development pipeline: IDE context injection, runtime output validation, API middleware, and CI/CD gating. It enforces a strict separation between **consumer wellness observations** (permissible) and **clinical assertions** (prohibited) — including medical diagnoses, supplement dosing, disease naming, and treatment protocols.
 
-> **v3.1.1:** Introduced the **Hardened Pattern Matcher** with text-normalization and semantic-similarity scoring to detect adversarial obfuscation (character spacing, special-character insertion, misspellings) that bypass traditional regular expressions. [Details below](#️-hardened-pattern-matcher-new-in-v311).
+> **v3.3.3:** Hardened Pattern Matcher now uses **signal-based adversarial detection** — normalization diffs alone no longer auto-block; violations are only escalated when obfuscation correlates with a forbidden semantic/pattern hit. Includes multilingual support (50+ languages), confidence penalties, and the `AdversarialSignal` metadata type. [Details below](#️-hardened-validation-catches-adversarial-attacks-v311).
 
 ---
 
@@ -252,7 +252,7 @@ function analyzeSleep(sleepData, userBaseline) {
 - ✅ No diagnosis or treatment
 - ✅ Explicit disclaimer
 
-### 🛡️ Hardened Validation Catches Adversarial Attacks (v3.1.1)
+### 🛡️ Hardened Validation Catches Adversarial Attacks (v3.3.3+)
 
 ```typescript
 // ❌ Traditional regex might miss these obfuscated attacks:
@@ -267,16 +267,23 @@ const validator = createValidator({
 });
 
 await validator.validate("You have d i a g n o s e d insomnia");
-// → Blocked: Adversarial attack detected (spacing)
+// → Blocked: Adversarial manipulation (spacing) hiding forbidden content
 // → Semantic match: medical-diagnosis (92% similarity)
 // → Safe alternative provided
+
+// ✅ Benign text with emoji/symbols is NOT blocked:
+await validator.validate("Great session today! 💪🔥");
+// → Safe (adversarial signal recorded, no forbidden hit correlated)
 ```
 
-**How it's caught:**
+**How it's caught (v3.3.3+ signal-based detection):**
 1. Text normalization: `"d i a g n o s e d"` → `"diagnosed"`
-2. Adversarial detection: Flags spacing manipulation
-3. Semantic similarity: Compares against forbidden medical concepts
-4. **Result:** Violation blocked, safe alternative returned
+2. Adversarial signal: Records spacing manipulation + confidence penalty
+3. Pattern/semantic checks run on **both** original and normalized text
+4. Correlation gate: Normalized text reveals `"diagnosed"` → forbidden hit found
+5. **Result:** Violation escalated to critical, safe alternative returned
+
+> Normalization diffs alone (emoji, symbols, formatting) no longer auto-block.
 
 ---
 
@@ -286,10 +293,10 @@ Install only the packages you need. Each includes all tools (validator, middlewa
 
 | Package | Status | Coverage | Install |
 |---------|--------|----------|--------|
-| [**🏃 Wearables**](https://www.npmjs.com/package/@the-governor-hq/constitution-wearables) | ✅ Production v3.3.2 | Sleep, HRV, heart rate, training load, recovery | `npm i -D @the-governor-hq/constitution-wearables` |
-| [**🧠 BCI**](https://www.npmjs.com/package/@the-governor-hq/constitution-bci) | ✅ Production v3.3.2 | EEG, fNIRS, neurofeedback, meditation states | `npm i -D @the-governor-hq/constitution-bci` |
-| [**💭 Therapy**](https://www.npmjs.com/package/@the-governor-hq/constitution-therapy) | ✅ Production v3.3.2 | Mood tracking, journaling, behavioral patterns | `npm i -D @the-governor-hq/constitution-therapy` |
-| [**⚙️ Core**](https://www.npmjs.com/package/@the-governor-hq/constitution-core) | ✅ Production v3.3.2 | Universal safety rules + hardened matcher | Auto-installed with domains |
+| [**🏃 Wearables**](https://www.npmjs.com/package/@the-governor-hq/constitution-wearables) | ✅ Production v3.3.3 | Sleep, HRV, heart rate, training load, recovery | `npm i -D @the-governor-hq/constitution-wearables` |
+| [**🧠 BCI**](https://www.npmjs.com/package/@the-governor-hq/constitution-bci) | ✅ Production v3.3.3 | EEG, fNIRS, neurofeedback, meditation states | `npm i -D @the-governor-hq/constitution-bci` |
+| [**💭 Therapy**](https://www.npmjs.com/package/@the-governor-hq/constitution-therapy) | ✅ Production v3.3.3 | Mood tracking, journaling, behavioral patterns | `npm i -D @the-governor-hq/constitution-therapy` |
+| [**⚙️ Core**](https://www.npmjs.com/package/@the-governor-hq/constitution-core) | ✅ Production v3.3.3 | Universal safety rules + hardened matcher | Auto-installed with domains |
 
 **Supported Devices:** Garmin, Apple Watch, Whoop, Oura, Fitbit, Muse, OpenBCI, and more.
 
@@ -337,7 +344,7 @@ The framework applies a **defense-in-depth** strategy across five sequential enf
 ┌─────────────────────────────────────────────────────────────┐
 │  Layer 3: Runtime Validator (Post-generation)              │
 │  → Pattern matching: <10ms (regex) / typically tens of ms (semantic, warm cache) │
-│  → Text normalization + adversarial-obfuscation detection   │
+│  → Text normalization + adversarial signal (correlation-gated) │
 │  → Optional LLM judge for ambiguous cases (~500–2000ms)     │
 └─────────────────────────────────────────────────────────────┘
                               ↓
@@ -373,7 +380,7 @@ npm test
 # ✓ RuntimeValidator validates 20+ violation patterns
 # ✓ Middleware blocks unsafe API responses  
 # ✓ Pattern matcher catches edge cases
-# ✓ Adversarial attack detection (23 tests) - NEW in v3.1.1
+# ✓ Adversarial attack detection (23 tests, signal-based since v3.3.3)
 #   → Spacing attacks: d i a g n o s e
 #   → Special chars: d!i@a#g$n%o^s&e  
 #   → Misspellings: diagnoz, tratment
@@ -521,7 +528,7 @@ Fast enough for production APIs. Use regex-only for real-time, semantic for batc
 <details>
 <summary><b>Can I use this in production?</b></summary>
 
-Yes. All packages (`wearables`, `core`, `bci`, `therapy`) are production-ready at v3.3.2 with comprehensive safety tests including adversarial attack prevention.
+Yes. All packages (`wearables`, `core`, `bci`, `therapy`) are production-ready at v3.3.3 with comprehensive safety tests including adversarial attack prevention.
 
 </details>
 
@@ -573,10 +580,13 @@ npm run ai:context
 - Misspellings: `diagnoz`, `tratment` → Caught ✅
 - Combined: `T A K E mel@tonin` → Caught ✅
 
-**How it works:**
+**How it works (v3.3.3+ signal-based):**
 1. Text normalization removes obfuscation
-2. Adversarial detection flags manipulation
-3. Semantic similarity compares embeddings against forbidden concepts
+2. Adversarial signal recorded (metadata + confidence penalty)
+3. Pattern/semantic checks run on original AND normalized text
+4. Escalated to a violation **only** if normalized text reveals new forbidden hits
+
+Benign text with emoji, symbols, or formatting no longer triggers false-positive blocks.
 
 **Enable it:**
 ```typescript
@@ -691,7 +701,7 @@ We believe transparency about these limitations is more valuable than false conf
 
 ## Known Limitations & Current Status
 
-**Current Status:** v3.3.2 — **Active Development / Beta**
+**Current Status:** v3.3.3 — **Active Development / Beta**
 
 The framework is production-ready for runtime validation and middleware use, but certain components are in active development:
 
@@ -802,10 +812,10 @@ This framework was developed with assistance from Claude Opus 4.5, Claude Sonnet
 ## Links & Resources
 
 **NPM Packages:**
-- [@the-governor-hq/constitution-wearables](https://www.npmjs.com/package/@the-governor-hq/constitution-wearables) — v3.3.2
-- [@the-governor-hq/constitution-bci](https://www.npmjs.com/package/@the-governor-hq/constitution-bci) — v3.3.2
-- [@the-governor-hq/constitution-therapy](https://www.npmjs.com/package/@the-governor-hq/constitution-therapy) — v3.3.2
-- [@the-governor-hq/constitution-core](https://www.npmjs.com/package/@the-governor-hq/constitution-core) — v3.3.2 ⭐ Hardened Pattern Matcher + LLM Judge
+- [@the-governor-hq/constitution-wearables](https://www.npmjs.com/package/@the-governor-hq/constitution-wearables) — v3.3.3
+- [@the-governor-hq/constitution-bci](https://www.npmjs.com/package/@the-governor-hq/constitution-bci) — v3.3.3
+- [@the-governor-hq/constitution-therapy](https://www.npmjs.com/package/@the-governor-hq/constitution-therapy) — v3.3.3
+- [@the-governor-hq/constitution-core](https://www.npmjs.com/package/@the-governor-hq/constitution-core) — v3.3.3 ⭐ Hardened Pattern Matcher + LLM Judge
 
 **Documentation:**
 - [Main Documentation Site](https://the-governor-hq.vercel.app)
@@ -848,9 +858,9 @@ cd packages/your-domain
 ```json
 {
   "name": "@the-governor-hq/constitution-your-domain",
-  "version": "3.3.2",
+  "version": "3.3.3",
   "dependencies": {
-    "@the-governor-hq/constitution-core": "3.3.2"
+    "@the-governor-hq/constitution-core": "3.3.3"
   }
 }
 ```

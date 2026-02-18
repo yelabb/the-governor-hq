@@ -63,12 +63,18 @@ export declare function runHardenedChecks(text: string, options?: {
     allViolations: Violation[];
 }>;
 /**
- * Pre-process text to detect adversarial attacks
- * Returns normalized text and whether manipulation was detected
+ * Pre-process text to detect adversarial manipulation attempts.
+ *
+ * Returns normalized text, a boolean signal, and a confidence penalty.
+ * This is an **informational signal**, not an automatic violation.
+ * The caller (RuntimeValidator) decides whether to escalate based on
+ * whether the manipulation actually correlates with a forbidden hit.
  */
 export declare function detectAdversarialAttack(text: string): {
     normalized: string;
     manipulationDetected: boolean;
     manipulationType?: 'spacing' | 'special-chars' | 'misspelling';
+    /** Suggested confidence penalty (0 – 0.15). Higher = more suspicious. */
+    confidencePenalty: number;
 };
 //# sourceMappingURL=pattern-matcher.d.ts.map

@@ -7,7 +7,7 @@
 import { BaseGovernorMCPServer } from './base-mcp-server';
 import type { ServerConfig } from './base-mcp-server';
 export { RuntimeValidator, createValidator, validateText } from './validators/runtime-validator';
-export type { ValidatorConfig, ValidationResult, Violation, Domain, ViolationAction, SeverityLevel, ValidationRule, PatternCheckResult, LLMJudgeResult, SemanticCheckResult, SemanticViolation, ForbiddenConcept, LLMProvider, } from './validators/types';
+export type { ValidatorConfig, ValidationResult, Violation, Domain, ViolationAction, SeverityLevel, ValidationRule, PatternCheckResult, LLMJudgeResult, SemanticCheckResult, SemanticViolation, ForbiddenConcept, LLMProvider, AdversarialSignal, } from './validators/types';
 export { LLMClient, createLLMClient } from './validators/llm-client';
 export type { LLMClientConfig, LLMJudgeResponse } from './validators/llm-client';
 export { governorValidator, validateField, validationErrorHandler } from './middleware/express';

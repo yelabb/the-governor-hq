@@ -91,21 +91,16 @@ class RuntimeValidator {
         if (this.initializationPromise) {
             await this.initializationPromise;
         }
-        // Step 1: Check for adversarial attacks (spacing/spelling)
-        const adversarialViolations = [];
+        // Step 1: Adversarial signal (informational — not an auto-violation)
         const adversarialCheck = (0, pattern_matcher_1.detectAdversarialAttack)(text);
-        if (adversarialCheck.manipulationDetected) {
-            console.warn(`⚠️  Adversarial attack detected: ${adversarialCheck.manipulationType}`);
-            // Flag this as a critical violation
-            adversarialViolations.push({
-                rule: 'adversarial-attack',
-                severity: 'critical',
-                message: `Adversarial manipulation detected: ${adversarialCheck.manipulationType}`,
-                matched: [adversarialCheck.manipulationType || 'unknown'],
-            });
-        }
-        // Step 2: Run pattern checks (fast regex + optional semantic)
-        let allViolations = [...adversarialViolations];
+        const adversarialSignal = {
+            detected: adversarialCheck.manipulationDetected,
+            manipulationType: adversarialCheck.manipulationType,
+            confidencePenalty: adversarialCheck.confidencePenalty,
+            correlatedWithForbiddenHit: false,
+        };
+        // Step 2: Run pattern checks on the ORIGINAL text (fast regex + optional semantic)
+        let allViolations = [];
         let usedSemanticSimilarity = false;
         let semanticMaxSimilarity = 0;
         if (this.config.useSemanticSimilarity) {
@@ -123,6 +118,43 @@ class RuntimeValidator {
             const patterns = (0, pattern_matcher_1.runPatternChecks)(text);
             allViolations = [...allViolations, ...(0, pattern_matcher_1.patternsToViolations)(patterns)];
         }
+        // Step 2b: If manipulation was detected, ALSO check the normalized text
+        // and escalate only when the normalization reveals NEW forbidden hits
+        if (adversarialCheck.manipulationDetected) {
+            const normalizedText = adversarialCheck.normalized;
+            let normalizedViolations = [];
+            if (this.config.useSemanticSimilarity) {
+                const normHardened = await (0, pattern_matcher_1.runHardenedChecks)(normalizedText, {
+                    useSemanticSimilarity: true,
+                    semanticThreshold: this.config.semanticThreshold,
+                });
+                normalizedViolations = normHardened.allViolations;
+                if (normHardened.semantic?.maxSimilarity && normHardened.semantic.maxSimilarity > semanticMaxSimilarity) {
+                    semanticMaxSimilarity = normHardened.semantic.maxSimilarity;
+                }
+            }
+            else {
+                const normPatterns = (0, pattern_matcher_1.runPatternChecks)(normalizedText);
+                normalizedViolations = (0, pattern_matcher_1.patternsToViolations)(normPatterns);
+            }
+            // Find violations that ONLY appear after normalization (delta)
+            const existingRules = new Set(allViolations.map(v => `${v.rule}|${v.message}`));
+            const newViolations = normalizedViolations.filter(v => !existingRules.has(`${v.rule}|${v.message}`));
+            if (newViolations.length > 0) {
+                // The manipulation was hiding something forbidden — escalate
+                adversarialSignal.correlatedWithForbiddenHit = true;
+                console.warn(`⚠️  Adversarial manipulation (${adversarialCheck.manipulationType}) ` +
+                    `correlated with ${newViolations.length} hidden forbidden hit(s)`);
+                allViolations.push({
+                    rule: 'adversarial-attack',
+                    severity: 'critical',
+                    message: `Adversarial manipulation (${adversarialCheck.manipulationType}) hiding forbidden content`,
+                    matched: [adversarialCheck.manipulationType || 'unknown'],
+                });
+                // Also include the newly-revealed violations
+                allViolations.push(...newViolations);
+            }
+        }
         // Step 3: Custom rules
         const customViolations = this.checkCustomRules(text);
         allViolations = [...allViolations, ...customViolations];
@@ -130,6 +162,8 @@ class RuntimeValidator {
         const patterns = (0, pattern_matcher_1.runPatternChecks)(text);
         let confidence = (0, pattern_matcher_1.calculatePatternConfidence)(patterns);
         let usedLLMJudge = false;
+        // Apply adversarial confidence penalty (even if not escalated to violation)
+        confidence = Math.max(0, confidence - adversarialCheck.confidencePenalty);
         if (this.config.useLLMJudge && this.llmClient && allViolations.length === 0 && this.config.strictMode) {
             try {
                 const llmResult = await this.llmClient.judge(text, this.config.domain);
@@ -174,6 +208,7 @@ class RuntimeValidator {
                 usedLLMJudge,
                 usedSemanticSimilarity,
                 semanticMaxSimilarity,
+                adversarialSignal,
             },
         };
     }
@@ -184,12 +219,38 @@ class RuntimeValidator {
      */
     validateSync(text) {
         const startTime = Date.now();
+        // Adversarial signal (informational — not an auto-violation)
+        const adversarialCheck = (0, pattern_matcher_1.detectAdversarialAttack)(text);
+        const adversarialSignal = {
+            detected: adversarialCheck.manipulationDetected,
+            manipulationType: adversarialCheck.manipulationType,
+            confidencePenalty: adversarialCheck.confidencePenalty,
+            correlatedWithForbiddenHit: false,
+        };
         const patterns = (0, pattern_matcher_1.runPatternChecks)(text);
         const patternViolations = (0, pattern_matcher_1.patternsToViolations)(patterns);
         const customViolations = this.checkCustomRules(text);
-        const allViolations = [...patternViolations, ...customViolations];
+        let allViolations = [...patternViolations, ...customViolations];
+        // If manipulation detected, also check normalized text for hidden violations
+        if (adversarialCheck.manipulationDetected) {
+            const normPatterns = (0, pattern_matcher_1.runPatternChecks)(adversarialCheck.normalized);
+            const normViolations = (0, pattern_matcher_1.patternsToViolations)(normPatterns);
+            const existingRules = new Set(allViolations.map(v => `${v.rule}|${v.message}`));
+            const newViolations = normViolations.filter(v => !existingRules.has(`${v.rule}|${v.message}`));
+            if (newViolations.length > 0) {
+                adversarialSignal.correlatedWithForbiddenHit = true;
+                allViolations.push({
+                    rule: 'adversarial-attack',
+                    severity: 'critical',
+                    message: `Adversarial manipulation (${adversarialCheck.manipulationType}) hiding forbidden content`,
+                    matched: [adversarialCheck.manipulationType || 'unknown'],
+                });
+                allViolations.push(...newViolations);
+            }
+        }
         const isSafe = allViolations.length === 0;
-        const confidence = (0, pattern_matcher_1.calculatePatternConfidence)(patterns);
+        let confidence = (0, pattern_matcher_1.calculatePatternConfidence)(patterns);
+        confidence = Math.max(0, confidence - adversarialCheck.confidencePenalty);
         const output = this.generateOutput(text, isSafe, patterns);
         const safeAlternative = !isSafe
             ? (0, sanitizer_1.generateSafeAlternative)(text, patterns, this.config.domain, this.config.defaultSafeMessage)
@@ -207,6 +268,7 @@ class RuntimeValidator {
                 domain: this.config.domain,
                 action: this.config.onViolation,
                 usedLLMJudge: false,
+                adversarialSignal,
             },
         };
     }

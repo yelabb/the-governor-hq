@@ -68,7 +68,7 @@ normalizeText('diagnoz');           // → 'diagnose'
 
 ### Adversarial Attack Detection
 
-Automatically detects when text has been manipulated:
+Detects when text has been manipulated. Since v3.3.3, adversarial detection is a **signal** (metadata + confidence penalty), not an automatic critical violation. It only escalates to a violation when the manipulation **correlates** with a forbidden pattern/semantic hit — i.e., the obfuscation was hiding something.
 
 ```typescript
 import { detectAdversarialAttack } from '@the-governor-hq/constitution-core';
@@ -79,14 +79,17 @@ console.log(result);
 // {
 //   normalized: 'you have diagnosed insomnia',
 //   manipulationDetected: true,
-//   manipulationType: 'spacing'
+//   manipulationType: 'spacing',
+//   confidencePenalty: 0.15
 // }
 ```
 
-**Attack types detected:**
-- `spacing` - Extra spaces between characters
-- `special-chars` - Special characters inserted
-- `misspelling` - Intentional misspellings
+**Attack types detected (with confidence penalties):**
+- `spacing` - Extra spaces between characters (penalty: 0.15)
+- `special-chars` - Special characters inserted (penalty: 0.12)
+- `misspelling` - Intentional misspellings (penalty: 0.05)
+
+> **Note:** Benign text that triggers normalization diffs (emoji, symbols, formatting, copy/paste artefacts) will record a signal and apply a small confidence penalty, but will **not** generate a violation unless a forbidden hit is also found in the normalized form.
 
 ### Semantic Similarity Matching
 
@@ -238,15 +241,24 @@ await validator.validate('you have i-n-s-o-m-n-i-a');
 import { detectAdversarialAttack, normalizeText } from '@the-governor-hq/constitution-core';
 
 describe('Adversarial Attack Tests', () => {
-  test('Detects spacing attacks', () => {
+  test('Detects spacing attacks with confidence penalty', () => {
     const result = detectAdversarialAttack('d i a g n o s e');
     expect(result.manipulationDetected).toBe(true);
     expect(result.manipulationType).toBe('spacing');
+    expect(result.confidencePenalty).toBe(0.15);
   });
   
   test('Normalizes obfuscated text', () => {
     const normalized = normalizeText('d!i@a#g$n%o^s&e');
     expect(normalized).toBe('diagnose');
+  });
+
+  test('Signal only — no auto-violation for benign text', async () => {
+    const validator = createValidator({ useSemanticSimilarity: false });
+    // Emoji/symbol text triggers normalization but contains no forbidden content
+    const result = validator.validateSync('Great job today! 💪🔥');
+    expect(result.safe).toBe(true);
+    expect(result.metadata.adversarialSignal?.detected).toBeDefined();
   });
 });
 ```

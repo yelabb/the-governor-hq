@@ -2,6 +2,34 @@
 
 All notable changes to the core package will be documented in this file.
 
+## [3.3.3] - 2026-02-18
+
+### 🔧 Improvement: Signal-Based Adversarial Detection
+
+**Breaking behavior change:** `detectAdversarialAttack()` no longer auto-generates a critical violation when `normalizeText()` changes the string. Normalization diffs are common in benign text (emoji, symbols, formatting, copy/paste) and were causing noisy false-positive blocks.
+
+#### Changed
+- **Adversarial detection is now a signal, not an auto-violation**:
+  - Always recorded in `ValidationResult.metadata.adversarialSignal`
+  - Applies a graduated confidence penalty (0.05–0.15) based on manipulation type
+  - Only escalated to a critical violation when the normalized text reveals a **new** forbidden pattern/semantic hit that the original text didn't trigger (correlation gate)
+  
+- **`detectAdversarialAttack()` return type extended**:
+  - New `confidencePenalty` field (0 for clean text, 0.05 misspelling, 0.12 special-chars, 0.15 spacing)
+  
+- **`ValidationResult.metadata` extended**:
+  - New `adversarialSignal?: AdversarialSignal` field with `detected`, `manipulationType`, `confidencePenalty`, and `correlatedWithForbiddenHit`
+
+- **`validateSync()` now includes adversarial signal + correlation gating** (previously only `validate()` checked adversarial)
+
+#### New Type
+- `AdversarialSignal` interface exported from `@the-governor-hq/constitution-core`
+
+#### Impact
+- Benign text with emoji, symbols, or unusual formatting **no longer blocked**
+- Genuine obfuscation attacks (spacing/special-chars hiding forbidden terms) **still caught and blocked as critical**
+- Confidence score slightly reduced for manipulated text even when not escalated
+
 ## [3.1.1] - 2026-02-17
 
 ### 🐛 Bug Fixes

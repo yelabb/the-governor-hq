@@ -261,8 +261,12 @@ async function runHardenedChecks(text, options = {}) {
     };
 }
 /**
- * Pre-process text to detect adversarial attacks
- * Returns normalized text and whether manipulation was detected
+ * Pre-process text to detect adversarial manipulation attempts.
+ *
+ * Returns normalized text, a boolean signal, and a confidence penalty.
+ * This is an **informational signal**, not an automatic violation.
+ * The caller (RuntimeValidator) decides whether to escalate based on
+ * whether the manipulation actually correlates with a forbidden hit.
  */
 function detectAdversarialAttack(text) {
     const original = text;
@@ -270,24 +274,29 @@ function detectAdversarialAttack(text) {
     // Check if normalization changed the text significantly
     const manipulationDetected = original.toLowerCase() !== normalized;
     let manipulationType;
+    let confidencePenalty = 0;
     if (manipulationDetected) {
         // Detect spacing attack (e.g., "d i a g n o s e")
         if (/\b\w(\s+\w){3,}\b/.test(original)) {
             manipulationType = 'spacing';
+            confidencePenalty = 0.15;
         }
         // Detect special character insertion (e.g., "d!i@a#g$n%o^s&e")
         else if (/[a-z][^a-z\s]{2,}[a-z]/i.test(original)) {
             manipulationType = 'special-chars';
+            confidencePenalty = 0.12;
         }
-        // Likely misspelling
+        // Likely misspelling — mildest penalty (very common in benign text)
         else {
             manipulationType = 'misspelling';
+            confidencePenalty = 0.05;
         }
     }
     return {
         normalized,
         manipulationDetected,
         manipulationType,
+        confidencePenalty,
     };
 }
 //# sourceMappingURL=pattern-matcher.js.map

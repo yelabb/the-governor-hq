@@ -57,6 +57,21 @@ export interface Violation {
         end: number;
     };
 }
+/**
+ * Adversarial signal — informational metadata about text manipulation.
+ * Only escalated to a violation when the manipulation correlates with a
+ * forbidden pattern/semantic hit (i.e. the obfuscation was hiding something).
+ */
+export interface AdversarialSignal {
+    /** Whether normalizeText() changed the string materially */
+    detected: boolean;
+    /** Classification of the manipulation */
+    manipulationType?: 'spacing' | 'special-chars' | 'misspelling';
+    /** Confidence penalty applied (0-0.15) */
+    confidencePenalty: number;
+    /** True when the normalized text triggered a forbidden hit the original didn't */
+    correlatedWithForbiddenHit: boolean;
+}
 export interface ValidationResult {
     /** Whether the text passed validation */
     safe: boolean;
@@ -77,6 +92,8 @@ export interface ValidationResult {
         usedLLMJudge: boolean;
         usedSemanticSimilarity?: boolean;
         semanticMaxSimilarity?: number;
+        /** Adversarial manipulation signal (always present, never auto-blocks) */
+        adversarialSignal?: AdversarialSignal;
     };
 }
 export interface PatternCheckResult {

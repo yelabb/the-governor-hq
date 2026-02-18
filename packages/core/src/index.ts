@@ -24,6 +24,7 @@ export type {
   SemanticViolation,
   ForbiddenConcept,
   LLMProvider,
+  AdversarialSignal,
 } from './validators/types';
 
 // LLM Client (for LLM judge)
