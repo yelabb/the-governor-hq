@@ -12,7 +12,7 @@
 
 
 
-[Quick Start](#-quick-start-in-60-seconds) · [Architecture](#-what-you-get) · [Examples](#-see-it-in-action) · [Documentation](https://the-governor-hq.vercel.app)
+[Quick Start](#-quick-start-in-60-seconds) · [Any Language](#works-with-any-language-python-go-rust-) · [Architecture](#-what-you-get) · [Examples](#-see-it-in-action) · [Documentation](https://the-governor-hq.vercel.app)
 
 </div>
 
@@ -33,6 +33,8 @@ The Governor HQ is a **constraint-enforcement framework** that interposes safety
 **1. Install your domain package:**
 
 Pick the domain that matches your project:
+
+> **Not using npm?** See [Works with Any Language](#works-with-any-language-python-go-rust-) below for the one-liner shell install.
 
 | Domain | Package | Install |
 |--------|---------|--------|
@@ -80,6 +82,49 @@ npm run validate:safety
 ```
 
 That's it. Your development environment is now protected.
+
+---
+
+## Works with Any Language (Python, Go, Rust, …)
+
+The framework uses a **five-layer defense-in-depth strategy**. The npm packages deliver the full stack — runtime validator, API middleware, CLI gate, and MCP servers (layers 3–5). If you are working in Python, Go, Rust, or any language that does not use npm, the shell installer covers **layers 1 and 2**: IDE context injection (`.cursorrules`, `.vscode/settings.json`) and MCP server wiring. That alone constrains your AI assistant at the point of code generation — before unsafe output is ever produced.
+
+Layers 3–5 (post-generation validation, API middleware, CI/CD gating) currently require the TypeScript runtime. Native ports for other languages are on the roadmap and community contributions are welcome.
+
+**Install layers 1–2 with a one-liner:**
+
+**macOS / Linux / WSL:**
+```sh
+curl -fsSL https://raw.githubusercontent.com/the-governor-hq/constitution/main/install.sh | sh
+```
+
+**Windows (PowerShell):**
+```powershell
+irm https://raw.githubusercontent.com/the-governor-hq/constitution/main/install.ps1 | iex
+```
+
+**Pick a domain** with the `--domain` flag (default: `core`):
+```sh
+# macOS / Linux
+curl -fsSL https://raw.githubusercontent.com/the-governor-hq/constitution/main/install.sh | sh -s -- --domain bci
+
+# Windows
+iex "& { $(irm https://raw.githubusercontent.com/the-governor-hq/constitution/main/install.ps1) } -Domain wearables"
+```
+
+**Or clone manually** if you prefer full control:
+```sh
+git clone --depth 1 https://github.com/the-governor-hq/constitution.git .governor-hq
+```
+
+The install scripts:
+- Clone the repo into `.governor-hq/` inside your project
+- Write `.cursorrules` (Cursor AI safety context)
+- Write `.vscode/settings.json` (GitHub Copilot instructions)
+- Write `.mcp-config.json` if Node.js is available (MCP server for Claude Desktop)
+- Are idempotent — safe to re-run; existing files are not overwritten
+
+> **Layers 1–2, no npm required.** The `.cursorrules` and `.vscode/settings.json` files give your AI assistant full constraint context at generation time. For post-generation validation (RuntimeValidator, middleware, CLI), use the npm packages or contribute a native port for your language.
 
 ---
 
@@ -496,6 +541,27 @@ the-governor-hq/
 ## Frequently Asked Questions
 
 <details>
+<summary><b>Do I need npm / Node.js to use this?</b></summary>
+
+**No.** If you are working in Python, Go, Rust, or any other language you can install with a single command:
+
+```sh
+# macOS / Linux / WSL
+curl -fsSL https://raw.githubusercontent.com/the-governor-hq/constitution/main/install.sh | sh
+
+# Windows PowerShell
+irm https://raw.githubusercontent.com/the-governor-hq/constitution/main/install.ps1 | iex
+```
+
+This clones the repo into `.governor-hq/` and writes `.cursorrules` + `.vscode/settings.json` so Cursor and GitHub Copilot immediately have the safety context — covering **layers 1 and 2** of the defense stack (IDE context injection + MCP wiring).
+
+For **layers 3–5** (RuntimeValidator, API middleware, CLI gate), the npm packages are required. Those layers perform post-generation validation and are currently TypeScript-only. Native ports for Python/Go/Rust are on the roadmap.
+
+You can also `git clone --depth 1 https://github.com/the-governor-hq/constitution.git .governor-hq` for full manual control over which files you use.
+
+</details>
+
+<details>
 <summary><b>Do I need to modify my existing codebase?</b></summary>
 
 No. The framework guides AI assistants during code generation and validates output. Your existing code remains unchanged. Use the Runtime Validator and Middleware to protect new code as it's generated.
@@ -749,9 +815,11 @@ The framework is production-ready for runtime validation and middleware use, but
 - Recommendation: Cache validator instances, use async validation
 
 **6. Ecosystem Coverage**
-- Focused on TypeScript/JavaScript ecosystems
-- Python, Go, Rust ports are community-driven (not yet official)
-- Native integrations exist for Express, Next.js; others need custom setup
+- Core constraint rules are language-agnostic plain Markdown
+- ✅ **Cross-platform shell installer** — `install.sh` (macOS/Linux/WSL) and `install.ps1` (Windows/PowerShell) — no npm required
+- Python, Go, Rust, and any other language project can install via one `curl` / `irm` command
+- Native runtime integrations (RuntimeValidator, Middleware, CLI) are TypeScript/JavaScript; other language ports are community-driven
+- Native framework integrations exist for Express, Next.js; others need custom setup
 
 ### 📋 What We Need From You
 
@@ -774,7 +842,8 @@ We're actively seeking feedback on:
 - ✅ **Multi-language support (completed in v3.3.0)** - 50+ languages via cross-lingual embeddings
 - Plugin architecture for custom validators
 - Enhanced LLM judge with confidence scoring
-- Python/Go/Rust native implementations
+- ✅ **Cross-platform shell install** (completed) — `install.sh` + `install.ps1`
+- Python/Go/Rust native runtime validator implementations
 - GraphQL middleware support
 - Real-time validation streaming
 
