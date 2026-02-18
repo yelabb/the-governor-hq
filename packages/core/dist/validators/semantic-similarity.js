@@ -263,8 +263,14 @@ async function checkSemanticSimilarity(text, threshold = 0.75) {
         // - critical: cap at 0.75 (most sensitive — diagnoses, treatments)
         // - high: cap at 0.77 (slightly less sensitive — scope violations, alarming language)
         // - medium: cap at 0.78 (use caller default if already below — prescriptive commands)
+        // A per-concept minThreshold override (if set) takes precedence over the
+        // severity-based cap. This is used to tune noisy multilingual anchor concepts
+        // whose cross-lingual embeddings produce false positives near the global floor.
         let severityThreshold = threshold;
-        if (concept.severity === 'critical') {
+        if (concept.minThreshold !== undefined) {
+            severityThreshold = concept.minThreshold;
+        }
+        else if (concept.severity === 'critical') {
             severityThreshold = Math.min(threshold, 0.75);
         }
         else if (concept.severity === 'high') {
@@ -469,6 +475,12 @@ exports.FORBIDDEN_MEDICAL_CONCEPTS = [
         severity: 'critical',
         example: '你有失眠症', // "You have insomnia"
         embedding: [],
+        // Raised from the default critical floor (0.75) to 0.78 because the cross-lingual
+        // embedding for this Chinese anchor has elevated cosine similarity with safe
+        // observational phrases in Romance languages (e.g., Spanish "Tu ritmo de sueño
+        // parece diferente…" at 75%, French "Votre sommeil semble différent…" at 77%).
+        // Real Chinese diagnoses score ≥ 0.85, so 0.78 still provides full coverage.
+        minThreshold: 0.78,
     },
     // Simplified Chinese – treatment
     {

@@ -265,21 +265,16 @@ export async function runHardenedChecks(
     // This prevents "consider talking to your doctor" from being flagged,
     // while still allowing diagnosis and treatment violations in any language to surface.
     //
-    // Design note: semantic similarity is the primary detection mechanism for languages
-    // not fully covered by the regex patterns above. The filter below is intentionally
-    // gated on English/unknown text only: for non-English input the prescriptive-language
-    // regex has limited coverage, so a semantic-prescriptive hit without a regex match is
-    // NOT a false positive — it is the correct signal. Suppressing it would cause genuine
-    // non-English prescriptive violations (e.g., "Vous devez consulter un médecin",
-    // "Devi consultare un medico", "Você deve consultar um médico") to be missed.
+    // Design note: PRESCRIPTIVE_PATTERNS already covers the prescriptive forms in all
+    // tested languages (debes/deve/devez/müssen/devi/должны, 必须/必須/すべき/しなければ),
+    // so for genuinely prescriptive non-English text hasExplicitPrescriptive will be true
+    // and the suppression below never fires. The suppression only fires for truly suggestive
+    // phrases like "Erwägen Sie einen Arzt zu konsultieren" (German: "consider consulting a
+    // doctor"), where the regex correctly finds no prescriptive command — those are the
+    // legitimate false-positive false-positives we need to suppress in every language.
     const hasSuggestiveLanguage = checkSuggestivePatterns(text);
     const hasExplicitPrescriptive = patterns.prescriptive.length > 0;
-    // detectedLanguage comes from the semantic result so we don't add a round-trip.
-    // 'en' and 'unknown' are the only cases where regex prescriptive coverage is
-    // reliable enough to use it as a gate for suppressing semantic violations.
-    const detectedLang = semantic.detectedLanguage ?? 'unknown';
-    const isEnglishOrUnknown = detectedLang === 'en' || detectedLang === 'unknown';
-    if (hasSuggestiveLanguage && !hasExplicitPrescriptive && isEnglishOrUnknown) {
+    if (hasSuggestiveLanguage && !hasExplicitPrescriptive) {
       semanticViolations = semanticViolations.filter(v => {
         // Only suppress prescriptive-category semantic hits, never diagnosis or treatment
         const isPrescriptiveOnly = v.rule === 'semantic-prescriptive';

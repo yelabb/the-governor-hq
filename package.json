@@ -1,6 +1,6 @@
 {
   "name": "@the-governor-hq/governor-hq-monorepo",
-  "version": "3.3.2",
+  "version": "3.3.3",
   "description": "AI Safety Constitutions for Health Data Projects - Monorepo with domain-specific packages",
   "private": true,
   "workspaces": [

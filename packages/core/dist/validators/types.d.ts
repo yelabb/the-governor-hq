@@ -102,6 +102,13 @@ export interface ForbiddenConcept {
     example: string;
     embedding: number[];
     similarity?: number;
+    /**
+     * Optional per-concept threshold override.
+     * When set, this value replaces the severity-based default threshold for this
+     * specific concept. Use it to tune noisy multilingual anchor concepts that
+     * produce cross-lingual false positives at the global severity floor.
+     */
+    minThreshold?: number;
 }
 export interface SemanticViolation {
     concept: string;
