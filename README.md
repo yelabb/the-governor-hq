@@ -64,7 +64,10 @@ npx governor-install-bci
 npx governor-install-therapy
 ```
 
+
 You'll see:
+
+<img width="512" alt="image" src="https://github.com/user-attachments/assets/7a5f20cf-8ce7-4856-ba7d-83b8bbfad0ca" />
 
 ```
 ✓ Created .cursorrules (Cursor AI safety rules)
@@ -985,5 +988,6 @@ This framework enforces constraints for consumer wellness applications built wit
 
 
 [⬆ Back to Top](#top)
+
 
 
