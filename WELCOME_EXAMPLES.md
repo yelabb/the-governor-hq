@@ -19,21 +19,20 @@ This guide shows you exactly what the framework does and how it protects your ap
 
 ## Quick Demo
 
-### Install & Auto-Configure (3 seconds)
+### Install & Set Up (two commands)
 
 ```bash
 npm install --save-dev @the-governor-hq/constitution-wearables
+npx governor-install
 ```
 
-**What just happened:**
+**What you'll see:**
 
 ```
 ✓ Created .cursorrules (Cursor AI safety rules)
 ✓ Created .vscode/settings.json (Copilot instructions)
 ✓ Created .mcp-config.json (Claude Desktop integration)
 ✓ Updated package.json (added ai:context and validation scripts)
-
-Installation complete in 2.8s
 ```
 
 ### Validate Your Code

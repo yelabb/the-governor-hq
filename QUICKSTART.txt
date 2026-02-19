@@ -10,11 +10,12 @@
 │  ⚡ INSTANT SETUP                                                │
 └──────────────────────────────────────────────────────────────────┘
 
-  $ npm install --save-dev @the-governor-hq/constitution
+  $ npm install --save-dev @the-governor-hq/constitution-wearables
+  $ npx governor-install
 
-  ✓ Done! Your AI is now safety-aware in 3 seconds.
+  ✓ Done! Your AI is now safety-aware.
   
-  Auto-configures: Cursor • Copilot • Claude • ChatGPT
+  Configures: Cursor • Copilot • Claude • ChatGPT
 
 ┌──────────────────────────────────────────────────────────────────┐
 │  🚫 THE 5 ABSOLUTE RULES                                         │

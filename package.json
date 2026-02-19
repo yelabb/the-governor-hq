@@ -16,8 +16,6 @@
     "pre-publish": "node scripts/pre-publish-check.js",
     "publish:all": "npm publish --workspaces --access public",
     "ai:context": "node ./node_modules/@the-governor-hq/constitution-wearables/dist/mcp-server.js",
-    "postinstall": "npm run install:all-packages",
-    "install:all-packages": "npm run install:package --workspaces --if-present",
     "version:patch": "node scripts/version-lockstep.js patch",
     "version:minor": "node scripts/version-lockstep.js minor",
     "version:major": "node scripts/version-lockstep.js major"

@@ -114,18 +114,19 @@ function install(): void {
   log('   AI Safety for Brain-Computer Interface Data', 'blue');
   log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n', 'blue');
 
-  const targetDir = path.resolve(process.cwd(), '..', '..');
+  // When invoked via npx or directly, cwd is the user's project root
+  const targetDir = process.cwd();
 
   try {
     createCursorRules(targetDir);
     updateVSCodeSettings(targetDir);
 
-    log('\n✅ Installation complete!\n', 'green');
+    log('\n✅ Setup complete!\n', 'green');
     log('Next steps:', 'bright');
     log('  1. Restart your AI coding assistant', 'blue');
     log('  2. Check .cursorrules for active constraints', 'blue');
     log('  3. Read docs: node_modules/@the-governor-hq/constitution-bci/', 'blue');
-    log('');
+    log('\n💡 Tip: Re-run this anytime with: npx governor-install-bci\n', 'yellow');
   } catch (error) {
     log(`\n❌ Installation failed: ${(error as Error).message}\n`, 'red');
     process.exit(1);

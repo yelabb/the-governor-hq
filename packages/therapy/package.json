@@ -14,8 +14,7 @@
     "prepublishOnly": "npm run clean && npm run build",
     "test": "node mcp-server.test.js",
     "ai:context": "node dist/mcp-server.js",
-    "postinstall": "node dist/install.js",
-    "install:package": "node dist/install.js || echo 'Build required: run npm run build in packages/therapy'"
+    "setup": "node dist/install.js"
   },
   "files": [
     "dist/",

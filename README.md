@@ -51,15 +51,26 @@ npm install --save-dev @the-governor-hq/constitution-wearables
 
 > **Need a domain we don't cover yet?** See [Creating a New Domain Package](#creating-a-new-domain-package) below.
 
-**2. Auto-configuration happens instantly:**
+**2. Run setup to configure your AI tools:**
+
+```bash
+# Wearables
+npx governor-install
+
+# BCI
+npx governor-install-bci
+
+# Therapy
+npx governor-install-therapy
+```
+
+You'll see:
 
 ```
 ✓ Created .cursorrules (Cursor AI safety rules)
 ✓ Created .vscode/settings.json (GitHub Copilot instructions)
 ✓ Created .mcp-config.json (Claude Desktop integration)  
 ✓ Updated package.json (added ai:context and validation scripts)
-
-Installation complete in 2.8s
 ```
 
 **3. Your AI assistant now has safety constraints:**
@@ -217,7 +228,7 @@ npx governor-validate "src/**/*.{ts,tsx}"
 
 ### 5. IDE Integration
 
-Auto-configures Cursor and VS Code on installation:
+Configures Cursor and VS Code via `npx` setup command:
 
 - **`.cursorrules`** — Immediate safety context for Cursor AI
 - **`.vscode/settings.json`** — GitHub Copilot instructions
@@ -777,7 +788,7 @@ The framework is production-ready for runtime validation and middleware use, but
 - ✅ **Express/Next.js Middleware** — Battle-tested in production environments
 - ✅ **CLI Validator** (`governor-validate`) — Stable, CI/CD ready
 - ✅ **Core Safety Rules** — Comprehensive pattern library (200+ patterns)
-- ✅ **Auto-Configuration** — Cursor, Copilot, Claude Desktop integration
+- ✅ **IDE Setup** — Cursor, Copilot, Claude Desktop integration via `npx`
 
 ### 🚧 In Development
 - 🚧 **LLM Judge** (v3.2.0) — Recently added, supports Groq/OpenAI/Anthropic (needs more real-world testing)

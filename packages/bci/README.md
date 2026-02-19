@@ -10,6 +10,12 @@ AI behavior guidance layer working with consumer BCI/neurotechnology data (EEG, 
 npm install --save-dev @the-governor-hq/constitution-bci
 ```
 
+Then run setup to configure your AI tools:
+
+```bash
+npx governor-install-bci
+```
+
 ## What It Covers
 
 ### BCI Data Types

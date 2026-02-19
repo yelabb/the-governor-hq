@@ -35,7 +35,20 @@ npm install --save-dev @the-governor-hq/constitution-therapy
 npm install --save-dev @the-governor-hq/constitution-core
 ```
 
-**That's it!** The post-install script automatically configures:
+**Then run the setup command for your domain:**
+
+```bash
+# Wearables
+npx governor-install
+
+# BCI
+npx governor-install-bci
+
+# Therapy
+npx governor-install-therapy
+```
+
+This configures:
 - ✅ `.cursorrules` - Cursor AI safety rules
 - ✅ `.vscode/settings.json` - GitHub Copilot instructions
 - ✅ `.mcp-config.json` - MCP server for Claude/ChatGPT
