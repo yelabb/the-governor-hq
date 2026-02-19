@@ -1,6 +1,6 @@
 {
   "name": "@the-governor-hq/constitution-bci",
-  "version": "3.3.4",
+  "version": "3.3.5",
   "description": "AI Safety Constitution for Brain-Computer Interface (BCI) Data Projects",
   "main": "dist/mcp-server.js",
   "types": "dist/index.d.ts",
@@ -46,10 +46,10 @@
     "node": ">=16.0.0"
   },
   "dependencies": {
-    "@the-governor-hq/constitution-core": "3.3.4"
+    "@the-governor-hq/constitution-core": "3.3.5"
   },
   "peerDependencies": {
-    "@the-governor-hq/constitution-core": "3.3.4"
+    "@the-governor-hq/constitution-core": "3.3.5"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
