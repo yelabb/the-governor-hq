@@ -154,6 +154,7 @@ function printSuccessMessage() {
     log('   1. Restart your AI assistant (Cursor, VS Code, etc.)');
     log('   2. Start coding - safety constraints are now active');
     log('   3. For MCP support: npm run ai:context\n');
+    log('💡 Re-run anytime with: npx governor-install\n', 'yellow');
     log('💡 Pro Tip:', 'yellow');
     log('   When using ChatGPT/Claude, paste this in your first message:\n');
     log('   "I\'m using the Governor HQ Constitutional Framework', 'bright');
@@ -163,7 +164,7 @@ function printSuccessMessage() {
     log('='.repeat(60) + '\n', 'bright');
 }
 function install() {
-    log('\n🛡️  Installing Governor HQ Constitutional Framework...\n', 'bright');
+    log('\n🛡️  Setting up Governor HQ Constitutional Framework...\n', 'bright');
     const targetDir = process.cwd();
     try {
         let changes = 0;

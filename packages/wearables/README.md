@@ -10,7 +10,13 @@ AI behavior guidance layer working with consumer wearable health data (Garmin, A
 npm install --save-dev @the-governor-hq/constitution-wearables
 ```
 
-**That's it!** Auto-configuration creates:
+Then run setup to configure your AI tools:
+
+```bash
+npx governor-install
+```
+
+This creates:
 - `.cursorrules` — Safety rules for Cursor AI
 - `.vscode/settings.json` — Copilot instructions
 - `.mcp-config.json` — MCP server for Claude/ChatGPT

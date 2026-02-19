@@ -10,6 +10,12 @@ AI behavior guidance layer working with therapy, mental health, and emotional we
 npm install --save-dev @the-governor-hq/constitution-therapy
 ```
 
+Then run setup to configure your AI tools:
+
+```bash
+npx governor-install-therapy
+```
+
 ## What It Covers
 
 ### Therapy Data Types

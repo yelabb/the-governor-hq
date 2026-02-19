@@ -132,11 +132,12 @@ function install() {
     log('   Governor HQ Constitutional Framework - Therapy', 'bright');
     log('   AI Safety for Mental Health & Wellbeing Data', 'blue');
     log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n', 'blue');
-    const targetDir = path.resolve(process.cwd(), '..', '..');
+    // When invoked via npx or directly, cwd is the user's project root
+    const targetDir = process.cwd();
     try {
         createCursorRules(targetDir);
         updateVSCodeSettings(targetDir);
-        log('\n✅ Installation complete!\n', 'green');
+        log('\n✅ Setup complete!\n', 'green');
         log('⚠️  IMPORTANT: This is the most sensitive data domain', 'yellow');
         log('   Always include crisis resources (988 hotline)', 'yellow');
         log('   Never attempt diagnosis or treatment advice\n', 'yellow');
@@ -144,7 +145,7 @@ function install() {
         log('  1. Restart your AI coding assistant', 'blue');
         log('  2. Check .cursorrules for active constraints', 'blue');
         log('  3. Read docs: node_modules/@the-governor-hq/constitution-therapy/', 'blue');
-        log('');
+        log('\n💡 Tip: Re-run this anytime with: npx governor-install-therapy\n', 'yellow');
     }
     catch (error) {
         log(`\n❌ Installation failed: ${error.message}\n`, 'red');

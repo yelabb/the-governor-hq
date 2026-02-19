@@ -207,9 +207,10 @@ Create a brand new project and follow the README:
 mkdir fresh-test
 cd fresh-test
 npm init -y
-npm install --save-dev @the-governor-hq/constitution
+npm install --save-dev @the-governor-hq/constitution-wearables
 
-# Should auto-configure everything
+# Run setup to configure IDE integration
+npx governor-install
 ls -la .cursorrules
 cat package.json  # Check for ai:context script
 npm run ai:context  # Test MCP server
@@ -278,11 +279,14 @@ npm pack --dry-run
 # Verify 'files' field in package.json
 ```
 
-### "postinstall script fails"
+### "Setup script fails"
 
 ```bash
-# Test locally first
-node install.js
+# Run it manually
+npx governor-install
+
+# Or invoke the script directly
+node node_modules/@the-governor-hq/constitution-wearables/dist/install.js
 
 # Check file paths are relative to package root
 # Check Node.js compatibility (>=16.0.0)

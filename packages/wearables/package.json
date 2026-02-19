@@ -1,6 +1,6 @@
 {
   "name": "@the-governor-hq/constitution-wearables",
-  "version": "3.3.4",
+  "version": "3.3.5",
   "description": "AI Safety Constitution for Wearable/Smartwatch Data Projects - Instant context for AI coding assistants",
   "main": "dist/mcp-server.js",
   "types": "dist/index.d.ts",
@@ -14,8 +14,7 @@
     "prepublishOnly": "npm run clean && npm run build",
     "test": "node mcp-server.test.js",
     "ai:context": "node dist/mcp-server.js",
-    "postinstall": "node dist/install.js",
-    "install:package": "node dist/install.js || echo 'Build required: run npm run build in packages/wearables'"
+    "setup": "node dist/install.js"
   },
   "keywords": [
     "ai-safety",
@@ -54,10 +53,10 @@
     "node": ">=16.0.0"
   },
   "dependencies": {
-    "@the-governor-hq/constitution-core": "3.3.4"
+    "@the-governor-hq/constitution-core": "3.3.5"
   },
   "peerDependencies": {
-    "@the-governor-hq/constitution-core": "3.3.4"
+    "@the-governor-hq/constitution-core": "3.3.5"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",

@@ -17,7 +17,7 @@ the-governor-hq/
 │   ├── wearables/         # @the-governor-hq/constitution-wearables
 │   │   ├── pages/         # Domain-specific documentation
 │   │   ├── mcp-server.js  # MCP server implementation
-│   │   ├── install.js     # Auto-configuration script
+│   │   ├── install.js     # Setup script (run via npx governor-install)
 │   │   ├── .cursorrules   # Cursor AI rules
 │   │   ├── package.json
 │   │   └── README.md
@@ -75,7 +75,7 @@ All domain-specific packages depend on `@the-governor-hq/constitution-core`.
 **Contains:**
 - Wearable-specific documentation (HRV, sleep, activity)
 - MCP server with wearable data context
-- Install scripts for auto-configuration
+- Install scripts for IDE setup (run via `npx`)
 - `.cursorrules` for Cursor AI
 - Tests for wearable data scenarios
 
@@ -203,7 +203,7 @@ cd packages/your-domain
   "types": "index.d.ts",
   "scripts": {
     "ai:context": "node mcp-server.js",
-    "postinstall": "node install.js"
+    "setup": "node install.js"
   },
   "keywords": [
     "ai-safety",
@@ -253,7 +253,7 @@ Define domain-specific rules for Cursor AI. Inherit from core rules and add doma
 
 ### 6. Create `install.js`
 
-Auto-configuration script that runs on `npm install`:
+Setup script that configures your project (run via `npx governor-install`):
 - Copy `.cursorrules` to project root
 - Update `.vscode/settings.json`
 - Create `.mcp-config.json`
