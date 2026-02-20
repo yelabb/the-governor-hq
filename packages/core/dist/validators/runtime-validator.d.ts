@@ -2,12 +2,12 @@
  * Runtime Validator - Hard post-generation gate
  * LLM → Validator → Output
  *
- * Fast pattern matching (<10ms) with multilingual semantic similarity (100-300ms)
+ * Fast pattern matching (<10ms) with optional multilingual semantic similarity (100-300ms)
  *
- * MULTILINGUAL SUPPORT (v3.3.0+):
- * - Detects and validates medical advice in 50+ languages
- * - Uses cross-lingual embeddings (no per-language patterns needed)
- * - Semantic similarity enabled by default for security
+ * DEPLOYMENT MODES (v3.4.0+):
+ * - Lightweight (default): Fast regex patterns only, ~10ms, English-only
+ * - Enhanced (opt-in): +Semantic similarity, ~420MB model, 50+ languages, adversarial protection
+ * - See: https://the-governor-hq.vercel.app/packages/core/runtime-validation#deployment-modes
  */
 import type { ValidatorConfig, ValidationResult, Domain } from './types';
 /**
