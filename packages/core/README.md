@@ -85,19 +85,23 @@ import { createValidator } from '@the-governor-hq/constitution-core';
 
 const validator = createValidator({
   domain: 'wearables',
-  useSemanticSimilarity: true,  // Enabled by default in v3.3.0+ for multilingual support
-  semanticThreshold: 0.75,       // Similarity threshold
+  useSemanticSimilarity: false,  // Default: lightweight mode (no ML model)
+  semanticThreshold: 0.75,       // Only used if useSemanticSimilarity: true
 });
 
-// ❌ All blocked by semantic similarity (English obfuscation):
-await validator.validate('You have d i a g n o s e d insomnia');  // spacing attack
-await validator.validate('Take mel@tonin 5mg');                    // special chars
-await validator.validate('You have diagnoz');                      // misspelling
+// 🪶 Lightweight Mode (Default):
+// - Ultra-fast (<10ms), no ML model, English-only
+// - Best for: Small Node.js projects, serverless, development
 
-// ❌ Also blocked (multilingual v3.3.0+):
-await validator.validate('Tienes insomnio');                      // Spanish
-await validator.validate('Vous avez de l\'insomnie');             // French
-await validator.validate('Sie haben Schlafapnoe');                // German
+// 🛡️ Enhanced Mode (Opt-in):
+// - Multilingual (50+ languages), adversarial protection
+// - ~420MB ML model, 100-300ms latency
+// - Enable with: useSemanticSimilarity: true
+// - Best for: Production with non-English users, security-critical apps
+
+// ❌ All blocked by lightweight mode (English):
+await validator.validate('You have insomnia');                // Direct medical claim
+await validator.validate('Take melatonin 5mg before bed');    // Supplement recommendation
 await validator.validate('你有失眠症');                             // Chinese
 ```
 

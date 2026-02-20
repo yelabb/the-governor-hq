@@ -157,26 +157,30 @@ import { RuntimeValidator } from '@the-governor-hq/constitution-core';
 const validator = new RuntimeValidator({
   onViolation: 'sanitize', // 'block' | 'sanitize' | 'warn' | 'log'
   useLLMJudge: false,
-  useSemanticSimilarity: true  // 🛡️ NEW: Prevents spacing/spelling attacks
+  useSemanticSimilarity: false  // Default: lightweight mode (v3.4.0+)
+  // Set to true for: multilingual support (50+ languages) + adversarial protection
+  // Trade-off: ~420MB ML model download, 100-300ms latency vs <10ms
 });
 
 const result = await validator.validate(aiGeneratedText);
 
 if (result.hasCriticalViolations) {
   // Blocked: "Take melatonin for better sleep"
-  // Also blocked: "T a k e  m e l a t o n i n" (spacing attack)
-  // Also blocked: "Take mel@tonin" (special char attack)
+  // With useSemanticSimilarity: true, also blocks:
+  //   - "T a k e  m e l a t o n i n" (spacing attack)
+  //   - "Take mel@tonin" (special char attack)  
+  //   - "Tienes insomnio" (Spanish medical advice)
   // Sanitized: "Consider adjusting your bedtime routine"
 }
 ```
 
 **Features:**
-- ⚡ Fast pattern matching (<10ms)
-- 🛡️ **NEW: Hardened Pattern Matcher** - Semantic similarity prevents adversarial attacks
-- 🌍 **NEW v3.3.0: Multilingual Safety** - Validates medical advice in 50+ languages
+- ⚡ **Lightweight mode (default):** Fast pattern matching (<10ms), no ML dependencies
+- 🛡️ **Enhanced mode (opt-in):** Semantic similarity + 50+ languages (~420MB model, 100-300ms)
 - 🔍 Optional LLM judge for edge cases
 - 🎯 Multiple violation actions
 - 📊 TypeScript support with full type safety
+- 🌐 Multilingual safety (when semantic similarity enabled)
 
 ### 2. API Middleware
 
@@ -312,18 +316,20 @@ function analyzeSleep(sleepData, userBaseline) {
 - ✅ No diagnosis or treatment
 - ✅ Explicit disclaimer
 
-### 🛡️ Hardened Validation Catches Adversarial Attacks (v3.3.3+)
+### 🛡️ Hardened Validation Catches Adversarial Attacks (Opt-in)
+
+Enable semantic similarity for adversarial protection and multilingual support:
 
 ```typescript
-// ❌ Traditional regex might miss these obfuscated attacks:
+// Traditional regex might miss these obfuscated attacks:
 "You have d i a g n o s e d insomnia"         // Spacing
 "Take mel@tonin 5mg"                          // Special chars
 "You have diagnoz"                            // Misspelling
 "T A K E  s u p p l e m e n t s"            // Spaced prescription
 
-// ✅ Hardened pattern matcher catches all of them:
+// ✅ Opt-in to enhanced mode with semantic similarity:
 const validator = createValidator({
-  useSemanticSimilarity: true  // Enables semantic matching
+  useSemanticSimilarity: true  // Opt-in (downloads ~420MB ML model)
 });
 
 await validator.validate("You have d i a g n o s e d insomnia");
@@ -335,6 +341,19 @@ await validator.validate("You have d i a g n o s e d insomnia");
 await validator.validate("Great session today! 💪🔥");
 // → Safe (adversarial signal recorded, no forbidden hit correlated)
 ```
+
+**Trade-offs:**
+- ✅ **Enhanced protection:** Catches spacing, misspellings, multilingual attacks
+- ✅ **50+ languages:** Validates medical advice in any language
+- ⚠️ **Heavy:** ~420MB ML model download on first use
+- ⚠️ **Slower:** 100-300ms vs <10ms for pattern-only mode
+
+**When to use:**
+- Production deployments with non-English users
+- Security-critical applications requiring adversarial protection
+- High-volume services with ML infrastructure available
+
+**For small Node.js projects:** Use default lightweight mode (pattern-matching only)
 
 **How it's caught (v3.3.3+ signal-based detection):**
 1. Text normalization: `"d i a g n o s e d"` → `"diagnosed"`

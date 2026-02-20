@@ -2,6 +2,69 @@
 
 All notable changes to the core package will be documented in this file.
 
+## [3.4.0] - 2026-02-20
+
+### ⚡ Performance: Semantic Similarity Now Opt-In (Default Changed)
+
+**Important Change:** `useSemanticSimilarity` now defaults to `false` (was `true` in v3.3.0-v3.3.3). This makes the library practical for small Node.js projects, serverless environments, and CPU-constrained deployments.
+
+#### Changed
+- **Default behavior**: `RuntimeValidator` now uses lightweight pattern-matching mode by default
+  - Previous (v3.3.x): `useSemanticSimilarity: true` (auto-downloaded ~420MB ML model)
+  - Current (v3.4.0+): `useSemanticSimilarity: false` (fast regex only, <10ms)
+  
+- **Deployment modes documented**:
+  - 🪶 **Lightweight (default)**: Fast regex patterns, no ML, English-only
+  - 🛡️ **Enhanced (opt-in)**: Semantic similarity, 50+ languages, adversarial protection
+  - 🔍 **LLM Judge**: Most thorough, API-based validation
+  - 🚀 **Hybrid**: Combine multiple modes
+
+#### Migration Guide
+
+**If you relied on automatic semantic similarity in v3.3.x:**
+
+```typescript
+// Before (v3.3.x - automatic)
+const validator = createValidator({ domain: 'wearables' });
+
+// After (v3.4.0+ - explicit opt-in)
+const validator = createValidator({ 
+  domain: 'wearables',
+  useSemanticSimilarity: true  // Add this to maintain v3.3.x behavior
+});
+```
+
+**If you want the new lightweight default:**
+
+```typescript
+// v3.4.0+ default (no change needed)
+const validator = createValidator({ domain: 'wearables' });
+// Fast <10ms validation, no ML model download
+```
+
+#### Rationale
+
+Users reported the library was impractical for small Node.js projects due to:
+- ~420MB ML model download on first import
+- 100-300ms validation latency
+- Heavy CPU usage in serverless environments
+- Model download timing out in AWS Lambda / Vercel Functions
+
+**Solution:** Make semantic similarity opt-in. Users can explicitly enable it when they need:
+- Multilingual support (50+ languages)
+- Adversarial attack prevention (spacing, misspellings, obfuscation)
+- Maximum security for production deployments
+
+For most small projects, fast pattern-matching (<10ms) is sufficient.
+
+#### Documentation
+
+- Added comprehensive "Deployment Modes" guide to [Runtime Validation docs](https://the-governor-hq.vercel.app/packages/core/runtime-validation#deployment-modes)
+- Updated all README examples to show opt-in syntax
+- Added trade-off guidance: when to use lightweight vs enhanced mode
+
+---
+
 ## [3.3.3] - 2026-02-18
 
 ### 🔧 Improvement: Signal-Based Adversarial Detection

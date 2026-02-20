@@ -102,6 +102,134 @@ const result = await validator.validate(llmOutput);
 
 ---
 
+## Deployment Modes
+
+Choose the right mode for your infrastructure:
+
+### 🪶 Lightweight Mode (Default - v3.4.0+)
+
+**Fast regex patterns only** - ideal for small Node.js projects, serverless, CPU-constrained environments:
+
+```typescript
+const validator = createValidator({
+  domain: 'wearables',
+  useSemanticSimilarity: false  // Default (no ML model)
+});
+```
+
+**Characteristics:**
+- ⚡ **Ultra-fast:** <10ms validation
+- 📦 **Zero dependencies:** No ML models or vector DB
+- 🪶 **Lightweight:** ~50KB bundle size
+- 🌐 **English-only:** Pattern matching works best in English
+- ⚠️ **Basic evasion protection:** Can be bypassed with spacing (`d i a g n o s e`) or misspellings
+
+**Best for:**
+- Small Node.js apps
+- Serverless functions (AWS Lambda, Vercel, Cloudflare Workers)
+- Development/testing
+- English-only applications
+- CPU/memory-constrained environments
+
+---
+
+### 🛡️ Enhanced Mode (Opt-in)
+
+**Semantic similarity + multilingual support** - for production deployments requiring maximum safety:
+
+```typescript
+const validator = createValidator({
+  domain: 'wearables',
+  useSemanticSimilarity: true,  // Opt-in (downloads ~420MB ML model)
+  semanticThreshold: 0.75
+});
+```
+
+**Characteristics:**
+- 🌍 **Multilingual:** Validates medical advice in 50+ languages
+- 🛡️ **Adversarial protection:** Prevents spacing, special char, misspelling attacks
+- 🧠 **Semantic understanding:** Catches concept-level violations
+- 📦 **Heavy:** ~420MB ML model download on first use
+- ⏱️ **Slower:** 100-300ms validation latency
+- 💻 **CPU-intensive:** Uses transformers.js for embeddings
+
+**Best for:**
+- Production deployments with non-English users
+- Security-critical applications
+- High-volume services with ML infrastructure
+- Preventing adversarial attacks
+
+**Model info:** Uses `paraphrase-multilingual-MiniLM-L12-v2` (384-dim embeddings, 50+ languages)
+
+---
+
+### 🔍 LLM Judge Mode
+
+**Most thorough validation** - uses an external LLM to judge safety:
+
+```typescript
+const validator = createValidator({
+  domain: 'wearables',
+  useLLMJudge: true,
+  llmProvider: 'groq',  // or 'openai', 'anthropic'
+  apiKey: process.env.GROQ_API_KEY
+});
+```
+
+**Characteristics:**
+- 🎯 **Most accurate:** Catches subtle violations patterns miss
+- 💸 **API costs:** ~$0.0001-0.001 per validation
+- ⏱️ **Slowest:** ~500ms latency
+- 🔑 **Requires API key**
+
+**Best for:**
+- Critical production flows
+- Regulatory compliance
+- Edge cases patterns can't catch
+- When accuracy > speed
+
+---
+
+### 🚀 Hybrid Mode (Recommended for Production)
+
+**Combine modes for optimal performance:**
+
+```typescript
+const validator = createValidator({
+  domain: 'wearables',
+  useSemanticSimilarity: true,  // Adversarial protection
+  useLLMJudge: true,             // Edge case fallback
+  apiKey: process.env.GROQ_API_KEY
+});
+```
+
+**Flow:**
+1. **Fast patterns** (5ms) - catch obvious violations
+2. **Semantic similarity** (150ms) - catch obfuscated/multilingual
+3. **LLM judge** (500ms) - final check for edge cases
+
+---
+
+### 🔮 Remote API Mode (Coming Soon)
+
+**Call remote semantic similarity API instead of running ML locally:**
+
+```typescript
+const validator = createValidator({
+  domain: 'wearables',
+  useSemanticSimilarity: true,
+  semanticApiUrl: 'https://api.governor-hq.com/semantic'  // Not yet available
+});
+```
+
+**When available:**
+- All benefits of enhanced mode
+- No local ML model download
+- Faster cold starts
+- Serverless-friendly
+
+---
+
 ## Basic Setup
 
 ### Install

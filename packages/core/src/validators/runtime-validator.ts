@@ -2,12 +2,12 @@
  * Runtime Validator - Hard post-generation gate
  * LLM → Validator → Output
  * 
- * Fast pattern matching (<10ms) with multilingual semantic similarity (100-300ms)
+ * Fast pattern matching (<10ms) with optional multilingual semantic similarity (100-300ms)
  * 
- * MULTILINGUAL SUPPORT (v3.3.0+):
- * - Detects and validates medical advice in 50+ languages
- * - Uses cross-lingual embeddings (no per-language patterns needed)
- * - Semantic similarity enabled by default for security
+ * DEPLOYMENT MODES (v3.4.0+):
+ * - Lightweight (default): Fast regex patterns only, ~10ms, English-only
+ * - Enhanced (opt-in): +Semantic similarity, ~420MB model, 50+ languages, adversarial protection
+ * - See: https://the-governor-hq.vercel.app/packages/core/runtime-validation#deployment-modes
  */
 
 import type {
@@ -49,10 +49,12 @@ export class RuntimeValidator {
       useLLMJudge: config.useLLMJudge ?? false,
       llmProvider: config.llmProvider || 'groq',
       llmModel: config.llmModel || '',
-      // Default to TRUE for multilingual support (v3.3.0+)
-      // Semantic similarity is now required to catch non-English medical advice
-      // Pattern matching alone is English-only and vulnerable to bypasses
-      useSemanticSimilarity: config.useSemanticSimilarity ?? true,
+      // Default to FALSE (opt-in) as of v3.4.0+
+      // Semantic similarity requires ~420MB ML model download + CPU overhead
+      // Enable for: 1) Multilingual support, 2) Adversarial attack prevention, 3) Production deployments
+      // Disable for: Small Node.js projects, serverless, resource-constrained environments
+      // See: https://the-governor-hq.vercel.app/packages/core/runtime-validation#deployment-modes
+      useSemanticSimilarity: config.useSemanticSimilarity ?? false,
       semanticThreshold: config.semanticThreshold ?? 0.75,
       customRules: config.customRules || [],
       apiKey: config.apiKey || '',
